@@ -11,15 +11,38 @@
   const restorers = [];
   const titles = new WeakMap();
   const TITLE_KEY = 'letter-tabs-fixed-title';
-  const { SessionStore } = ChromeUtils.importESModule('resource:///modules/sessionstore/SessionStore.sys.mjs');
+  // Current Firefox/Zen moved SessionStore to moz-src. Retain older builds.
+  let sessionStore = null;
+  for (const uri of [
+    'moz-src:///browser/components/sessionstore/SessionStore.sys.mjs',
+    'resource:///modules/sessionstore/SessionStore.sys.mjs',
+  ]) {
+    try {
+      sessionStore = ChromeUtils.importESModule(uri).SessionStore;
+      if (sessionStore) break;
+    } catch { /* Try the next supported module location. */ }
+  }
+  let storageWarningShown = false;
+  function storage(method, ...args) {
+    try {
+      return sessionStore?.[method]?.(...args) ?? '';
+    } catch (error) {
+      // A tab may not yet be registered with SessionStore during restoration.
+      if (!storageWarningShown) {
+        console.warn('[Letter Tabs] Session storage unavailable; keeping titles in memory.', error);
+        storageWarningShown = true;
+      }
+      return '';
+    }
+  }
   function saveTitle(tab, title) {
     titles.set(tab, title);
-    if (title) SessionStore.setCustomTabValue(tab, TITLE_KEY, title);
-    else SessionStore.deleteCustomTabValue(tab, TITLE_KEY);
+    if (title) storage('setCustomTabValue', tab, TITLE_KEY, title);
+    else storage('deleteCustomTabValue', tab, TITLE_KEY);
   }
   function keepTitle(tab) {
     if (!titles.has(tab)) {
-      const title = tab.zenStaticLabel || SessionStore.getCustomTabValue(tab, TITLE_KEY);
+      const title = tab.zenStaticLabel || storage('getCustomTabValue', tab, TITLE_KEY);
       if (title) saveTitle(tab, title);
     }
     const title = titles.get(tab);
@@ -86,7 +109,7 @@
     if (destroyed) return;
     const saved = read();
     for (const tab of document.querySelectorAll('.tabbrowser-tab')) {
-      keepTitle(tab);
+      try { keepTitle(tab); } catch (error) { console.warn('[Letter Tabs] Could not restore tab title.', error); }
       tab.removeAttribute('zen-pinned-changed');
       tab.removeAttribute('had-zen-pinned-changed');
       if (!tab.hasAttribute('zen-essential')) {
