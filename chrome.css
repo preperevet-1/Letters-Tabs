@@ -286,3 +286,51 @@
     transition: none !important;
   }
 }
+
+/* 1.3.1: folder backgrounds use the same full row width as tabs.
+   Keep native indentation for nested folders. */
+:root[zen-letter-tabs-active][zen-sidebar-expanded="true"] .zen-workspace-tabs-section > zen-folder {
+  margin-inline: 0 !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+:root[zen-letter-tabs-active][zen-sidebar-expanded="true"] zen-folder > .tab-group-label-container {
+  align-self: stretch !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin-inline: 0 !important;
+}
+:root[zen-letter-tabs-active][zen-sidebar-expanded="true"] zen-folder > .tab-group-label-container::before {
+  left: 0 !important;
+  right: 0 !important;
+  width: auto !important;
+}
+/* A 20px hit target with a centered 12px glyph, not a padded 12px bubble. */
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator .zen-workspaces-actions {
+  --toolbarbutton-padding-inner: 0px !important;
+  box-sizing: border-box !important;
+  min-width: 20px !important;
+  max-width: 20px !important;
+  min-height: 20px !important;
+  max-height: 20px !important;
+  padding: 0 !important;
+  margin-block: 0 !important;
+  align-self: center !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator .zen-workspaces-actions > .toolbarbutton-icon {
+  box-sizing: border-box !important;
+  width: 12px !important;
+  height: 12px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
