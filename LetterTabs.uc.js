@@ -35,21 +35,64 @@
       return '';
     }
   }
+  const TITLES_PREF = 'zen.letter-tabs.fixed-titles';
+  function readTitles() {
+    try {
+      const value = JSON.parse(Services.prefs.getStringPref(TITLES_PREF, '{}'));
+      return value && typeof value === 'object' && !Array.isArray(value) ? value : {};
+    } catch { return {}; }
+  }
+  function titleId(tab) {
+    // Zen persists this id as zenSyncId across navigation, discard and restore.
+    return tab.getAttribute('id') || '';
+  }
   function saveTitle(tab, title) {
     titles.set(tab, title);
-    if (title) storage('setCustomTabValue', tab, TITLE_KEY, title);
-    else storage('deleteCustomTabValue', tab, TITLE_KEY);
+    const id = titleId(tab);
+    // SessionStore also preserves names for tabs without a persistent Zen id.
+    storage('setCustomTabValue', tab, TITLE_KEY, title || '\u0001');
+    if (id && !window.PrivateBrowsingUtils?.isWindowPrivate?.(window)) {
+      const saved = readTitles();
+      saved[id] = title; // Empty string explicitly restores dynamic titles.
+      Services.prefs.setStringPref(TITLES_PREF, JSON.stringify(saved));
+    }
+  }
+  function fixedTitle(tab) {
+    if (titles.has(tab)) return titles.get(tab);
+    const saved = readTitles();
+    const id = titleId(tab);
+    const stored = storage('getCustomTabValue', tab, TITLE_KEY);
+    let title;
+    if (id && Object.hasOwn(saved, id)) title = saved[id];
+    else if (stored) title = stored === '\u0001' ? '' : stored;
+    else title = tab.zenStaticLabel ||
+      (tab.pinned && tab._zenPinnedInitialState?.entry?.title) || '';
+    if (typeof title !== 'string') return '';
+    // Don't cache an unknown empty title before session restoration finishes.
+    if (title || stored || (id && Object.hasOwn(saved, id))) {
+      titles.set(tab, title);
+      if (title && !stored && !(id && Object.hasOwn(saved, id))) saveTitle(tab, title);
+    }
+    return title;
   }
   function keepTitle(tab) {
-    if (!titles.has(tab)) {
-      const title = tab.zenStaticLabel || storage('getCustomTabValue', tab, TITLE_KEY);
-      if (title) saveTitle(tab, title);
-    }
-    const title = titles.get(tab);
+    const title = fixedTitle(tab);
     if (!title) return;
     tab.zenStaticLabel = title;
-    if (tab.getAttribute('label') !== title) {
-      window.gBrowser._setTabLabel(tab, title, { _zenChangeLabelFlag: true });
+    // Directly update the label: Zen's _setTabLabel can reject changes for
+    // unloaded/background tabs and can be overwritten by window sync.
+    if (tab.getAttribute('label') !== title) tab.setAttribute('label', title);
+    tab._fullLabel = title;
+  }
+  function protectTitleUpdates() {
+    for (const name of ['setTabTitle', '_setTabLabel']) {
+      patch(window.gBrowser, name, original => function (tab, ...args) {
+        const title = tab && fixedTitle(tab);
+        if (title) tab.zenStaticLabel = title;
+        const result = original.call(this, tab, ...args);
+        if (tab) keepTitle(tab);
+        return result;
+      });
     }
   }
   function captureRename(event) {
@@ -182,12 +225,13 @@
     document.documentElement.setAttribute(ROOT, 'true');
     observer.observe(document.getElementById('navigator-toolbox') || document.documentElement, {
       subtree: true, childList: true, attributes: true,
-      attributeFilter: ['zen-essential', 'label', 'usercontextid', 'zen-pinned-changed', 'had-zen-pinned-changed'],
+      attributeFilter: ['zen-essential', 'label', 'usercontextid', 'zen-pinned-changed', 'had-zen-pinned-changed', 'id'],
     });
     events.forEach(name => window.addEventListener(name, schedule));
     window.addEventListener('dblclick', edit, true);
     window.addEventListener('keydown', captureRename, true);
     disablePinReset();
+    protectTitleUpdates();
     Services.prefs.addObserver(PREF, prefObserver);
     refresh();
   }
