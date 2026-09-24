@@ -1,59 +1,26 @@
-# Letter Tabs 1.3.2
+# Letter Tabs 1.0
 
-Sine-мод для Zen: текстові вкладки, літери Essentials та компактні папки.
+A minimal sidebar mod for Zen Browser, installed through Sine.
 
-## Вигляд
+## Features
 
-- Звичайні вкладки: без favicon, висота 32 px, лівий відступ 14 px, проміжок між рядками 2 px.
-- Вивантажені / ще не завантажені вкладки (`pending`) мають приглушений текст. Завантажені фонові вкладки зберігають звичайний колір.
-- Essentials: висота 37 px замість стандартних 46 px, літера 13 px, без декоративної рамки активної плитки.
-- Папки: заголовок висотою 32 px, звичайна товщина тексту, без іконки папки. Шеврон праворуч дивиться вправо для закритої папки й вниз для відкритої. Відкриття, вкладені папки та їх вміст залишаються під керуванням Zen.
-- Менші кнопки закриття й unload. Прибрано кнопку Back to pinned URL та її ручну дію.
+- **Text-only tabs:** hides site favicons, adds a larger left inset, and uses compact 32px rows with 2px spacing.
+- **Tab states:** unloaded tabs have dimmer text; the selected tab has no shadow. Close and unload buttons are smaller.
+- **Essentials:** shorter 37px tiles, slightly bolder 13px letters with optical centering, no selected outline or shadow, and adjusted spacing below the tiles.
+- **Editable initials:** double-click an Essential to edit its symbol inline. Enter or clicking outside saves; Escape cancels. Clear the field to restore the domain initial. Letters and emoji are saved locally per site and browser container.
+- **Fixed titles:** renamed tabs retain their names during navigation and restoration. Pinned tabs fall back to their original pinned title. Submit an empty rename to restore dynamic titles.
+- **Pinned tab behavior:** closing/unloading a pinned tab resets it to its original pinned URL for the next opening. The manual “Back to pinned URL” button, menu item, and changed-URL indicator are hidden. Explicit tab removal remains available.
+- **Minimal folders:** removes folder icons, matches tab row sizing and spacing, and adds a right-side chevron that smoothly rotates when expanded. Nested indentation is preserved; reduced-motion preferences are respected.
+- **Compact workspace header:** reduces its height and icon sizes. The centered three-dot menu uses the same rounded hover/pressed background as tab controls.
 
-## Редагування
+## Installation
 
-Essentials: подвійний клік відкриває поле всередині плитки. Enter або клік назовні зберігає, Esc скасовує. Порожнє поле повертає першу літеру домену. Підтримуються Unicode та emoji.
+1. Upload `theme.json`, `chrome.css`, `LetterTabs.uc.js`, and `README.md` to the repository root.
+2. Add the repository URL in **Settings → Sine Mods**. Enable JavaScript from unofficial sources in Sine if required.
+3. Install or update the mod, then fully restart Zen.
 
-Назви вкладок: використовуй звичайне перейменування Zen і натисни Enter. Назва зберігається окремо за постійним ID вкладки та через SessionStore, якщо він доступний. Мод захищає її під час навігації та відновлення вкладки. Порожнє перейменування повертає динамічні назви.
+Disable the mod in Sine to restore the standard layout and handlers. Saved initials and titles remain available when re-enabled.
 
-Pinned-вкладки без окремої збереженої назви використовують назву на момент закріплення. Якщо потрібна назва вже втрачена і немає її збереженої копії, перейменуй вкладку знову — мод не може вгадати попередній текст.
+## Notes
 
-Дані зберігаються локально в `zen.letter-tabs.overrides`, `zen.letter-tabs.fixed-titles` та SessionStore. Вимкнення мода прибирає стилі й відновлює перехоплені методи; збережені назви та літери залишаються.
-
-## Встановлення через GitHub
-
-Заміни `theme.json`, `chrome.css`, `LetterTabs.uc.js`, `README.md` у корені репозиторію. У Sine перевір оновлення, після чого повністю перезапусти Zen. У списку модів має бути версія **1.3.2**. Для цього мода Sine має дозволяти JavaScript з неофіційних джерел.
-
-## Перевірки
-
-Селектори папок і стану collapsed звірено з файлами встановленого Zen. Пройдено JS syntax check та тести: inline-редагування, Enter/Esc/blur, навігація, відмова штатного методу зміни назви, повторне створення вкладки з тим самим ID, відсутній SessionStore, старий/новий шлях SessionStore, окремі назви для різних вкладок, скидання назви, cleanup. Живу візуальну перевірку в Zen не виконано.
-
-## 1.2.2
-
-Додано відступ 10 px під Essentials, скинуто успадковані розміри псевдоелемента для центрування літер, прибрано тінь активної вкладки. Мінімальна висота звичайних вкладок більше не перебиває анімацію згортання Zen; рядки з нульовою висотою не залишають вертикальні відступи. Активна вкладка лишається видимою у згорнутому спейсі — це штатна поведінка Zen.
-
-## Висота папок у 1.2.2
-
-Висота заголовка папки враховує внутрішні вертикальні відступи Zen: 32 px + два `--tab-margin-block`. Фон рядка залишається 32 px, як у вкладок. Змінюється лише заголовок, а не контейнер із вкладеними вкладками.
-
-## 1.2.3
-
-Додатковий нижній відступ Essentials зменшено з 10 до 4 px, щоб наблизити видимий проміжок до відступу між пошуком і Essentials на наданому скриншоті. Інші стилі не змінено.
-
-## 1.2.4
-
-Літери Essentials оптично зміщено вниз на 2 CSS px за наданим скриншотом. Поле редагування отримало відповідне зміщення тексту. Розміри плиток та відступи не змінювались.
-
-## 1.3.0
-
-Уніфіковано геометрію папок і вкладок: рядок 32 px + 2 px між рядками, без подвійних внутрішніх відступів. Кнопка спейсу: фон 32 px, іконки 12 px. Літери Essentials мають вагу 600. Шеврон папки повертається за 220 мс; reduced-motion вимикає анімацію.
-
-Нова поведінка закриття pinned-вкладок: використовується штатний reset-unload-switch Zen, тому після успішного unload наступне відкриття починається з початкової закріпленої адреси. Якщо Zen скасовує unload, скидання не виконується. Явне видалення pinned-вкладки зберігається. Кнопка ручного Back to pinned URL залишається прихованою.
-
-## 1.3.1
-
-Прибрано зайві горизонтальні відступи фону папок: фон заповнює рядок як у вкладок, вкладені папки зберігають свою ієрархічну індентацію. Кнопка меню спейсу має область натискання 20 px і центровану іконку 12 px без круглого фону та успадкованого padding. Звірено з CSS установленого Zen; візуальна перевірка в активному браузері не виконувалася.
-
-## 1.3.2
-
-Кнопка трьох крапок отримала фон на всій області 20×20 px, як кнопка unload вкладки: однаковий радіус Zen, заливка 10% при наведенні / відкритому меню і 20% при натисканні. Іконка лишається центрованою без окремого круглого фону.
+Customizations are stored locally in browser preferences and, when available, SessionStore. A previously lost custom title must be renamed once again. The mod uses Zen's internal UI and may need updates when Zen changes.
