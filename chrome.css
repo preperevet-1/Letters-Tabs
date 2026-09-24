@@ -213,3 +213,12 @@
   top: var(--tab-margin-block, 2px) !important;
   height: 32px !important;
 }
+
+/* 1.2.4: optical centering for system-ui capitals within Essentials. */
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after {
+  transform: translateY(2px) !important;
+}
+:root[zen-letter-tabs-active] .zen-letter-tabs-editor {
+  padding-block-start: 4px !important;
+  padding-block-end: 0 !important;
+}
