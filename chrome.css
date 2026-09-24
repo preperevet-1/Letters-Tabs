@@ -37,9 +37,9 @@
 
 /* Compact text tabs: 32px rows and a deliberate left inset. */
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]) {
-  --tab-min-height: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
+  --tab-min-height: 32px;
+  min-height: 32px;
+  max-height: 32px;
 }
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]) .tab-content {
   padding-inline-start: 14px !important;
@@ -117,8 +117,8 @@
   position: relative !important;
   box-sizing: border-box !important;
   height: 32px !important;
-  min-height: 32px !important;
-  max-height: 32px !important;
+  min-height: 32px;
+  max-height: 32px;
   margin-block: 1px !important;
   padding: 0 28px 0 14px !important;
   font-weight: 400 !important;
@@ -163,4 +163,53 @@
 :root[zen-letter-tabs-active] zen-folder > .tab-group-label-container:has(> .tab-reset-button:hover) > .tab-group-label,
 :root[zen-letter-tabs-active] zen-folder[has-active] > .tab-group-label-container:hover > .tab-group-label {
   padding-inline-end: 22px !important;
+}
+
+/* 1.2.1: leave inline/animated height and min-height under Zen's control. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential])[style*="height: 0px"],
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential])[style*="height: 0;"] {
+  min-height: 0 !important;
+  margin-block: 0 !important;
+  padding-block: 0 !important;
+}
+/* Visible spacing between Essentials and the workspace header. */
+:root[zen-letter-tabs-active] #zen-essentials:has(.tabbrowser-tab[zen-essential]) {
+  margin-block-end: 10px !important;
+}
+/* Match the letter box to the background, clearing native tab pseudo styles. */
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after {
+  inset: var(--tab-margin-block, 0px) 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  display: grid !important;
+  place-items: center !important;
+  align-self: stretch !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab:is([selected], [visuallyselected]) {
+  --tab-box-shadow-selected: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab:is([selected], [visuallyselected]) .tab-background,
+:root[zen-letter-tabs-active] .tabbrowser-tab:is([selected], [visuallyselected]) .tab-background::before,
+:root[zen-letter-tabs-active] .tabbrowser-tab:is([selected], [visuallyselected]) .tab-background::after {
+  box-shadow: none !important;
+}
+
+/* 1.2.2: tab backgrounds are 32px plus Zen's internal block margins.
+   Give folder headers the same full row box, not just the background height. */
+:root[zen-letter-tabs-active] zen-folder > .tab-group-label-container {
+  --tab-min-height: 32px;
+  height: calc(32px + 2 * var(--tab-margin-block, 2px)) !important;
+  min-height: calc(32px + 2 * var(--tab-margin-block, 2px));
+  max-height: calc(32px + 2 * var(--tab-margin-block, 2px));
+}
+:root[zen-letter-tabs-active] zen-folder > .tab-group-label-container::before {
+  top: var(--tab-margin-block, 2px) !important;
+  height: 32px !important;
 }
