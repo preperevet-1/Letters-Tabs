@@ -165,6 +165,8 @@
     if (destroyed) return;
     const saved = read();
     for (const tab of document.querySelectorAll('.tabbrowser-tab')) {
+      // Transient Glance child tabs must keep their native title/lifecycle.
+      if (tab.hasAttribute('zen-glance-tab')) continue;
       try { keepTitle(tab); } catch (error) { console.warn('[Letter Tabs] Could not restore tab title.', error); }
       tab.removeAttribute('zen-pinned-changed');
       tab.removeAttribute('had-zen-pinned-changed');
