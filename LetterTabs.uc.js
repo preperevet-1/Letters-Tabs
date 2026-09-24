@@ -122,8 +122,21 @@
     }
     patch(manager, 'onCloseTabShortcut', original => function (event, tab, options = {}) {
       const behavior = options.behavior ?? Services.prefs.getStringPref('zen.pinned-tab-manager.close-shortcut-behavior', 'switch');
-      const safe = behavior.replace(/^reset-?/, '') || 'unload-switch';
+      // Preserve explicit removal; closing a loaded pin unloads and resets it.
+      const safe = behavior === 'close' ? 'close' : 'reset-unload-switch';
       return original.call(this, event, tab, { ...options, behavior: safe });
+    });
+  }
+  function closePinnedCommand(event) {
+    if (event.target.id !== 'cmd_close' || !window.gBrowser.selectedTab?.pinned) return;
+    // Zen registered a bound handler before mods loaded; route this command
+    // through the updated method too. Ordinary tab closing remains native.
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    const selected = window.gBrowser.selectedTabs?.length
+      ? window.gBrowser.selectedTabs : window.gBrowser.selectedTab;
+    window.gZenPinnedTabManager.onCloseTabShortcut(event, selected, {
+      behavior: 'reset-unload-switch',
     });
   }
   const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
@@ -230,6 +243,7 @@
     events.forEach(name => window.addEventListener(name, schedule));
     window.addEventListener('dblclick', edit, true);
     window.addEventListener('keydown', captureRename, true);
+    window.addEventListener('command', closePinnedCommand, true);
     disablePinReset();
     protectTitleUpdates();
     Services.prefs.addObserver(PREF, prefObserver);
@@ -245,6 +259,7 @@
     window.removeEventListener('unload', destroy);
     window.removeEventListener('dblclick', edit, true);
     window.removeEventListener('keydown', captureRename, true);
+    window.removeEventListener('command', closePinnedCommand, true);
     events.forEach(name => window.removeEventListener(name, schedule));
     try { Services.prefs.removeObserver(PREF, prefObserver); } catch {}
     document.documentElement.removeAttribute(ROOT);

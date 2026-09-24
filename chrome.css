@@ -222,3 +222,67 @@
   padding-block-start: 4px !important;
   padding-block-end: 0 !important;
 }
+
+/* 1.3: one row geometry for tabs and folder headers, without double insets. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]),
+:root[zen-letter-tabs-active] zen-folder > .tab-group-label-container {
+  --tab-margin-block: 0px;
+  box-sizing: border-box !important;
+}
+:root[zen-letter-tabs-active] zen-folder {
+  margin-block: 0 !important;
+}
+:root[zen-letter-tabs-active] zen-folder > .tab-group-label-container {
+  height: 32px !important;
+  min-height: 32px;
+  max-height: 32px;
+  margin-block: 1px !important;
+}
+:root[zen-letter-tabs-active] zen-folder > .tab-group-label-container::before {
+  top: 0 !important;
+  height: 32px !important;
+}
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator {
+  --zen-workspace-indicator-height: 34px !important;
+  box-sizing: border-box !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  max-height: 34px !important;
+  padding-block: 0 !important;
+}
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator::before {
+  top: 1px !important;
+  height: 32px !important;
+}
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator-icon,
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator-icon img,
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator-chevron {
+  width: 12px !important;
+  height: 12px !important;
+  font-size: 12px !important;
+  padding-block: 0 !important;
+}
+:root[zen-letter-tabs-active] .zen-current-workspace-indicator .zen-workspaces-actions {
+  width: 20px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+  padding: 4px !important;
+}
+:root[zen-letter-tabs-active] .zen-workspaces-actions .toolbarbutton-icon {
+  width: 12px !important;
+  height: 12px !important;
+  padding: 0 !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after,
+:root[zen-letter-tabs-active] .zen-letter-tabs-editor {
+  font-weight: 600 !important;
+}
+:root[zen-letter-tabs-active] zen-folder > .tab-group-label-container::after {
+  transform-origin: center !important;
+  transition: transform 220ms cubic-bezier(.22, .61, .36, 1), opacity 160ms ease !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[zen-letter-tabs-active] zen-folder > .tab-group-label-container::after {
+    transition: none !important;
+  }
+}
