@@ -16,6 +16,8 @@ for path in (registry, css):
     if path.exists():
         shutil.copy2(path, path.with_name(path.name + '.backup-' + stamp))
 destination = mods / metadata['id']
+if destination.exists():
+    shutil.copytree(destination, mods / (metadata['id'] + '.backup-' + stamp))
 destination.mkdir(exist_ok=True)
 for name in ('theme.json', 'chrome.css', 'LetterTabs.uc.js'):
     shutil.copy2(source / name, destination / name)

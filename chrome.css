@@ -34,3 +34,62 @@
 :root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]:is([selected], [visuallyselected], :hover)::after {
   color: currentColor;
 }
+
+/* Compact text tabs: 32px rows and a deliberate left inset. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]) {
+  --tab-min-height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]) .tab-content {
+  padding-inline-start: 14px !important;
+  padding-inline-end: 8px !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab .tab-reset-pin-button,
+:root[zen-letter-tabs-active] #context_zen-reset-pinned-tab {
+  display: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab .tab-close-button,
+:root[zen-letter-tabs-active] .tabbrowser-tab .tab-reset-button {
+  width: 20px !important;
+  height: 20px !important;
+  padding: 5px !important;
+  box-sizing: border-box !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential] .tab-background,
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential] .tab-background::before,
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential] .tab-background::after {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential] {
+  --tab-selected-outline-color: transparent !important;
+  --tab-box-shadow-selected: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-letter-tabs-editing]::after {
+  visibility: hidden !important;
+}
+:root[zen-letter-tabs-active] .zen-letter-tabs-editor {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+  border: 0 !important;
+  border-radius: inherit !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  color: inherit !important;
+  text-align: center !important;
+  padding: 0 4px !important;
+  font: 500 13px/1 system-ui, sans-serif !important;
+  -moz-window-dragging: no-drag !important;
+}
