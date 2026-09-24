@@ -1,0 +1,36 @@
+/* Scope to tab favicons; retain folder, workspace and audio controls. */
+:root[zen-letter-tabs-active] .tabbrowser-tab .tab-icon-image,
+:root[zen-letter-tabs-active] .tabbrowser-tab .tab-icon-pending,
+:root[zen-letter-tabs-active] .tabbrowser-tab .tab-icon-stack:not(:has(.tab-icon-overlay:is([soundplaying], [muted], [activemedia-blocked], [sharing], [pictureinpicture]))) {
+  display: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab:not([zen-essential]) .tab-label-container {
+  margin-inline-start: 0 !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter] {
+  --zen-essential-tab-icon: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter] .tab-label-container {
+  display: none !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter] .tab-content {
+  position: relative !important;
+  justify-content: center !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after {
+  content: attr(zen-letter-tabs-letter);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  font: 600 16px/1 system-ui, sans-serif;
+  color: color-mix(in srgb, currentColor 40%, transparent);
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter] {
+  position: relative !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]:is([selected], [visuallyselected], :hover)::after {
+  color: currentColor;
+}

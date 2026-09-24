@@ -1,0 +1,19 @@
+{
+  "id": "zen-letter-tabs",
+  "name": "Letter Tabs",
+  "description": "Text-only tabs and editable single-letter Essentials.",
+  "version": "1.0.0",
+  "author": "Local",
+  "createdAt": "2026-09-24",
+  "updatedAt": "2026-09-24",
+  "style": { "chrome": "chrome.css" },
+  "scripts": {
+    "LetterTabs.uc.js": {
+      "name": "Letter Tabs",
+      "include": ["chrome://browser/content/browser.xhtml"]
+    }
+  },
+  "supportsUnload": true,
+  "tags": ["JavaScript", "Tabs", "Minimal"],
+  "fork": ["zen"]
+}
