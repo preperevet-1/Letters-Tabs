@@ -174,7 +174,7 @@
 }
 /* Visible spacing between Essentials and the workspace header. */
 :root[zen-letter-tabs-active] #zen-essentials:has(.tabbrowser-tab[zen-essential]) {
-  margin-block-end: 4px !important;
+  margin-block-end: 8px !important;
 }
 /* Match the letter box to the background, clearing native tab pseudo styles. */
 :root[zen-letter-tabs-active] .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after {
