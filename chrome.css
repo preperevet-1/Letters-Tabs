@@ -475,3 +475,76 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     display: none !important;
   }
 }
+
+/* Search refinements: compact results, consistent contrast and edge spacing. */
+:root[zen-single-toolbar="true"] #urlbar[letter-tabs-minimal-search][breakout-extend], #urlbar[letter-tabs-minimal-search][breakout-extend][zen-floating-urlbar="true"] {
+  --urlbarview-text-color-selected: light-dark(#222, #eee) !important;
+  --urlbarView-result-button-selected-color: light-dark(#555, #ddd) !important;
+  --urlbarView-result-button-hover-color: light-dark(#222, #fff) !important;
+
+  > .urlbar-input-container:has(#urlbar-label-box:not([hidden])),
+  > .urlbar-input-container:has(#urlbar-search-mode-indicator:not([hidden])) {
+    padding-inline-start: 10px !important;
+  }
+  #urlbar-label-box, #urlbar-search-mode-indicator {
+    margin-inline-start: 0 !important;
+    border-radius: 8px !important;
+  }
+  .urlbarView-row:is(:hover, [selected]) .urlbarView-favicon,
+  .urlbarView-row:is(:hover, [selected]) .urlbarView-action-icon,
+  .urlbarView-row:is(:hover, [selected]) .urlbarView-action-favicon {
+    color: light-dark(#555, #ddd) !important;
+    fill: light-dark(#555, #ddd) !important;
+    stroke: light-dark(#555, #ddd) !important;
+    fill-opacity: 1 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    -moz-context-properties: fill, fill-opacity, stroke !important;
+  }
+  .urlbarView-row:is([type="switchtab"], [type="remotetab"], [type="bookmark"], [type="history"], [type="top_site"], [type^="autofill_"]) .urlbarView-favicon,
+  .urlbarView-row[has-url]:not([type="search"], [type="dynamic"], [type="tabtosearch"]) .urlbarView-favicon {
+    display: none !important;
+  }
+  .urlbarView-row:is([type="switchtab"], [type="remotetab"]) .urlbarView-action:last-child {
+    margin-inline-start: auto !important;
+    margin-inline-end: 0 !important;
+    padding-inline-end: 0 !important;
+    scale: 1 !important;
+  }
+  .urlbarView-row:not([rich-suggestion]) {
+    box-sizing: border-box !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    --urlbarview-row-padding-block: 0px !important;
+    --urlbarView-row-padding-block: 0px !important;
+  }
+  .urlbarView-row:not([rich-suggestion]) > .urlbarView-row-inner {
+    box-sizing: border-box !important;
+    min-height: 38px !important;
+    height: 38px !important;
+    padding-block: 0 !important;
+    padding-inline: 10px !important;
+    align-items: center !important;
+  }
+  .urlbarView-row-buttons {
+    align-items: center !important;
+    padding-inline-end: 4px !important;
+  }
+  .urlbarView-button-result-menu:empty {
+    box-sizing: border-box !important;
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    padding: 0 !important;
+    margin-inline: 2px !important;
+    border-radius: 6px !important;
+    background-size: 12px !important;
+    color: light-dark(#555, #ddd) !important;
+    fill: currentColor !important;
+    background-color: light-dark(#e3e3e3, #444) !important;
+  }
+  .urlbarView-button-result-menu:empty:is(:hover, [aria-expanded="true"]) {
+    background-color: light-dark(#d6d6d6, #555) !important;
+  }
+}
