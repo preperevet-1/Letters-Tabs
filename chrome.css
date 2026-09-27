@@ -369,7 +369,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 :root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
   gap: 0 !important;
-  list-style-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22context-fill%22%20stroke-width%3D%220.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M13.5%2010.5%2022%202%22%20%2F%3E%20%3Cpath%20d%3D%22M14.734%2013.841a2%202%200%2000-.314-2.42L12.58%209.58a2%202%200%2000-2.421-.314l-7.657%204.461A1%201%200%20002.3%2015.3l6.403%206.403a1%201%200%20001.571-.204z%22%20%2F%3E%20%3Cpath%20d%3D%22m5%2018%202-2%22%20%2F%3E%20%3Cpath%20d%3D%22m7.699%2010.7%205.602%205.601%22%20%2F%3E%20%3C%2Fsvg%3E") !important;
+  list-style-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22context-fill%22%20stroke-width%3D%220.9%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M13.5%2010.5%2022%202%22%20%2F%3E%20%3Cpath%20d%3D%22M14.734%2013.841a2%202%200%2000-.314-2.42L12.58%209.58a2%202%200%2000-2.421-.314l-7.657%204.461A1%201%200%20002.3%2015.3l6.403%206.403a1%201%200%20001.571-.204z%22%20%2F%3E%20%3Cpath%20d%3D%22m5%2018%202-2%22%20%2F%3E%20%3Cpath%20d%3D%22m7.699%2010.7%205.602%205.601%22%20%2F%3E%20%3C%2Fsvg%3E") !important;
 }
 :root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-text {
   display: none !important;
@@ -604,9 +604,43 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active][zen-sidebar-expanded="true"] #navigator-toolbox:is(:hover, :focus-within) .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"],
 :root[zen-letter-tabs-active][zen-sidebar-expanded="true"] .pinned-tabs-container-separator:is(:hover, :focus-within) toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
   visibility: visible !important;
-  opacity: .7 !important;
+  opacity: 1 !important;
 }
 :root[zen-letter-tabs-active][zen-sidebar-expanded="true"] #navigator-toolbox .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"]:is(:hover, :focus-visible) {
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+/* Broom: stronger contrast without increasing the 12px icon size. */
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
+  color: light-dark(#444, #ddd) !important;
+}
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-icon {
+  fill: currentColor !important;
+  fill-opacity: 1 !important;
+  opacity: 1 !important;
+}
+
+/* Zen hides Clear's native arrow without can-close and shows only its label.
+   This mod is icon-only, so retain the broom in both native command states. */
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-icon {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* 1.1.5: consistent secondary text, including highlighted URL fragments. */
+:root[zen-single-toolbar="true"] #urlbar[letter-tabs-minimal-search][breakout-extend],
+#urlbar[letter-tabs-minimal-search][breakout-extend][zen-floating-urlbar="true"] {
+  .urlbarView-row .urlbarView-action,
+  .urlbarView-row .urlbarView-userContext,
+  .urlbarView-row .urlbarView-title-separator,
+  .urlbarView-row .urlbarView-title-separator::before,
+  .urlbarView-row .urlbarView-url,
+  .urlbarView-row .urlbarView-action *,
+  .urlbarView-row .urlbarView-userContext *,
+  .urlbarView-row .urlbarView-url * {
+    font-size: 12px !important;
+    color: light-dark(#777, #aaa) !important;
+    opacity: 1 !important;
+  }
 }
