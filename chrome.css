@@ -375,8 +375,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   display: none !important;
 }
 :root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-icon {
-  width: 10px !important;
-  height: 10px !important;
+  width: 16px !important;
+  height: 16px !important;
   -moz-context-properties: fill !important;
   fill: currentColor !important;
 }

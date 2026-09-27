@@ -2,10 +2,10 @@
   "id": "zen-letter-tabs",
   "name": "Letter Tabs",
   "description": "Text-only tabs and editable single-letter Essentials.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Local",
   "createdAt": "2026-09-24",
-  "updatedAt": "2026-09-27T12:12:26Z",
+  "updatedAt": "2026-09-27T12:17:13Z",
   "style": {
     "chrome": "chrome.css"
   },
