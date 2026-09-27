@@ -548,3 +548,44 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     background-color: light-dark(#d6d6d6, #555) !important;
   }
 }
+
+/* 1.1.2: more breathing room and short, non-displacing hover transitions. */
+:root[zen-single-toolbar="true"] #urlbar[letter-tabs-minimal-search][breakout-extend],
+#urlbar[letter-tabs-minimal-search][breakout-extend][zen-floating-urlbar="true"] {
+  --lt-search-shadow: 0 8px 28px light-dark(rgba(0,0,0,.11), rgba(0,0,0,.28));
+
+  #urlbar-results > .urlbarView-row + .urlbarView-row {
+    margin-block-start: 4px !important;
+  }
+}
+@keyframes letter-tabs-search-appear {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root[zen-single-toolbar="true"] #urlbar[letter-tabs-minimal-search][breakout-extend],
+  #urlbar[letter-tabs-minimal-search][breakout-extend][zen-floating-urlbar="true"] {
+    > .urlbar-input-container,
+    > .urlbarView {
+      animation: letter-tabs-search-appear 180ms cubic-bezier(.22,.61,.36,1) !important;
+    }
+    .urlbarView-row,
+    .urlbarView-button-result-menu {
+      transition: background-color 120ms ease-out, color 120ms ease-out !important;
+    }
+  }
+  :root[zen-letter-tabs-active] {
+    .tabbrowser-tab:not([zen-glance-tab]) > .tab-stack > .tab-background,
+    .tabbrowser-tab:not([zen-glance-tab]) > .tab-stack > .tab-background::before,
+    zen-folder > .tab-group-label-container::before,
+    .zen-current-workspace-indicator::before,
+    .tabbrowser-tab .tab-close-button,
+    .tabbrowser-tab .tab-reset-button,
+    .zen-current-workspace-indicator .zen-workspaces-actions {
+      transition: background-color 120ms ease-out, color 120ms ease-out, box-shadow 120ms ease-out !important;
+    }
+    .tabbrowser-tab[zen-essential][zen-letter-tabs-letter]::after {
+      transition: color 120ms ease-out !important;
+    }
+  }
+}
