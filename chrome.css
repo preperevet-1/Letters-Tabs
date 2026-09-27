@@ -380,3 +380,98 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   -moz-context-properties: fill !important;
   fill: currentColor !important;
 }
+
+/* Minimal floating search. Native result ordering and commands are preserved. */
+:root[zen-single-toolbar="true"] #urlbar[letter-tabs-minimal-search][breakout-extend], #urlbar[letter-tabs-minimal-search][breakout-extend][zen-floating-urlbar="true"] {
+  --urlbar-container-height: 48px !important;
+  --urlbar-height: 48px !important;
+  --urlbarView-results-padding: 6px !important;
+  --lt-search-surface: light-dark(#fff, #242424);
+  --lt-search-border: light-dark(rgba(0,0,0,.09), rgba(255,255,255,.12));
+  --lt-search-shadow: 0 6px 24px light-dark(rgba(0,0,0,.07), rgba(0,0,0,.20));
+  padding: 0 !important;
+  min-height: 48px !important;
+  height: auto !important;
+  min-width: min(560px, 90vw) !important;
+  width: min(560px, 90vw) !important;
+  max-width: 90vw !important;
+  font-size: 16px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+
+  > .urlbar-background {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border: none !important;
+    backdrop-filter: none !important;
+  }
+  > .urlbar-input-container {
+    box-sizing: border-box !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 20px !important;
+    margin: 0 !important;
+    border: 1px solid var(--lt-search-border) !important;
+    border-radius: 14px !important;
+    background: var(--lt-search-surface) !important;
+    box-shadow: var(--lt-search-shadow) !important;
+    align-items: center !important;
+  }
+  .urlbar-input-box, .urlbar-input {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+  }
+  .urlbar-input::placeholder {
+    opacity: .5 !important;
+  }
+  #identity-box[pageproxystate="invalid"], #searchmode-switcher {
+    display: none !important;
+  }
+  > .urlbarView {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    margin: 8px 0 0 !important;
+    padding: 0 6px !important;
+    border: 1px solid var(--lt-search-border) !important;
+    border-radius: 14px !important;
+    background: var(--lt-search-surface) !important;
+    box-shadow: var(--lt-search-shadow) !important;
+    overflow: hidden !important;
+  }
+  .urlbarView-body-inner {
+    border-top: none !important;
+  }
+  #urlbar-results {
+    margin-block: 4px !important;
+  }
+  .urlbarView-row {
+    --urlbarView-row-padding-block: 8px;
+    --urlbarview-row-padding-block: 8px;
+    border-radius: 9px !important;
+  }
+  .urlbarView-row[selected] {
+    background: light-dark(#f1f1f1, #353535) !important;
+  }
+  .urlbarView-row[selected] *,
+  .urlbarView-row[selected] .urlbarView-title-separator::before {
+    color: light-dark(#222, #eee) !important;
+  }
+  .urlbarView-row[selected] .urlbarView-favicon {
+    background: transparent !important;
+  }
+  .urlbarView-title {
+    font-weight: 400 !important;
+  }
+  .urlbarView-action {
+    font-weight: 400 !important;
+  }
+  .urlbarView-row[type="switchtab"] .urlbarView-action::after {
+    display: none !important;
+  }
+  &[letter-tabs-search-empty] > .urlbarView,
+  &:has(#urlbar-input:placeholder-shown) > .urlbarView {
+    display: none !important;
+  }
+}

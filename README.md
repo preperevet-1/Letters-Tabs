@@ -1,6 +1,6 @@
 # Letter Tabs
 
-A minimal Zen Browser sidebar: text-only tabs, editable Essential initials, fixed tab titles, compact folders with animated chevrons, smaller controls, and pinned URL reset on unload.
+A minimal Zen Browser sidebar: text-only tabs, editable Essential initials, fixed tab titles, compact folders with animated chevrons, smaller controls, pinned URL reset on unload, and a minimal floating search with suggestions only after typing.
 
 ## Installation
 
