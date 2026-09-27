@@ -352,3 +352,31 @@
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab .tabbrowser-tab[zen-glance-tab] {
   display: none !important;
 }
+
+/* Lucide Broom — https://lucide.dev/icons/broom
+ISC License
+Copyright (c) 2026 Lucide Icons and Contributors
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+*/
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
+  gap: 0 !important;
+  list-style-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22context-fill%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20%3E%20%3Cpath%20d%3D%22M13.5%2010.5%2022%202%22%20%2F%3E%20%3Cpath%20d%3D%22M14.734%2013.841a2%202%200%2000-.314-2.42L12.58%209.58a2%202%200%2000-2.421-.314l-7.657%204.461A1%201%200%20002.3%2015.3l6.403%206.403a1%201%200%20001.571-.204z%22%20%2F%3E%20%3Cpath%20d%3D%22m5%2018%202-2%22%20%2F%3E%20%3Cpath%20d%3D%22m7.699%2010.7%205.602%205.601%22%20%2F%3E%20%3C%2Fsvg%3E") !important;
+}
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-text {
+  display: none !important;
+}
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-icon {
+  width: 10px !important;
+  height: 10px !important;
+  -moz-context-properties: fill !important;
+  fill: currentColor !important;
+}
