@@ -599,16 +599,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     font-weight: 400 !important;
   }
 }
-/* Native Clear visibility relies on zen-has-implicit-hover. Also respond
-   directly to pointer/focus so the broom appears reliably in the sidebar. */
-:root[zen-letter-tabs-active][zen-sidebar-expanded="true"] #navigator-toolbox:is(:hover, :focus-within) .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"],
-:root[zen-letter-tabs-active][zen-sidebar-expanded="true"] .pinned-tabs-container-separator:is(:hover, :focus-within) toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
-  visibility: visible !important;
-  opacity: 1 !important;
+/* Reveal Clear only over the separator, not the whole toolbox. */
+:root[zen-letter-tabs-active] #navigator-toolbox .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
-:root[zen-letter-tabs-active][zen-sidebar-expanded="true"] #navigator-toolbox .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"]:is(:hover, :focus-visible) {
+:root[zen-letter-tabs-active] #navigator-toolbox .pinned-tabs-container-separator:hover toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] {
   visibility: visible !important;
   opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Broom: stronger contrast without increasing the 12px icon size. */
@@ -625,7 +625,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
    This mod is icon-only, so retain the broom in both native command states. */
 :root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarbutton[command="cmd_zenCloseUnpinnedTabs"] .toolbarbutton-icon {
   display: block !important;
-  visibility: visible !important;
+  visibility: inherit !important;
 }
 
 /* 1.1.5: consistent secondary text, including highlighted URL fragments. */
@@ -643,4 +643,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     color: light-dark(#777, #aaa) !important;
     opacity: 1 !important;
   }
+}
+
+/* Reveal the settings/internal-page badge only over the sidebar URL field. */
+:root[zen-letter-tabs-active][zen-single-toolbar="true"] #urlbar:not([breakout-extend]) #identity-box.chromeUI {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+:root[zen-letter-tabs-active][zen-single-toolbar="true"] #urlbar:not([breakout-extend]):hover #identity-box.chromeUI {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+:root[zen-letter-tabs-active][zen-single-toolbar="true"] #urlbar:not([breakout-extend]):not(:hover) #identity-box.chromeUI .identity-box-button {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+:root[zen-letter-tabs-active][zen-single-toolbar="true"] #urlbar:not([breakout-extend]):hover #identity-box.chromeUI .identity-box-button {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
 }
