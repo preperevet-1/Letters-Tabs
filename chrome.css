@@ -633,8 +633,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #urlbar[letter-tabs-minimal-search][breakout-extend][zen-floating-urlbar="true"] {
   .urlbarView-row .urlbarView-action,
   .urlbarView-row .urlbarView-userContext,
-  .urlbarView-row .urlbarView-title-separator,
-  .urlbarView-row .urlbarView-title-separator::before,
   .urlbarView-row .urlbarView-url,
   .urlbarView-row .urlbarView-action *,
   .urlbarView-row .urlbarView-userContext *,
@@ -642,6 +640,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
     font-size: 12px !important;
     color: light-dark(#777, #aaa) !important;
     opacity: 1 !important;
+  }
+  /* Keep native separator opacity: switch-to-tab rows deliberately hide
+     the dash with opacity: 0 and a negative margin for accessibility. */
+  .urlbarView-row .urlbarView-title-separator,
+  .urlbarView-row .urlbarView-title-separator::before {
+    font-size: 12px !important;
+    color: light-dark(#777, #aaa) !important;
   }
 }
 
