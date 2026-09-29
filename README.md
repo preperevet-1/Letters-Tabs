@@ -12,3 +12,5 @@ A minimal Zen Browser sidebar: text-only tabs, editable Essential initials, fixe
 ## Search shortcuts
 
 Type `!gpt`, `!per`, `!yt`, `!gen`, or `!pin` to search ChatGPT, Perplexity, YouTube, Genius, or Pinterest. Enter your query and press Enter. Press Escape to exit shortcut mode.
+
+Type `!` to see available shortcuts. Matching pinned tabs in the current Space (including Essentials) are reused in the same container.

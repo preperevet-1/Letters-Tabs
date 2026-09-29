@@ -712,3 +712,35 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #urlbar[letter-tabs-bang][breakout-extend] > .urlbar-input-container {
   padding-inline-start: 10px !important;
 }
+
+/* Bang choices use their own list so history never replaces the commands. */
+#urlbar[letter-tabs-bang-suggesting] > .urlbarView { display: none !important; }
+#urlbar .letter-tabs-bang-suggestions[hidden] { display: none !important; }
+#urlbar .letter-tabs-bang-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 5px;
+  border: 1px solid var(--lt-search-border, light-dark(#ddd, #444));
+  border-radius: 14px;
+  background: var(--lt-search-surface, light-dark(#fff, #242424));
+  box-shadow: var(--lt-search-shadow, 0 6px 24px #0002);
+  color: light-dark(#444, #eee);
+}
+#urlbar .letter-tabs-bang-suggestions > [role="option"] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 9px;
+  font: 14px system-ui, sans-serif;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+#urlbar .letter-tabs-bang-suggestions > [role="option"]:is(:hover, [aria-selected="true"]) {
+  background: light-dark(#f0f0f0, #383838);
+}
+#urlbar .letter-tabs-bang-suggestions img { width: 16px; height: 16px; }
+#urlbar .letter-tabs-bang-command { margin-inline-start: auto; color: light-dark(#777, #aaa); font-size: 12px; }
