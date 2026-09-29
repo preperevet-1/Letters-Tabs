@@ -671,3 +671,44 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   visibility: visible !important;
   pointer-events: auto !important;
 }
+
+/* Site shortcut mode: chip replaces the !command in the editable field. */
+#urlbar[letter-tabs-bang] > .urlbarView,
+#urlbar[letter-tabs-bang] #urlbar-label-box,
+#urlbar[letter-tabs-bang] #urlbar-search-mode-indicator,
+#urlbar[letter-tabs-bang] #searchmode-switcher {
+  display: none !important;
+}
+#urlbar .letter-tabs-bang-chip[hidden] { display: none !important; }
+#urlbar .letter-tabs-bang-chip {
+  appearance: none;
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  max-width: 160px;
+  box-sizing: border-box;
+  margin: 0 8px 0 0;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 8px;
+  background: light-dark(#e7e7e7, #444);
+  color: light-dark(#444, #eee);
+  font: 500 12px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+#urlbar .letter-tabs-bang-chip img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+}
+#urlbar .letter-tabs-bang-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#urlbar .letter-tabs-bang-chip:hover { background: light-dark(#ddd, #505050); }
+#urlbar[letter-tabs-bang][breakout-extend] > .urlbar-input-container {
+  padding-inline-start: 10px !important;
+}
