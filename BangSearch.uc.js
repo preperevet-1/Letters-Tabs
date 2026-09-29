@@ -42,7 +42,9 @@
       window.gURLBar.controller?.cancelQuery();
       const view = window.gURLBar.view;
       if (view) {
-        view.selectedRowIndex = -1;
+        // selectedRowIndex rewrites the input from the previous native query
+        // and throws when the results are closed. Preserve the typed query.
+        view.clearSelection();
         if (view.oneOffSearchButtons) view.oneOffSearchButtons.selectedButton = null;
       }
     }
