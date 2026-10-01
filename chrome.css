@@ -745,10 +745,25 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #urlbar .letter-tabs-bang-suggestions img { width: 16px; height: 16px; }
 #urlbar .letter-tabs-bang-command { margin-inline-start: auto; color: light-dark(#777, #aaa); font-size: 12px; }
 
-/* Reading progress fills the tab background without covering its text/controls. */
-:root[zen-letter-tabs-active] .tabbrowser-tab[letter-tabs-scroll]:not([zen-essential], [zen-glance-tab]) .tab-background {
-  background-image: linear-gradient(to right,
-    light-dark(rgba(0, 0, 0, .065), rgba(255, 255, 255, .09)) 0%,
-    light-dark(rgba(0, 0, 0, .065), rgba(255, 255, 255, .09)) var(--letter-tabs-scroll),
-    transparent var(--letter-tabs-scroll), transparent 100%) !important;
+/* Only the active tab shows reading progress. Animate the fill width rather
+   than gradient stops, which jump between updates. */
+:root[zen-letter-tabs-active] .tabbrowser-tab:not([zen-essential], [zen-glance-tab]) .tab-background {
+  background-size: var(--letter-tabs-scroll, 0%) 100%;
+  background-repeat: no-repeat;
+  background-position: left center;
+  transition: background-size 180ms ease-out, background-color 120ms ease-out !important;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[letter-tabs-scroll]:is([selected], [visuallyselected]):not([zen-essential], [zen-glance-tab]) .tab-background {
+  background-color: light-dark(#e5e5e5, #353535) !important;
+  background-image: linear-gradient(
+    light-dark(rgba(255, 255, 255, .85), rgba(255, 255, 255, .15)),
+    light-dark(rgba(255, 255, 255, .85), rgba(255, 255, 255, .15))) !important;
+  background-size: var(--letter-tabs-scroll, 0%) 100% !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[zen-letter-tabs-active] .tabbrowser-tab:not([zen-essential], [zen-glance-tab]) .tab-background {
+    transition: none !important;
+  }
 }

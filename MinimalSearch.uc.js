@@ -5,6 +5,7 @@
 (() => {
   window.__letterTabsSearch?.destroy();
   let initialized = false, disposed = false;
+  let cleanup = () => {};
   function initialize() {
   if (disposed || initialized) return;
   initialized = true;
@@ -33,6 +34,8 @@
   bar.setAttribute('letter-tabs-minimal-search', 'true');
   sync();
   function destroy() {
+    if (disposed) return;
+    disposed = true;
     observer.disconnect();
     input.removeEventListener('input', sync);
     input.removeEventListener('focus', sync);
@@ -42,13 +45,14 @@
     bar.removeAttribute('letter-tabs-minimal-search');
     delete window.__letterTabsSearch;
   }
+  cleanup = destroy;
   window.__letterTabsSearch = { destroy };
   window.addEventListener('unload', destroy, { once: true });
   }
   function dispose() {
-    disposed = true;
     window.removeEventListener('load', initialize);
-    window.__letterTabsSearch?.destroy();
+    cleanup();
+    disposed = true;
   }
   if (typeof window.addUnloadListener === 'function') window.addUnloadListener(dispose);
   if (document.readyState === 'complete') initialize();

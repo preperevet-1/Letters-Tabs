@@ -222,18 +222,21 @@
     window.addEventListener('input', onInput, true);
     window.addEventListener('keydown', onKey, true);
     window.addEventListener('TabSelect', clearMode);
+    window.addEventListener('ZenURLBarClosed', clearMode);
     cleanup = () => {
       observer.disconnect();
       input.removeEventListener('blur', onBlur);
       window.removeEventListener('input', onInput, true);
       window.removeEventListener('keydown', onKey, true);
       window.removeEventListener('TabSelect', clearMode);
+      window.removeEventListener('ZenURLBarClosed', clearMode);
       clearMode();
       badge.remove();
       suggestions.remove();
     };
   }
   function destroy() {
+    if (disposed) return;
     disposed = true;
     window.removeEventListener('load', initialize);
     window.removeEventListener('unload', destroy);
