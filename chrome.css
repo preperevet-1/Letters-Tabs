@@ -820,58 +820,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   }
 }
 
-/* Quiet, text-only preview of a collapsed folder. */
-#letter-tabs-folder-preview {
-  --panel-background: light-dark(#fff, #252525);
-  --panel-border-color: light-dark(#00000012, #ffffff18);
-  --panel-border-radius: 14px;
-  --panel-padding: 8px;
-  color: light-dark(#444, #ddd);
-}
-#letter-tabs-folder-preview .lt-folder-preview-title {
-  padding: 7px 10px 10px;
-  font: 500 12px system-ui;
-  color: light-dark(#888, #aaa);
-  max-width: 260px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-#letter-tabs-folder-preview .lt-folder-preview-list {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  width: 260px;
-  max-height: 350px;
-  overflow-y: auto;
-}
-#letter-tabs-folder-preview button {
-  appearance: none;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  text-align: start;
-  padding: 9px 10px;
-  margin: 0;
-  font: 14px system-ui;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: background-color 120ms ease;
-}
-#letter-tabs-folder-preview button:is(:hover, :focus-visible, [data-selected]) {
-  background: light-dark(#f2f2f2, #ffffff12);
-}
-#letter-tabs-folder-preview .lt-folder-preview-empty { padding: 10px; color: #888; font: 13px system-ui; }
-/* Keep Zen's native drop targets and ordering, soften its displacement. */
+/* Animate only inner visuals; native tab hitboxes and drop targets stay put. */
+#letter-tabs-folder-preview { display: none !important; }
 @media (prefers-reduced-motion: no-preference) {
-  :root[zen-letter-tabs-active] #tabbrowser-tabs {
-    --tab-dragover-transition: transform 240ms cubic-bezier(.22,.61,.36,1);
+  :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]) > .tab-stack {
+    transition: translate 180ms cubic-bezier(.22,.61,.36,1) !important;
   }
-  :root[zen-letter-tabs-active] #tabbrowser-tabs[movingtab] .tabbrowser-tab:not([dragtarget], [dragged], :active),
-  :root[zen-letter-tabs-active] #tabbrowser-tabs[movingtab] zen-folder:not([dragtarget], :active) {
-    transition: var(--tab-dragover-transition), margin-inline-start 180ms ease-out !important;
-  }
+  :root[zen-letter-tabs-active] #tabbrowser-tabs .tab-stack[lt-drag-gap="up"] { translate: 0 -8px; }
+  :root[zen-letter-tabs-active] #tabbrowser-tabs .tab-stack[lt-drag-gap="down"] { translate: 0 8px; }
 }

@@ -2,10 +2,10 @@
   "id": "zen-letter-tabs",
   "name": "Letter Tabs",
   "description": "Text-only tabs and editable single-letter Essentials.",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "author": "Local",
   "createdAt": "2026-09-24",
-  "updatedAt": "2026-10-01T23:38:18Z",
+  "updatedAt": "2026-10-01T23:43:46Z",
   "style": {
     "chrome": "chrome.css"
   },
@@ -41,7 +41,13 @@
       ]
     },
     "FolderPreview.uc.js": {
-      "name": "Minimal Folder Preview",
+      "name": "Remove Old Folder Preview",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "DragSpacing.uc.js": {
+      "name": "Smooth Drag Spacing",
       "include": [
         "chrome://browser/content/browser.xhtml"
       ]
