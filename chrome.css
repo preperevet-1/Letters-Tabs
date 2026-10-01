@@ -756,8 +756,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] .tabbrowser-tab[letter-tabs-scroll]:is([selected], [visuallyselected]):not([zen-essential], [zen-glance-tab]) .tab-background {
   background-color: light-dark(#fff, #353535) !important;
   background-image: linear-gradient(
-    light-dark(#ededed, rgba(255, 255, 255, .15)),
-    light-dark(#ededed, rgba(255, 255, 255, .15))) !important;
+    light-dark(#f4f4f4, rgba(255, 255, 255, .15)),
+    light-dark(#f4f4f4, rgba(255, 255, 255, .15))) !important;
   background-size: var(--letter-tabs-scroll, 0%) 100% !important;
   background-repeat: no-repeat !important;
   background-position: left center !important;
