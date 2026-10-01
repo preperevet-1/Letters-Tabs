@@ -73,7 +73,7 @@
     idleTimers.set(tab, window.setTimeout(() => {
       tab.removeAttribute('letter-tabs-scroll');
       idleTimers.delete(tab);
-    }, 2500));
+    }, 1500));
   }
   function initialize() {
     if (disposed) return;

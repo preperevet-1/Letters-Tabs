@@ -779,6 +779,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   background-image: none !important;
 }
 .letter-tabs-loading-fill {
+  mask-image: linear-gradient(to right, #000 0%, #000 max(0px, calc(100% - 20px)), transparent 100%);
   position: absolute;
   inset: 0 auto 0 0;
   pointer-events: none;
