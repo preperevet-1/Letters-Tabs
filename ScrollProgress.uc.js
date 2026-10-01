@@ -54,12 +54,15 @@
     addMessageListener(`${channel}:stop`, stop);
     schedule();
   }
+  const idleTimers = new Map();
   function receive(message) {
     if (disposed) return;
     const tab = window.gBrowser?.getTabForBrowser(message.target);
     if (!tab) return;
     const value = Number(message.data?.percent);
     if (!Number.isFinite(value)) return;
+    window.clearTimeout(idleTimers.get(tab));
+    idleTimers.delete(tab);
     if (tab.hasAttribute('zen-essential') || value <= 0) {
       tab.removeAttribute('letter-tabs-scroll');
       tab.style.removeProperty('--letter-tabs-scroll');
@@ -67,6 +70,10 @@
     }
     tab.setAttribute('letter-tabs-scroll', 'true');
     tab.style.setProperty('--letter-tabs-scroll', `${Math.min(100, value)}%`);
+    idleTimers.set(tab, window.setTimeout(() => {
+      tab.removeAttribute('letter-tabs-scroll');
+      idleTimers.delete(tab);
+    }, 2500));
   }
   function initialize() {
     if (disposed) return;
@@ -89,6 +96,8 @@
       manager.broadcastAsyncMessage(`${id}:stop`);
       manager.removeMessageListener(id, receive);
     }
+    for (const timer of idleTimers.values()) window.clearTimeout(timer);
+    idleTimers.clear();
     for (const tab of window.gBrowser?.tabs || []) {
       tab.removeAttribute('letter-tabs-scroll');
       tab.style.removeProperty('--letter-tabs-scroll');
