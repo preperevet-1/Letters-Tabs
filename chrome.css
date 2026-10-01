@@ -805,3 +805,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   .letter-tabs-loading-fill { transition: none; }
   .letter-tabs-loading-fill::after { animation: none; }
 }
+
+/* Keep the resting sidebar address quiet; retain normal contrast while editing. */
+:root[zen-letter-tabs-active] #urlbar:not([breakout-extend]) #urlbar-input {
+  transition: color 140ms ease-out !important;
+}
+:root[zen-letter-tabs-active] #urlbar:not([breakout-extend], [focused]):not(:hover):not(:focus-within) #urlbar-input {
+  color: light-dark(#909090, #a0a0a0) !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[zen-letter-tabs-active] #urlbar:not([breakout-extend]) #urlbar-input {
+    transition: none !important;
+  }
+}
