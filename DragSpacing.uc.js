@@ -26,13 +26,14 @@
       }
       const compact = !!folder;
       if (compact === imageInFolder) return;
-      imageInFolder = compact;
       const args = strip.tabDragAndDrop?.originalDragImageArgs;
       const image = args?.[0];
       if (!image) return;
+      imageInFolder = compact;
       for (const clone of image.querySelectorAll('[drag-image]')) {
         clone.toggleAttribute('lt-folder-drag-image', compact);
       }
+      image.getBoundingClientRect();
       // Refresh Zen's native drag image; styling the original tab cannot resize it.
       try { event?.dataTransfer?.updateDragImage(image, args[1], args[2]); }
       catch (error) { console.debug('[Letter Tabs] Drag image refresh unavailable', error); }
@@ -69,11 +70,8 @@
       if (!dragged || !dragged.isConnected) { stop(); return; }
       const data = dragged._dragData;
       const moving = data?.movingTabs || [dragged];
-      let folder = lastEvent?.target?.closest?.('zen-folder');
-      if (folder?.hasAttribute('collapsed') && !data?.shouldDropIntoCollapsedTabGroup) folder = null;
-      if (folder?.isLiveFolder || moving.length !== 1) folder = null;
-      folderFeedback(folder, lastEvent);
-      if (data?.shouldDropIntoCollapsedTabGroup) {
+      const folder = hoveredFolder;
+      if (folder?.hasAttribute('collapsed')) {
         clear();
         strip.setAttribute('lt-reordering', 'true');
         const node = visual(dragged);
@@ -107,8 +105,31 @@
       }
     }
     function over(event) {
+      if (!strip.contains(event.target)) { folderFeedback(null, event); return; }
+      // Zen can stop bubbling and dragstart can originate from an inner control.
+      // Recover the actual source from the native drag payload in capture phase.
+      if (!dragged) {
+        try {
+          const source = event.dataTransfer.mozGetDataAt('application/x-moz-tabbrowser-tab', 0);
+          if (source?.ownerDocument === document && source.matches?.('.tabbrowser-tab') && !source.hasAttribute('zen-essential')) {
+            dragged = source;
+            strip.setAttribute('lt-dragging', 'true');
+          }
+        } catch { return; }
+      }
+      if (!dragged) return;
       lastEvent = event;
-      if (dragged && !frame) frame = window.requestAnimationFrame(update);
+      let folder = event.target.closest?.('zen-folder');
+      const moving = dragged._dragData?.movingTabs || [dragged];
+      if (folder?.isLiveFolder || moving.length !== 1) folder = null;
+      if (folder?.hasAttribute('collapsed')) {
+        const header = folder.querySelector('.tab-group-label-container');
+        const rect = header?.getBoundingClientRect();
+        // Header edges are sibling insertion zones, its center means "inside".
+        if (!rect || event.clientY < rect.top + rect.height * .2 || event.clientY > rect.bottom - rect.height * .2) folder = null;
+      }
+      folderFeedback(folder, event);
+      if (!frame) frame = window.requestAnimationFrame(update);
     }
     function leave(event) {
       if (!strip.contains(event.relatedTarget)) {folderFeedback(null, event);strip.removeAttribute('lt-reordering');clear();}
@@ -119,18 +140,18 @@
       ending = window.requestAnimationFrame(stop);
     }
     strip.addEventListener('dragstart', start, true);
-    strip.addEventListener('dragover', over);
+    window.addEventListener('dragover', over, true);
     strip.addEventListener('dragleave', leave);
-    window.addEventListener('drop', drop);
-    window.addEventListener('dragend', drop);
+    window.addEventListener('drop', drop, true);
+    window.addEventListener('dragend', drop, true);
     window.addEventListener('blur', stop);
     cleanup = () => {
       window.cancelAnimationFrame(ending);stop();
       strip.removeEventListener('dragstart', start, true);
-      strip.removeEventListener('dragover', over);
+      window.removeEventListener('dragover', over, true);
       strip.removeEventListener('dragleave', leave);
-      window.removeEventListener('drop', drop);
-      window.removeEventListener('dragend', drop);
+      window.removeEventListener('drop', drop, true);
+      window.removeEventListener('dragend', drop, true);
       window.removeEventListener('blur', stop);
     };
   }

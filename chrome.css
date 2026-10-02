@@ -850,3 +850,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   scale: .92 !important;
   transform-origin: center;
 }
+
+/* Zen uses this dedicated indicator, not Firefox's tab-drop-indicator. */
+:root[zen-letter-tabs-active] #zen-drag-indicator { display: none !important; }
