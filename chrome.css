@@ -820,36 +820,41 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   }
 }
 
-/* Inline /tr translation; native results stay out of this command mode. */
-#urlbar[letter-tabs-translate] > .urlbarView,
-#urlbar[letter-tabs-translate] #urlbar-label-box,
-#urlbar[letter-tabs-translate] #urlbar-search-mode-indicator { display: none !important; }
+/* /tr replaces the complete floating search surface. */
+#urlbar[letter-tabs-translate] > :not(.lt-translate) { display: none !important; }
+#urlbar[letter-tabs-translate] { height: auto !important; min-height: 0 !important; }
 #urlbar .lt-translate[hidden], #urlbar:not([breakout-extend]) .lt-translate { display: none !important; }
 #urlbar .lt-translate {
-  margin-top: 10px;
-  padding: 14px;
-  border: 1px solid var(--lt-search-border, light-dark(#e5e5e5,#454545));
-  border-radius: 14px;
-  color: light-dark(#383838,#eee);
-  background: var(--lt-search-surface, light-dark(#fff,#242424));
-  box-shadow: var(--lt-search-shadow,0 10px 30px #0002);
-  font: 13px system-ui,sans-serif;
-  animation: lt-translate-enter 160ms ease-out;
+  --lt-tr-ink: light-dark(#343434,#eee);
+  --lt-tr-muted: light-dark(#929292,#a6a6a6);
+  box-sizing:border-box;width:100%;margin:0;overflow:hidden;
+  border:1px solid var(--lt-search-border,light-dark(#ddd,#454545));border-radius:16px;
+  background:var(--lt-search-surface,light-dark(#fff,#242424));color:var(--lt-tr-ink);
+  box-shadow:var(--lt-search-shadow,0 12px 32px #0002);
+  font:13px system-ui,sans-serif;animation:lt-translate-enter 160ms ease-out;
 }
-#urlbar .lt-translate-heading { margin: 0 4px 10px; font-size: 12px; color: light-dark(#888,#aaa); }
-#urlbar .lt-translate-card {
-  display: grid;grid-template-columns: minmax(0,1fr) 30px minmax(0,1fr);
-  align-items: stretch;border-radius: 11px;background: light-dark(#f4f4f4,#303030);
-}
-#urlbar .lt-translate-side {display:flex;flex-direction:column;align-items:center;min-width:0;padding:20px 14px 12px;gap:18px;}
-#urlbar .lt-translate-text {flex:1;width:100%;min-height:60px;max-height:220px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;text-align:center;font-size:17px;font-weight:500;line-height:1.5;user-select:text;}
-#urlbar .lt-translate button,#urlbar .lt-translate select {appearance:none;border:0;border-radius:7px;padding:6px 9px;font:12px system-ui;color:inherit;background:light-dark(#e7e7e7,#424242);cursor:pointer;}
-#urlbar .lt-translate button:hover {background:light-dark(#ddd,#505050);}
-#urlbar .lt-translate button:focus-visible,#urlbar .lt-translate select:focus-visible {outline:2px solid light-dark(#999,#aaa);outline-offset:2px;}
-#urlbar .lt-translate select {max-width:100%;}
-#urlbar .lt-translate .lt-translate-swap {align-self:center;padding:5px;background:transparent;font-size:20px;color:light-dark(#999,#aaa);}
-#urlbar .lt-translate-footer {display:flex;align-items:center;gap:8px;margin-top:12px;}
-#urlbar .lt-translate-status {flex:1;min-width:0;color:light-dark(#888,#aaa);font-size:11px;}
-#urlbar .lt-translate button:disabled {opacity:.45;cursor:default;}
+#urlbar .lt-translate-body {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);position:relative;padding:8px;gap:0;}
+#urlbar .lt-translate-left,#urlbar .lt-translate-right {display:flex;flex-direction:column;min-width:0;min-height:270px;height:min(46vh,400px);box-sizing:border-box;padding:10px 22px 12px;}
+#urlbar .lt-translate-left {background:light-dark(#f3f3f3,#303033);border-radius:10px;}
+#urlbar .lt-translate-header {display:flex;align-items:center;justify-content:center;position:relative;min-height:30px;margin-bottom:16px;}
+#urlbar .lt-translate-left .lt-translate-header {padding-left:28px;}
+#urlbar .lt-translate button,#urlbar .lt-translate select {box-sizing:border-box;border:0;border-radius:7px;color:var(--lt-tr-muted);background:transparent;font:13px system-ui,sans-serif;cursor:pointer;padding:6px 8px;}
+#urlbar .lt-translate select {min-width:0;max-width:100%;text-overflow:ellipsis;}
+#urlbar .lt-translate .lt-translate-back {position:absolute;left:-12px;padding:2px 7px;font-size:22px;line-height:26px;background:light-dark(#e8e8e8,#3b3b3e);}
+#urlbar .lt-translate-source,#urlbar .lt-translate-result {box-sizing:border-box;width:100%;min-width:0;min-height:0;flex:1;padding:0 4px;margin:0;border:0;background:transparent;color:var(--lt-tr-ink);font:400 20px/1.5 system-ui,sans-serif;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;overflow:auto;user-select:text;}
+#urlbar .lt-translate-source {appearance:none;resize:none;outline:none;}
+#urlbar .lt-translate-source::placeholder {color:var(--lt-tr-muted);opacity:.75;}
+#urlbar .lt-translate-result:empty::before {content:'Translation';color:var(--lt-tr-muted);opacity:.6;}
+#urlbar .lt-translate-result[aria-busy='true']::before {content:'Translating…';}
+#urlbar .lt-translate-count {text-align:right;font-size:11px;color:var(--lt-tr-muted);padding-top:12px;}
+#urlbar .lt-translate .lt-translate-swap {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:34px;height:36px;padding:0;background:light-dark(#e9e9e9,#3c3c40);box-shadow:0 0 0 5px var(--lt-search-surface,light-dark(#fff,#242424));font-size:21px;}
+#urlbar .lt-translate-footer {display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid light-dark(#e9e9e9,#39393b);background:light-dark(#fafafa,#222225);}
+#urlbar .lt-translate .lt-translate-submit {padding-left:3px;}
+#urlbar .lt-translate .lt-translate-copy {color:var(--lt-tr-ink);font-weight:500;white-space:nowrap;}
+#urlbar .lt-translate-copy::after {content:' ↵';color:var(--lt-tr-muted);margin-left:5px;}
+#urlbar .lt-translate-status {flex:1;min-width:0;font-size:11px;color:var(--lt-tr-muted);}
+#urlbar .lt-translate button:hover {background:light-dark(#e5e5e5,#414145);}
+#urlbar .lt-translate button:disabled {opacity:.4;cursor:default;}
+#urlbar .lt-translate button:focus-visible,#urlbar .lt-translate select:focus-visible,#urlbar .lt-translate-result:focus-visible {outline:2px solid light-dark(#999,#aaa);outline-offset:2px;}
 @keyframes lt-translate-enter {from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){#urlbar .lt-translate {animation:none;}}

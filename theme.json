@@ -2,10 +2,10 @@
   "id": "zen-letter-tabs",
   "name": "Letter Tabs",
   "description": "Text-only tabs and editable single-letter Essentials.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "author": "Local",
   "createdAt": "2026-09-24",
-  "updatedAt": "2026-10-02T21:10:17Z",
+  "updatedAt": "2026-10-02T21:22:37Z",
   "style": {
     "chrome": "chrome.css"
   },
@@ -47,7 +47,7 @@
       ]
     },
     "TranslateSearch.uc.js": {
-      "name": "Inline Translator",
+      "name": "Translator Search Mode",
       "include": [
         "chrome://browser/content/browser.xhtml"
       ]

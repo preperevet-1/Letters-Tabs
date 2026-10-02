@@ -21,10 +21,12 @@ Built from the supplied zen-mods/zen-letter-tabs-1.2.11-github folder. CSS, tab 
 
 Replace the previous mod installation completely (remove obsolete DragSpacing, FolderPreview and Zia files if present) and restart Zen. Mock lifecycle tests pass; live Zen visual behavior remains unverified.
 
-## Inline translator (1.6.0)
+## Translator mode (1.6.1)
 
-Type `/tr your text` or `/translate your text` in the floating search and press Enter. A two-column card displays the original and translation. The source defaults to automatic detection and the target to English; selectors allow changing languages. Use Copy or Cmd/Ctrl+C with no selected input text to copy the result. Escape exits translation mode. The swap button reverses languages and uses the translated text as the new source when available.
+Type `/tr` and press Enter, or type `/tr ` with a space, to replace the floating search with a translator. `/translate` is an alias. The interface is English: Back to search and language selectors at the top, an editable multiline source field on the left, translation on the right, and a central swap button. The footer contains Translate and Copy Translation, without a provider heading or Actions menu.
 
-Text is sent only when you press Enter or Translate, to Google's unauthenticated translate.googleapis.com endpoint. No API key is required. This is an unofficial endpoint with no availability or quota guarantee; errors are shown without falling back to another provider. Requests omit cookies and referrers and time out after 15 seconds. Input is limited to 1500 characters per request. Text/results are not persisted by the mod. Google processes submitted text.
+Source language defaults to detection and target language to English. Enter submits; Shift+Enter inserts a newline; Cmd/Ctrl+Enter copies the translation. Escape or the back button returns to search. Language changes invalidate the previous result; swap reverses the languages and places the completed translation in the source editor.
 
-Verified with a live Ukrainian-to-English sample request and mocked UI tests for command activation, manual submission, Unicode, canceled/stale responses, clipboard, IME, server errors, escape and cleanup. Visual integration still requires checking in Zen. Existing folder/loading fixes remain; custom dragging is not included.
+Text is submitted to Google's unauthenticated translate.googleapis.com endpoint only on Enter or Translate. No API key is required; this is an unofficial endpoint without guaranteed availability. Requests omit cookies/referrer, time out after 15 seconds, and allow up to 1500 characters. No local text history is stored by the mod. Google processes submitted text.
+
+Checks: JavaScript syntax and mocked command/editor/focus, multiline/IME, stale response cancellation, copy, swap, error, back/Escape and cleanup scenarios. A visual browser test could not run because no Playwright browser is installed; native Zen focus behavior and appearance remain unverified.
