@@ -30,3 +30,7 @@ Source language defaults to detection and target language to English. Enter subm
 Text is submitted to Google's unauthenticated translate.googleapis.com endpoint only on Enter or Translate. No API key is required; this is an unofficial endpoint without guaranteed availability. Requests omit cookies/referrer, time out after 15 seconds, and allow up to 1500 characters. No local text history is stored by the mod. Google processes submitted text.
 
 Checks: JavaScript syntax and mocked command/editor/focus, multiline/IME, stale response cancellation, copy, swap, error, back/Escape and cleanup scenarios. A visual browser test could not run because no Playwright browser is installed; native Zen focus behavior and appearance remain unverified.
+
+## 1.6.2
+
+The translator is an independent chrome overlay anchored to the search position. Native URL-bar blur/close events no longer dismiss it when its editor receives focus. Bare commands suppress native query selection; Enter or a following space opens the editor. Back/Escape and outside click close the overlay. Tests simulate native URL-bar closure after activation and cover editing/translation behavior; live Zen verification is still needed.

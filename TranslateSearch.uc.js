@@ -11,7 +11,7 @@
     if(!bar || !input)return;
     const make=(tag,cls,text)=>{const n=document.createElementNS('http://www.w3.org/1999/xhtml',tag);if(cls)n.className=cls;if(text)n.textContent=text;return n;};
     const button=(cls,text,label)=>{const n=make('button',cls,text);n.type='button';if(label)n.setAttribute('aria-label',label);return n;};
-    const panel=make('section','lt-translate');panel.hidden=true;panel.setAttribute('aria-label','Translator');
+    const panel=make('section','lt-translate');panel.id='lt-translator-panel';panel.hidden=true;panel.setAttribute('aria-label','Translator');panel.setAttribute('role','dialog');
     const body=make('div','lt-translate-body'),left=make('div','lt-translate-left'),right=make('div','lt-translate-right');
     const leftHead=make('div','lt-translate-header'),rightHead=make('div','lt-translate-header');
     const back=button('lt-translate-back','←','Back to search');back.title='Back to search (Escape)';
@@ -27,25 +27,43 @@
     const footer=make('div','lt-translate-footer');const translate=button('lt-translate-submit','Translate');translate.title='Translate (Enter; Shift+Enter for a new line)';
     const status=make('span','lt-translate-status');status.setAttribute('aria-live','polite');
     const copy=button('lt-translate-copy','Copy Translation');copy.title='Copy Translation (⌘/Ctrl+Enter)';copy.disabled=true;
-    footer.append(translate,status,copy);panel.append(body,footer);bar.append(panel);
+    footer.append(translate,status,copy);panel.append(body,footer);document.documentElement.append(panel);
     let active=false,revision=0,controller=null,translated='',detected='',focusFrame=0;
     const stop=e=>{e.preventDefault();e.stopImmediatePropagation();};
     function invalidate(){result.removeAttribute('aria-busy');revision++;controller?.abort();controller=null;translated='';copy.disabled=true;translate.disabled=false;}
     function countText(){const value=source.value.trim();count.textContent=`${value?value.split(/\s+/u).length:0} Words · ${[...source.value].length} Characters`;}
     function edited(){invalidate();detected='';auto.textContent='Detect language';result.textContent='';status.textContent='Enter to translate · Shift+Enter for a new line';countText();}
     function hide(){invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;bar.removeAttribute('letter-tabs-translate');}
-    function returnToSearch(){hide();window.gURLBar.value='';window.gURLBar.userTypedValue='';input.value='';bar.setAttribute('letter-tabs-search-empty','true');input.focus();}
+    function returnToSearch(){hide();window.gURLBar.focus();window.gURLBar.value='';window.gURLBar.userTypedValue='';input.value='';bar.setAttribute('letter-tabs-search-empty','true');input.focus();}
     function focusSource(){cancelAnimationFrame(focusFrame);focusFrame=requestAnimationFrame(()=>{if(active){source.focus();source.setSelectionRange(source.value.length,source.value.length);}});}
+    let anchor = null;
+    function positionPanel(){
+      if(!anchor)return;
+      const width=Math.max(280,Math.min(anchor.width,window.innerWidth-32));
+      panel.style.width=width+'px';
+      panel.style.left=Math.max(16,Math.min(anchor.left,window.innerWidth-width-16))+'px';
+      panel.style.top=Math.max(16,Math.min(anchor.top,window.innerHeight-panel.getBoundingClientRect().height-16))+'px';
+    }
     function activate(text){
+      const rect=bar.getBoundingClientRect();
+      anchor={left:rect.left,top:rect.top,width:Math.max(560,rect.width)};
+      const style=getComputedStyle(bar);
+      for(const name of ['--lt-search-surface','--lt-search-border','--lt-search-shadow']){
+        const value=style.getPropertyValue(name).trim();if(value)panel.style.setProperty(name,value);
+      }
       active=true;source.value=text;edited();panel.hidden=false;bar.setAttribute('letter-tabs-translate','true');
       window.gURLBar.controller?.cancelQuery?.();window.gURLBar.view?.clearSelection?.();
       // Native search owns no copy of text typed in the translator editor.
-      window.gURLBar.value='';window.gURLBar.userTypedValue='';input.value='';focusSource();
+      window.gURLBar.userTypedValue='';
+      positionPanel();focusSource();
     }
     function onInput(event){
       if(event.target===source){event.stopImmediatePropagation();edited();return;}
       if(event.target!==input || event.isComposing || bar.hasAttribute('letter-tabs-bang'))return;
       // A trailing space activates /tr; Enter also activates a bare command.
+      if (/^\/(?:tr|translate)$/i.test(input.value)) {
+        event.stopImmediatePropagation();window.gURLBar.controller?.cancelQuery?.();window.gURLBar.view?.clearSelection?.();return;
+      }
       const match=/^\/(?:tr|translate)\s+([\s\S]*)$/i.exec(input.value);
       if(match){event.stopImmediatePropagation();activate(match[1]);}
     }
@@ -86,9 +104,11 @@
     });
     back.addEventListener('click',returnToSearch);translate.addEventListener('click',run);copy.addEventListener('click',copyResult);
     window.addEventListener('input',onInput,true);window.addEventListener('keydown',key,true);input.addEventListener('compositionend',onInput);
-    window.addEventListener('TabSelect',hide);window.addEventListener('ZenURLBarClosed',hide);
-    const observer=new MutationObserver(()=>{if(active && !bar.hasAttribute('breakout-extend'))hide();});observer.observe(bar,{attributes:true,attributeFilter:['breakout-extend']});
-    cleanup=()=>{hide();observer.disconnect();window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);window.removeEventListener('ZenURLBarClosed',hide);panel.remove();};
+    function outside(event){if(active && !panel.contains(event.target)){hide();}}
+    window.addEventListener('mousedown',outside,true);
+    window.addEventListener('resize',positionPanel);
+    window.addEventListener('TabSelect',hide);
+    cleanup=()=>{hide();window.removeEventListener('mousedown',outside,true);window.removeEventListener('resize',positionPanel);window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);panel.remove();};
   }
   // Provider integration is configured separately from the search interface.
   async function translateText(text,source,target,signal) {
