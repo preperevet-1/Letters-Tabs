@@ -62,11 +62,15 @@
     function invalidate(){status.removeAttribute('data-copied');clearTimeout(debounce);result.removeAttribute('aria-busy');revision++;controller?.abort();controller=null;translated='';copy.disabled=true;}
     function edited(){invalidate();detected='';auto.textContent='Detect language';result.textContent='';status.textContent='';for(const menu of menus)menu.refresh();schedule();}
     function schedule(){clearTimeout(debounce);if(active && !composing && source.value.trim())debounce=setTimeout(run,500);}
-    function hide(){for(const menu of menus)menu.close();motion?.cancel();returning=false;invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;bar.removeAttribute('letter-tabs-translate');}
+    function hide(){for(const menu of menus)menu.close();motion?.cancel();returning=false;invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;panel.removeAttribute('data-returning');bar.removeAttribute('letter-tabs-translate-handoff');bar.removeAttribute('letter-tabs-translate');}
     async function returnToSearch(){
       if(returning)return;returning=true;invalidate();
+      cancelAnimationFrame(focusFrame);
+      panel.setAttribute('data-returning','true');
+      bar.setAttribute('letter-tabs-translate-handoff','true');
       // Restore native search underneath the still-visible overlay. Its own
       // entrance animation is suppressed throughout this search session.
+      try {
       bar.setAttribute('letter-tabs-translate-return','true');
       bar.removeAttribute('letter-tabs-translate');
       bar.getBoundingClientRect();
@@ -77,16 +81,18 @@
       document.getElementById('Browser:OpenLocation')?.doCommand?.();
       window.gURLBar.userTypedValue='';input.value='';
       bar.setAttribute('letter-tabs-search-empty','true');input.focus();
-      try {
         if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches && panel.animate){
           motion?.cancel();
           motion=panel.animate([{width:panel.style.width,left:panel.style.left,top:panel.style.top,height:panel.getBoundingClientRect().height+'px'},
             {width:anchor.width+'px',left:anchor.left+'px',top:anchor.top+'px',height:anchor.height+'px'}],{duration:260,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
           await motion.finished;
         }
-      }catch(_){return;}
-      if(disposed || !active)return;
-      hide();
+      }catch(error){
+        // A cancelled or unsupported animation must never strand the overlay.
+        if(!disposed)console.warn('Letter Tabs translator return:',error);
+      }finally{
+        if(!disposed && active && returning)hide();
+      }
     }
     function focusSource(){cancelAnimationFrame(focusFrame);focusFrame=requestAnimationFrame(()=>{if(active){source.focus();source.setSelectionRange(source.value.length,source.value.length);}});}
     let anchor = null, searchWasNewTab=false;

@@ -942,3 +942,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @media(prefers-reduced-motion:reduce){
   #lt-translator-panel .lt-translate-status[data-copied='true']::before {animation:none;}
 }
+
+/* Keep the native input focusable but invisible during the surface handoff. */
+#urlbar[letter-tabs-translate-handoff] {
+  opacity:0 !important;pointer-events:none !important;
+}
+#lt-translator-panel[data-returning] > * {opacity:0 !important;pointer-events:none !important;}
+#lt-translator-panel[data-returning] {min-height:0 !important;overflow:hidden !important;}

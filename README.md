@@ -42,3 +42,7 @@ Word and character counters are removed from the translator.
 ## 1.6.5
 
 Smaller circular swap control matches the source panel. Copied dot glows twice (respects reduced motion). Return restores native search beneath the overlay before shrinking, suppressing its separate entrance animation for that search session. Live Zen verification remains required.
+
+## 1.6.6
+
+Return hides native search with opacity while restoring focus and shrinking the translator shell. Editor content is hidden during the handoff, and search becomes visible only once the overlay is removed. Cancelled/failed animations clean up rather than leaving both surfaces visible. Live Zen verification remains required.
