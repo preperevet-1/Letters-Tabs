@@ -834,3 +834,19 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @media (prefers-reduced-motion: reduce) {
   :root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] [lt-drag-row] { transition: none !important; }
 }
+
+/* Replace the native insertion line with the animated space and folder outline. */
+:root[zen-letter-tabs-active]:has(#tabbrowser-tabs[lt-dragging]) .tab-drop-indicator,
+:root[zen-letter-tabs-active]:has(#tabbrowser-tabs[lt-dragging]) #zen-dragover-background {
+  visibility: hidden !important;
+}
+:root[zen-letter-tabs-active] zen-folder[lt-folder-drop] {
+  outline: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .22)) !important;
+  outline-offset: -1px;
+  border-radius: 14px !important;
+  background-color: light-dark(rgba(0, 0, 0, .025), rgba(255, 255, 255, .035)) !important;
+}
+:root[zen-letter-tabs-active] [drag-image][lt-folder-drag-image] {
+  scale: .92 !important;
+  transform-origin: center;
+}

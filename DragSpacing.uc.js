@@ -17,6 +17,26 @@
     if (!strip) return;
     let dragged = null, frame = 0, ending = 0;
     const affected = new Set();
+    let hoveredFolder = null, lastEvent = null, imageInFolder = false;
+    function folderFeedback(folder, event) {
+      if (hoveredFolder !== folder) {
+        hoveredFolder?.removeAttribute('lt-folder-drop');
+        hoveredFolder = folder;
+        folder?.setAttribute('lt-folder-drop', 'true');
+      }
+      const compact = !!folder;
+      if (compact === imageInFolder) return;
+      imageInFolder = compact;
+      const args = strip.tabDragAndDrop?.originalDragImageArgs;
+      const image = args?.[0];
+      if (!image) return;
+      for (const clone of image.querySelectorAll('[drag-image]')) {
+        clone.toggleAttribute('lt-folder-drag-image', compact);
+      }
+      // Refresh Zen's native drag image; styling the original tab cannot resize it.
+      try { event?.dataTransfer?.updateDragImage(image, args[1], args[2]); }
+      catch (error) { console.debug('[Letter Tabs] Drag image refresh unavailable', error); }
+    }
     function visual(item) {
       return item.matches?.('.tabbrowser-tab') ? item.querySelector('.tab-stack') : item;
     }
@@ -32,6 +52,9 @@
       window.cancelAnimationFrame(frame);
       frame = 0;
       dragged = null;
+      folderFeedback(null, lastEvent);
+      lastEvent = null;
+      strip.removeAttribute('lt-dragging');
       strip.removeAttribute('lt-reordering');
       clear();
     }
@@ -39,13 +62,24 @@
       window.cancelAnimationFrame(ending);
       stop();
       const tab = event.target.closest?.('.tabbrowser-tab');
-      if (tab && !tab.hasAttribute('zen-essential')) dragged = tab;
+      if (tab && !tab.hasAttribute('zen-essential')) { dragged = tab; strip.setAttribute('lt-dragging', 'true'); }
     }
     function update() {
       frame = 0;
       if (!dragged || !dragged.isConnected) { stop(); return; }
       const data = dragged._dragData;
       const moving = data?.movingTabs || [dragged];
+      let folder = lastEvent?.target?.closest?.('zen-folder');
+      if (folder?.hasAttribute('collapsed') && !data?.shouldDropIntoCollapsedTabGroup) folder = null;
+      if (folder?.isLiveFolder || moving.length !== 1) folder = null;
+      folderFeedback(folder, lastEvent);
+      if (data?.shouldDropIntoCollapsedTabGroup) {
+        clear();
+        strip.setAttribute('lt-reordering', 'true');
+        const node = visual(dragged);
+        if (node) { node.setAttribute('lt-drag-source', ''); affected.add(node); }
+        return;
+      }
       // Folder/group drags and multi-selection remain under native control.
       if (moving.length !== 1 || !Number.isFinite(data?.animDropElementIndex) ||
           data.shouldDropIntoCollapsedTabGroup || data.dropElement?.hasAttribute?.('zen-essential')) {
@@ -72,11 +106,12 @@
         node.style.removeProperty('--lt-drag-offset');affected.delete(node);
       }
     }
-    function over() {
+    function over(event) {
+      lastEvent = event;
       if (dragged && !frame) frame = window.requestAnimationFrame(update);
     }
     function leave(event) {
-      if (!strip.contains(event.relatedTarget)) {strip.removeAttribute('lt-reordering');clear();}
+      if (!strip.contains(event.relatedTarget)) {folderFeedback(null, event);strip.removeAttribute('lt-reordering');clear();}
     }
     function drop() {
       // Let the native handler commit the new DOM order before clearing offsets.
