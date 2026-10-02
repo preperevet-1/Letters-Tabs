@@ -32,3 +32,7 @@ Hide Zen’s native accent-colored drag background behind the custom drag surfac
 ## 1.4.3
 
 During a custom tab drag, mute native Zen haptics and emit the drag module’s throttled feedback instead. Restore the exact prior preference after drop, cancellation, unload or interrupted-session recovery. User-disabled haptics stay disabled. Mock preference lifecycle tests pass; physical trackpad feedback requires testing on macOS.
+
+## 1.4.4
+
+List-drag feedback follows a stable logical insertion gap, not animated row offsets. Repeated events at the same gap or below the last row are silent. A short stability check and movement threshold suppress boundary jitter. Synthetic slot-feedback tests pass; native drag/trackpad behavior remains unverified.

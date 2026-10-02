@@ -579,6 +579,8 @@ function moveTabsLikeDia() {
         tap();
       }
       drag.target = { folder, atEnd, first: !!first, prev, next, below, sameNext: same(next), slotTop, hand };
+      drag.feedback ||= {};
+      if (acceptDragSlot(drag.feedback, next?.node || folder || null, below, lastDy, performance.now(), Math.max(8, drag.pitch * 0.55))) tap(true);
       setDropSlot(folder);
       // (zia.debug.drag in about:config: each decision, for a bug report)
       if (window.ziaDragDebug) {
@@ -915,7 +917,8 @@ function moveTabsLikeDia() {
     let lastTap = 0;
     // Zia's own tap. Only if haptics are on in Zen; while a drag has them
     // muted, they're let through for just this one.
-    const tap = () => {
+    const tap = (slotChange = false) => {
+      if (drag && !slotChange) return;
       const muted = hapticsWereOn !== null;
       if (muted ? !hapticsWereOn : !Services.prefs.getBoolPref(HAPTIC_PREF, true)) {
         return;
@@ -3948,6 +3951,26 @@ function currentSeparator() {
     }
     return all[0] || null;
   }
+  // A gap has one identity: the following row (or the container's end).
+  // Animated row offsets and before/after descriptions aren't new gaps.
+  function acceptDragSlot(state, key, section, pointer, now, distance) {
+    if (!state.initialized) {
+      Object.assign(state, {initialized: true, key, section, pointer});
+      return false;
+    }
+    if (key === state.key && section === state.section) {
+      state.pending = null;
+      return false;
+    }
+    if (!state.pending || state.pending.key !== key || state.pending.section !== section) {
+      state.pending = {key, section, since: now};
+      return false;
+    }
+    if (now - state.pending.since < 70 || Math.abs(pointer - state.pointer) < distance) return false;
+    Object.assign(state, {key, section, pointer, pending: null});
+    return true;
+  }
+
   const hapticSnapshotKey = 'lettertabs.drag.haptic-snapshot';
   function restoreDragHaptics() {
     const saved = Services.prefs.getStringPref(hapticSnapshotKey, '');
