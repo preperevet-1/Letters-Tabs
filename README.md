@@ -21,6 +21,14 @@ Built from the original 1.2.11 release archive. Search, tabs, scroll progress an
 
 Only two additions: smooth folder opening/closing, adapted from Zia 2.81.2 (MIT, Copyright (c) 2026 z1nk; see Zia-LICENSE), and loading-wave cleanup for closed/discarded tabs, including late load events after closing.
 
-Delete obsolete `DragSpacing.uc.js` and `FolderPreview.uc.js` from the repository when uploading this release. Replace all included files and fully restart Zen to clear old prototype hooks. The isolated folder animation module requires restart on disable (`supportsUnload: false`).
+Upload the included inert `DragSpacing.uc.js` and `FolderPreview.uc.js` replacement files to overwrite previously installed modules. Replace all included files and fully restart Zen to clear old prototype hooks. The isolated folder animation module requires restart on disable (`supportsUnload: false`).
 
 Verified: unchanged baseline files, JavaScript syntax, loading lifecycle/late-event/discard tests. Interactive folder animation remains unverified in Zen.
+
+## 1.5.1
+
+Suppress native insertion-line overlap on the compact drag image. Folder motion bypasses native dragging and drag images. Include inert replacement files for removed modules so upgrades overwrite cached scripts. Full browser restart is required to clear already installed hooks.
+
+## 1.5.2
+
+Keep the native insertion indicator visible and hide only the cloned drag image (`[drag-image]`). No custom reordering is installed. Native drag-image rendering requires verification in Zen.

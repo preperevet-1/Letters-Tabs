@@ -490,6 +490,11 @@ function addFolderBounce() {
       return;
     }
     const patched = function (keyframes, options) {
+      // Folder motion must never retime native drag or landing animations.
+      if (document.getElementById('tabbrowser-tabs')?.hasAttribute('movingtab') ||
+          this.closest?.('[drag-image]')) {
+        return animate.call(this, keyframes, options);
+      }
       try {
         keyframes = fadeBackIn(this, keyframes);
         keyframes = settleTuckedPins(this, keyframes);

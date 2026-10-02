@@ -824,3 +824,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 .tab-group-container[zia-folder-holding] { overflow-y: clip !important; }
 /* A closing or discarded tab cannot retain a loading wave. */
 .tabbrowser-tab:is([closing], [pending]) .letter-tabs-loading-fill { display: none !important; }
+
+/* Hide only Zen's drag-image clones; keep the native insertion marker. */
+:root[zen-letter-tabs-active] [drag-image] {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
