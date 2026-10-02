@@ -204,7 +204,16 @@
       if (!frame) frame = window.requestAnimationFrame(update);
     }
     function leave(event) {
-      if (!strip.contains(event.relatedTarget)) {folderFeedback(null, event);strip.removeAttribute('lt-reordering');clear();}
+      // Native dragleave often has relatedTarget=null when crossing children.
+      // Clearing on that event caused clear/reapply loops under a still cursor.
+      const bounds = strip.getBoundingClientRect();
+      if (event.clientX >= bounds.left && event.clientX <= bounds.right &&
+          event.clientY >= bounds.top && event.clientY <= bounds.bottom) return;
+      window.cancelAnimationFrame(frame); frame = 0;
+      folderFeedback(null, event);
+      strip.removeAttribute('lt-reordering');
+      clear();
+      lastPointer = null;
     }
     function drop() {
       // Let the native handler commit the new DOM order before clearing offsets.

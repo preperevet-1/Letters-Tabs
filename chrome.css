@@ -898,3 +898,31 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   flex: 1 1 0% !important;
   margin-block: 0 !important;
 }
+
+/* Keep folder hitboxes stationary while their complete visual header moves. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row] {
+  translate: none !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row] > *,
+:root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row]::before,
+:root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row]::after {
+  translate: 0 var(--lt-drag-offset, 0px);
+  transition: translate 200ms cubic-bezier(.22,.61,.36,1) !important;
+  pointer-events: none !important;
+}
+/* Open folders keep a frame even when native split preview takes over. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs zen-folder:not([collapsed]) {
+  border-radius: 14px !important;
+  outline: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .22)) !important;
+  outline-offset: -1px;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs zen-folder:not([collapsed])[lt-folder-drop] {
+  outline-color: transparent !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row] > *,
+  :root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row]::before,
+  :root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] .tab-group-label-container[lt-drag-row]::after {
+    transition: none !important;
+  }
+}
