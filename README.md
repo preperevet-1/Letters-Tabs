@@ -21,16 +21,14 @@ Built from the supplied zen-mods/zen-letter-tabs-1.2.11-github folder. CSS, tab 
 
 Replace the previous mod installation completely (remove obsolete DragSpacing, FolderPreview and Zia files if present) and restart Zen. Mock lifecycle tests pass; live Zen visual behavior remains unverified.
 
-## Translator mode (1.6.1)
+## Translator mode (1.6.3)
 
-Type `/tr` and press Enter, or type `/tr ` with a space, to replace the floating search with a translator. `/translate` is an alias. The interface is English: Back to search and language selectors at the top, an editable multiline source field on the left, translation on the right, and a central swap button. The footer contains Translate and Copy Translation, without a provider heading or Actions menu.
+Type `/tr` and press Enter, or type `/tr ` with a space. `/translate` is an alias. The English translator expands from the search surface to a wider two-column editor (25% wider, minimum 800px, constrained to the viewport). Back/Escape animates back to search and restores its native input focus. Reduced-motion preferences skip these animations.
 
-Source language defaults to detection and target language to English. Enter submits; Shift+Enter inserts a newline; Cmd/Ctrl+Enter copies the translation. Escape or the back button returns to search. Language changes invalidate the previous result; swap reverses the languages and places the completed translation in the source editor.
+Language labels are centered above each column, gray and transparent, with chevrons. Hover or click opens a menu; arrow keys navigate, Enter chooses, and Escape closes it. The left editor is borderless, Back is a rounded square, and the center button swaps languages. Translate in the footer is an informational label.
 
-Text is submitted to Google's unauthenticated translate.googleapis.com endpoint only on Enter or Translate. No API key is required; this is an unofficial endpoint without guaranteed availability. Requests omit cookies/referrer, time out after 15 seconds, and allow up to 1500 characters. No local text history is stored by the mod. Google processes submitted text.
+Source defaults to detection; target defaults to English. Translation runs automatically 500ms after typing or changing languages. Enter inserts a newline. Cmd/Ctrl+C copies the translation when no text is selected; selected text retains native copy behavior. Composition input waits until composition ends. Edits cancel pending requests and prevent stale responses from replacing newer text.
 
-Checks: JavaScript syntax and mocked command/editor/focus, multiline/IME, stale response cancellation, copy, swap, error, back/Escape and cleanup scenarios. A visual browser test could not run because no Playwright browser is installed; native Zen focus behavior and appearance remain unverified.
+Text is automatically sent to Google's unauthenticated translate.googleapis.com endpoint. No API key is required; this is an unofficial endpoint without guaranteed availability. Requests omit cookies/referrer, time out after 15 seconds, and allow up to 1500 characters. No local text history is stored by the mod. Google processes submitted text.
 
-## 1.6.2
-
-The translator is an independent chrome overlay anchored to the search position. Native URL-bar blur/close events no longer dismiss it when its editor receives focus. Bare commands suppress native query selection; Enter or a following space opens the editor. Back/Escape and outside click close the overlay. Tests simulate native URL-bar closure after activation and cover editing/translation behavior; live Zen verification is still needed.
+Validation: JavaScript syntax and mocked activation, geometry, debounce, multiline, IME, stale responses, copy, language menu, swap, return-to-search and cleanup checks. Native Zen appearance and animation still require live verification.

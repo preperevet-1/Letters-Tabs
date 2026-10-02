@@ -858,3 +858,49 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-translator-panel.lt-translate button:focus-visible,#lt-translator-panel.lt-translate select:focus-visible,#lt-translator-panel .lt-translate-result:focus-visible {outline:2px solid light-dark(#999,#aaa);outline-offset:2px;}
 @keyframes lt-translate-enter {from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){#lt-translator-panel.lt-translate {animation:none;}}
+
+/* Reset native chrome form styling; keep both column headers truly centered. */
+#lt-translator-panel.lt-translate {animation:none;}
+#lt-translator-panel.lt-translate button {
+  appearance:none !important; min-width:0 !important; min-height:0 !important;
+  margin:0 !important; border:0 !important; background-image:none !important;
+  box-shadow:none; font-family:system-ui,sans-serif !important;
+}
+#lt-translator-panel .lt-translate-left .lt-translate-header {padding-left:0;}
+#lt-translator-panel .lt-translate-header {min-height:36px;}
+#lt-translator-panel.lt-translate .lt-translate-back {
+  display:grid;place-items:center;width:30px !important;height:30px !important;
+  padding:0 !important;border-radius:8px !important;line-height:1 !important;left:-12px;
+}
+#lt-translator-panel .lt-translate-source,
+#lt-translator-panel .lt-translate-source:is(:focus,:focus-visible) {
+  appearance:none !important;border:0 !important;outline:0 !important;box-shadow:none !important;
+  background:transparent !important;border-radius:0 !important;
+  font:400 20px/1.5 system-ui,sans-serif !important;
+}
+#lt-translator-panel.lt-translate .lt-translate-swap {
+  display:grid;place-items:center;width:40px !important;height:40px !important;padding:0 !important;
+  border-radius:13px !important;box-shadow:0 0 0 5px var(--lt-search-surface,light-dark(#fff,#242424));
+}
+#lt-translator-panel .lt-translate-submit {color:var(--lt-tr-muted);font-size:13px;}
+#lt-translator-panel .lt-translate-copy::after {content:' ⌘ C';font-size:12px;}
+#lt-translator-panel .lt-translate-language {position:relative;max-width:calc(100% - 54px);}
+#lt-translator-panel.lt-translate .lt-translate-language-trigger {
+  background:transparent !important;color:var(--lt-tr-muted) !important;
+  display:flex;align-items:center;gap:7px;max-width:100%;white-space:nowrap;font-weight:400;
+  padding:6px 0 !important;transition:color 140ms ease;
+}
+#lt-translator-panel .lt-translate-language-trigger::after {
+  content:'';width:6px;height:6px;flex:none;border-right:1.4px solid currentColor;
+  border-bottom:1.4px solid currentColor;transform:translateY(-2px) rotate(45deg);
+}
+#lt-translator-panel.lt-translate .lt-translate-language-trigger:is(:hover,:focus-visible,[aria-expanded='true']) {color:light-dark(#111,#fff) !important;}
+#lt-translator-panel .lt-translate-language-menu {
+  position:absolute;z-index:4;top:100%;left:50%;transform:translateX(-50%);
+  width:190px;max-height:220px;overflow:auto;padding:5px;box-sizing:border-box;border-radius:10px;
+  background:var(--lt-search-surface,light-dark(#fff,#242424));border:1px solid light-dark(#e5e5e5,#444);
+  box-shadow:0 8px 22px #0002;
+}
+#lt-translator-panel .lt-translate-language-menu[hidden] {display:none !important;}
+#lt-translator-panel.lt-translate .lt-translate-language-option {display:block;width:100%;text-align:left;color:var(--lt-tr-ink);}
+#lt-translator-panel .lt-translate-language-option[aria-selected='true'] {background:light-dark(#eee,#3c3c40);}
