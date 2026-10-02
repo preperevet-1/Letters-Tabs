@@ -820,12 +820,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   }
 }
 
-/* Animate only inner visuals; native tab hitboxes and drop targets stay put. */
+/* Retired folder preview: hide remnants until its previous script unloads. */
 #letter-tabs-folder-preview { display: none !important; }
-@media (prefers-reduced-motion: no-preference) {
-  :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]) > .tab-stack {
-    transition: translate 180ms cubic-bezier(.22,.61,.36,1) !important;
-  }
-  :root[zen-letter-tabs-active] #tabbrowser-tabs .tab-stack[lt-drag-gap="up"] { translate: 0 -8px; }
-  :root[zen-letter-tabs-active] #tabbrowser-tabs .tab-stack[lt-drag-gap="down"] { translate: 0 8px; }
+
+/* Native hitboxes stay in place; every crossed row moves one full slot. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] [lt-drag-row] {
+  translate: 0 var(--lt-drag-offset, 0px);
+  transition: translate 200ms cubic-bezier(.22,.61,.36,1) !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] [lt-drag-source] {
+  opacity: 0 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[zen-letter-tabs-active] #tabbrowser-tabs[lt-reordering] [lt-drag-row] { transition: none !important; }
 }
