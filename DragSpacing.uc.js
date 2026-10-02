@@ -18,7 +18,7 @@
     let dragged = null, frame = 0, ending = 0;
     const affected = new Set();
     let hoveredFolder = null, lastEvent = null, imageInFolder = false;
-    let outline = null, outlineFrame = 0;
+    let outline = null, outlineFrame = 0, lastPointer = null;
     function drawOutline() {
       outlineFrame = 0;
       if (!hoveredFolder?.isConnected) { outline?.remove(); outline = null; return; }
@@ -27,18 +27,27 @@
         outline.id = 'lt-drag-folder-outline';
         document.documentElement.append(outline);
       }
-      const rect = hoveredFolder.getBoundingClientRect();
+      const header = hoveredFolder.querySelector(':scope > .tab-group-label-container');
+      if (!header) return;
+      const rect = header.getBoundingClientRect();
       let top = rect.top, bottom = rect.bottom;
-      // CSS translation does not grow the DOM box. Measure the rendered rows,
-      // including intermediate animation frames, rather than outlining that box.
-      for (const row of hoveredFolder.querySelectorAll('.tab-group-label-container, .tabbrowser-tab > .tab-stack')) {
-        if (row.closest('.tabbrowser-tab') === dragged || !row.getClientRects().length) continue;
-        const bounds = row.getBoundingClientRect();
-        if (!bounds.height || !bounds.width) continue;
-        top = Math.min(top, bounds.top);
-        bottom = Math.max(bottom, bounds.bottom);
+      if (!hoveredFolder.hasAttribute('collapsed')) {
+        for (const row of hoveredFolder.querySelectorAll('.tab-group-label-container, .tabbrowser-tab > .tab-stack')) {
+          if (row.closest('.tabbrowser-tab') === dragged || !row.getClientRects().length) continue;
+          let owner = row.parentElement?.closest('zen-folder');
+          let hidden = false;
+          while (owner && owner !== hoveredFolder) {
+            if (owner.hasAttribute('collapsed') && row !== owner.querySelector(':scope > .tab-group-label-container')) { hidden = true; break; }
+            owner = owner.parentElement?.closest('zen-folder');
+          }
+          const style = window.getComputedStyle(row);
+          if (hidden || style.visibility !== 'visible' || style.display === 'none') continue;
+          const bounds = row.getBoundingClientRect();
+          if (bounds.height && bounds.width) bottom = Math.max(bottom, bounds.bottom);
+        }
       }
-      Object.assign(outline.style, {left: `${rect.left}px`, top: `${top}px`, width: `${rect.width}px`, height: `${bottom - top + 3}px`});
+      const origin = document.documentElement.getBoundingClientRect();
+      Object.assign(outline.style, {left: `${rect.left - origin.left}px`, top: `${top - origin.top}px`, width: `${rect.width}px`, height: `${bottom - top + 3}px`});
       outlineFrame = window.requestAnimationFrame(drawOutline);
     }
     function folderFeedback(folder, event) {
@@ -84,6 +93,7 @@
       frame = 0;
       dragged?.removeAttribute('lt-source-original');
       dragged = null;
+      lastPointer = null;
       folderFeedback(null, lastEvent);
       lastEvent = null;
       strip.removeAttribute('lt-dragging');
@@ -174,6 +184,9 @@
         } catch { return; }
       }
       if (!dragged) return;
+      const point = [event.clientX, event.clientY];
+      if (lastPointer && Math.abs(point[0] - lastPointer[0]) < 2 && Math.abs(point[1] - lastPointer[1]) < 2) return;
+      lastPointer = point;
       lastEvent = event;
       dragged.setAttribute('lt-source-original', 'true');
       if (splitMode()) { suspendForSplit(); return; }

@@ -7,7 +7,7 @@
   const states = new Map();
   let disposed = false, registered = false;
   const flags = Ci.nsIWebProgressListener;
-  function eligible(tab) { return tab && !tab.hasAttribute('zen-essential') && !tab.hasAttribute('zen-glance-tab'); }
+  function eligible(tab) { return tab && !tab.closing && tab.isConnected !== false && !tab.hasAttribute('pending') && !tab.hasAttribute('zen-essential') && !tab.hasAttribute('zen-glance-tab'); }
   function remove(tab) {
     const state = states.get(tab);
     if (!state) return;
@@ -32,7 +32,7 @@
     layer.style.width = '3%';
     // When no byte total is available, provide gentle estimated progress.
     state.ticker = window.setInterval(() => {
-      if (!eligible(tab)) { remove(tab); return; }
+      if (!eligible(tab) || !tab.hasAttribute('busy')) { remove(tab); return; }
       state.value += (90 - state.value) * .08;
       layer.style.width = `${state.value}%`;
     }, 180);
@@ -62,10 +62,16 @@
     },
   };
   function tabClosed(event) { remove(event.target); }
+  function tabChanged(event) {
+    const tab = event.target;
+    if (!eligible(tab) || !tab.hasAttribute('busy')) remove(tab);
+  }
   function initialize() {
     if (disposed || registered) return;
     window.gBrowser.addTabsProgressListener(listener);
     window.gBrowser.tabContainer.addEventListener('TabClose', tabClosed);
+    window.gBrowser.tabContainer.addEventListener('TabBrowserDiscarded', tabClosed);
+    window.gBrowser.tabContainer.addEventListener('TabAttrModified', tabChanged);
     registered = true;
     for (const tab of window.gBrowser.tabs) if (tab.hasAttribute('busy')) start(tab);
   }
@@ -77,6 +83,8 @@
     if (registered) {
       window.gBrowser.removeTabsProgressListener(listener);
       window.gBrowser.tabContainer.removeEventListener('TabClose', tabClosed);
+      window.gBrowser.tabContainer.removeEventListener('TabBrowserDiscarded', tabClosed);
+      window.gBrowser.tabContainer.removeEventListener('TabAttrModified', tabChanged);
     }
     for (const tab of [...states.keys()]) remove(tab);
     delete window.__letterTabsLoading;
