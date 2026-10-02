@@ -39,7 +39,10 @@
       catch (error) { console.debug('[Letter Tabs] Drag image refresh unavailable', error); }
     }
     function visual(item) {
-      return item.matches?.('.tabbrowser-tab') ? item.querySelector('.tab-stack') : item;
+      if (item.matches?.('.tabbrowser-tab')) return item.querySelector('.tab-stack');
+      // The focusable item is the text label; its chevron belongs to the parent.
+      return item.closest?.('.tab-group-label-container') || item;
+
     }
     function clear() {
       for (const node of affected) {
@@ -65,8 +68,24 @@
       const tab = event.target.closest?.('.tabbrowser-tab');
       if (tab && !tab.hasAttribute('zen-essential')) { dragged = tab; strip.setAttribute('lt-dragging', 'true'); }
     }
+    function splitMode() {
+      return !!strip.querySelector('zen-split-fake-tab') ||
+        !!dragged?.closest?.('tab-group[split-view-group], tab-split-view-wrapper') ||
+        !!window.gZenViewSplitter?._canDrop;
+    }
+    function suspendForSplit() {
+      strip.removeAttribute('lt-reordering');
+      clear();
+      folderFeedback(null, lastEvent);
+    }
+    // Split preview appears on Zen's timer, even when the pointer stops moving.
+    const splitObserver = new MutationObserver(() => {
+      if (dragged && splitMode()) suspendForSplit();
+    });
+    splitObserver.observe(strip, { childList: true, subtree: true });
     function update() {
       frame = 0;
+      if (splitMode()) { suspendForSplit(); return; }
       if (!dragged || !dragged.isConnected) { stop(); return; }
       const data = dragged._dragData;
       const moving = data?.movingTabs || [dragged];
@@ -85,6 +104,15 @@
       }
       const items = [...strip.ariaFocusableItems];
       const origin = dragged.elementIndex;
+      let destination = data.animDropElementIndex;
+      const target = data.dropElement;
+      const targetIndex = target?.elementIndex;
+      if (Number.isFinite(targetIndex)) destination = targetIndex + (data.dropBefore ? 0 : 1);
+      if (folder) {
+        const headerItem = items.find(item => item.closest?.('.tab-group-label-container')?.parentElement === folder);
+        // An "inside folder" preview must never allocate space above its title.
+        if (headerItem) destination = Math.max(destination, headerItem.elementIndex + 1);
+      }
       const next = items.find(item => item.elementIndex > origin);
       const rect = dragged.getBoundingClientRect();
       const distance = next ? next.getBoundingClientRect().top - rect.top : rect.height;
@@ -93,11 +121,11 @@
       const current = new Set();
       for (const item of items) {
         const node = visual(item);
-        if (!node || item.hasAttribute?.('zen-essential')) continue;
+        if (!node || current.has(node) || item.hasAttribute?.('zen-essential')) continue;
         current.add(node);affected.add(node);
         node.setAttribute('lt-drag-row', '');
         node.toggleAttribute('lt-drag-source', item === dragged);
-        node.style.setProperty('--lt-drag-offset', `${shift(item.elementIndex, origin, data.animDropElementIndex, height)}px`);
+        node.style.setProperty('--lt-drag-offset', `${shift(item.elementIndex, origin, destination, height)}px`);
       }
       for (const node of affected) if (!current.has(node)) {
         node.removeAttribute('lt-drag-row');node.removeAttribute('lt-drag-source');
@@ -119,14 +147,16 @@
       }
       if (!dragged) return;
       lastEvent = event;
+      if (splitMode()) { suspendForSplit(); return; }
       let folder = event.target.closest?.('zen-folder');
       const moving = dragged._dragData?.movingTabs || [dragged];
       if (folder?.isLiveFolder || moving.length !== 1) folder = null;
-      if (folder?.hasAttribute('collapsed')) {
+      if (folder) {
         const header = folder.querySelector('.tab-group-label-container');
         const rect = header?.getBoundingClientRect();
         // Header edges are sibling insertion zones, its center means "inside".
-        if (!rect || event.clientY < rect.top + rect.height * .2 || event.clientY > rect.bottom - rect.height * .2) folder = null;
+        if (!rect || event.clientY < rect.top + rect.height * .2 ||
+            (folder.hasAttribute('collapsed') && event.clientY > rect.bottom - rect.height * .2)) folder = null;
       }
       folderFeedback(folder, event);
       if (!frame) frame = window.requestAnimationFrame(update);
@@ -146,6 +176,7 @@
     window.addEventListener('dragend', drop, true);
     window.addEventListener('blur', stop);
     cleanup = () => {
+      splitObserver.disconnect();
       window.cancelAnimationFrame(ending);stop();
       strip.removeEventListener('dragstart', start, true);
       window.removeEventListener('dragover', over, true);

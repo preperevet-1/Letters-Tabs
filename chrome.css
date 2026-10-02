@@ -853,3 +853,40 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* Zen uses this dedicated indicator, not Firefox's tab-drop-indicator. */
 :root[zen-letter-tabs-active] #zen-drag-indicator { display: none !important; }
+
+/* Split rows have one outer 32px box, rather than stacking child margins. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs tab-group[split-view-group] > .tab-group-container,
+:root[zen-letter-tabs-active] #tabbrowser-tabs tab-split-view-wrapper {
+  box-sizing: border-box !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  margin-block: 1px !important;
+  padding-block: 2px !important;
+  box-shadow: none !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs :is(tab-group[split-view-group], tab-split-view-wrapper) .tabbrowser-tab:not([zen-essential]) {
+  --tab-min-height: 28px !important;
+  box-sizing: border-box !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
+  min-width: 0 !important;
+  margin-block: 0 !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs :is(tab-group[split-view-group], tab-split-view-wrapper) .tab-background {
+  margin-block: 0 !important;
+}
+/* Native split creation temporarily divides one row into two flex children. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:has(zen-split-fake-tab) > .tab-stack {
+  min-width: 0 !important;
+  flex: 1 1 0% !important;
+  translate: none !important;
+  opacity: 1 !important;
+  overflow: hidden;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs zen-split-fake-tab {
+  min-width: 0 !important;
+  flex: 1 1 0% !important;
+  margin-block: 0 !important;
+}
