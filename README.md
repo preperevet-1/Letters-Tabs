@@ -1,6 +1,6 @@
 # Letter Tabs
 
-A minimal Zen Browser sidebar: text-only tabs, editable Essential initials, fixed tab titles, original compact folders with animated chevrons and smooth tab dragging, smaller controls, pinned URL reset on unload, scroll progress and a loading wave in tabs (excluding Essentials), and a minimal floating search with suggestions only after typing.
+A minimal Zen Browser sidebar: text-only tabs, editable Essential initials, fixed tab titles, compact folders with animated chevrons, smaller controls, pinned URL reset on unload, scroll progress and a loading wave in tabs (excluding Essentials), and a minimal floating search with suggestions only after typing.
 
 ## Installation
 
@@ -15,24 +15,12 @@ Type `!gpt`, `!per`, `!yt`, `!gen`, or `!pin` to search ChatGPT, Perplexity, You
 
 Type `!` to see available shortcuts. Matching pinned tabs in the current Space (including Essentials) are reused in the same container.
 
-## Folders and dragging (1.4.1)
+## 1.5.0 — restored 1.2.11 baseline
 
-Folder styling is restored from Letter Tabs 1.3.2: text-only headers, right-hand chevrons and the original hover treatment. Zia's folder frames, icons, opening animation, color watchers and empty-folder slots are removed. Opening and closing folders uses Zen's original behavior.
+Built from the original 1.2.11 release archive. Search, tabs, scroll progress and folder styling are restored without later changes. Custom drag movement, drag haptics and drag-to-split overrides are removed; Zen handles dragging normally.
 
-Smooth drag movement, narrowing and landing remain adapted from [Zia 2.81.2](https://github.com/z1n-k/zia), Copyright (c) 2026 z1nk, MIT (see `Zia-LICENSE`). Dragging does not create split views; ordinary split commands remain available.
+Only two additions: smooth folder opening/closing, adapted from Zia 2.81.2 (MIT, Copyright (c) 2026 z1nk; see Zia-LICENSE), and loading-wave cleanup for closed/discarded tabs, including late load events after closing.
 
-**Restart Zen completely after updating or disabling this version.** The drag module patches browser prototypes and requires a restart to remove old hooks (`supportsUnload: false`). Upload all release files together.
+Delete obsolete `DragSpacing.uc.js` and `FolderPreview.uc.js` from the repository when uploading this release. Replace all included files and fully restart Zen to clear old prototype hooks. The isolated folder animation module requires restart on disable (`supportsUnload: false`).
 
-Validation: original 1.3.2 CSS retained verbatim, folder-module removal, JavaScript syntax/dependency closure, CSS parsing, embedded resources and mocked drag-to-split/startup checks. Native drag behavior has not been verified interactively in Zen.
-
-## 1.4.2
-
-Hide Zen’s native accent-colored drag background behind the custom drag surface. Folder styling and drag logic are unchanged.
-
-## 1.4.3
-
-During a custom tab drag, mute native Zen haptics and emit the drag module’s throttled feedback instead. Restore the exact prior preference after drop, cancellation, unload or interrupted-session recovery. User-disabled haptics stay disabled. Mock preference lifecycle tests pass; physical trackpad feedback requires testing on macOS.
-
-## 1.4.4
-
-List-drag feedback follows a stable logical insertion gap, not animated row offsets. Repeated events at the same gap or below the last row are silent. A short stability check and movement threshold suppress boundary jitter. Synthetic slot-feedback tests pass; native drag/trackpad behavior remains unverified.
+Verified: unchanged baseline files, JavaScript syntax, loading lifecycle/late-event/discard tests. Interactive folder animation remains unverified in Zen.

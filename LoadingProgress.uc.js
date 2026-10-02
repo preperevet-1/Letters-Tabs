@@ -5,12 +5,13 @@
 (() => {
   window.__letterTabsLoading?.destroy();
   const states = new Map();
+  const closedTabs = new WeakSet();
   let disposed = false, registered = false;
   const flags = Ci.nsIWebProgressListener;
-  function eligible(tab) { return tab && !tab.closing && tab.isConnected !== false && !tab.hasAttribute('pending') && !tab.hasAttribute('zen-essential') && !tab.hasAttribute('zen-glance-tab'); }
+  function eligible(tab) { return tab && !closedTabs.has(tab) && !tab.closing && tab.isConnected !== false && !tab.hasAttribute('pending') && !tab.hasAttribute('zen-essential') && !tab.hasAttribute('zen-glance-tab'); }
   function remove(tab) {
     const state = states.get(tab);
-    if (!state) return;
+    if (!state) { tab?.removeAttribute('letter-tabs-loading'); return; }
     window.clearInterval(state.ticker);
     window.clearTimeout(state.finish);
     state.layer.remove();
@@ -48,8 +49,9 @@
         window.clearInterval(state.ticker);
         state.layer.style.width = '100%';
         state.finish = window.setTimeout(() => {
+          if (states.get(tab) !== state || !eligible(tab)) { if (states.get(tab) === state) remove(tab); return; }
           state.layer.classList.add('finished');
-          state.finish = window.setTimeout(() => remove(tab), 450);
+          state.finish = window.setTimeout(() => { if (states.get(tab) === state) remove(tab); }, 450);
         }, 280);
       }
     },
@@ -61,7 +63,8 @@
       state.layer.style.width = `${state.value}%`;
     },
   };
-  function tabClosed(event) { remove(event.target); }
+  function tabClosed(event) { closedTabs.add(event.target); remove(event.target); }
+  function tabDiscarded(event) { remove(event.target); }
   function tabChanged(event) {
     const tab = event.target;
     if (!eligible(tab) || !tab.hasAttribute('busy')) remove(tab);
@@ -70,7 +73,7 @@
     if (disposed || registered) return;
     window.gBrowser.addTabsProgressListener(listener);
     window.gBrowser.tabContainer.addEventListener('TabClose', tabClosed);
-    window.gBrowser.tabContainer.addEventListener('TabBrowserDiscarded', tabClosed);
+    window.gBrowser.tabContainer.addEventListener('TabBrowserDiscarded', tabDiscarded);
     window.gBrowser.tabContainer.addEventListener('TabAttrModified', tabChanged);
     registered = true;
     for (const tab of window.gBrowser.tabs) if (tab.hasAttribute('busy')) start(tab);
@@ -83,7 +86,7 @@
     if (registered) {
       window.gBrowser.removeTabsProgressListener(listener);
       window.gBrowser.tabContainer.removeEventListener('TabClose', tabClosed);
-      window.gBrowser.tabContainer.removeEventListener('TabBrowserDiscarded', tabClosed);
+      window.gBrowser.tabContainer.removeEventListener('TabBrowserDiscarded', tabDiscarded);
       window.gBrowser.tabContainer.removeEventListener('TabAttrModified', tabChanged);
     }
     for (const tab of [...states.keys()]) remove(tab);
