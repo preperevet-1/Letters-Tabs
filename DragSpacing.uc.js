@@ -18,11 +18,38 @@
     let dragged = null, frame = 0, ending = 0;
     const affected = new Set();
     let hoveredFolder = null, lastEvent = null, imageInFolder = false;
+    let outline = null, outlineFrame = 0;
+    function drawOutline() {
+      outlineFrame = 0;
+      if (!hoveredFolder?.isConnected) { outline?.remove(); outline = null; return; }
+      if (!outline) {
+        outline = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+        outline.id = 'lt-drag-folder-outline';
+        document.documentElement.append(outline);
+      }
+      const rect = hoveredFolder.getBoundingClientRect();
+      let top = rect.top, bottom = rect.bottom;
+      // CSS translation does not grow the DOM box. Measure the rendered rows,
+      // including intermediate animation frames, rather than outlining that box.
+      for (const row of hoveredFolder.querySelectorAll('.tab-group-label-container, .tabbrowser-tab > .tab-stack')) {
+        if (row.closest('.tabbrowser-tab') === dragged || !row.getClientRects().length) continue;
+        const bounds = row.getBoundingClientRect();
+        if (!bounds.height || !bounds.width) continue;
+        top = Math.min(top, bounds.top);
+        bottom = Math.max(bottom, bounds.bottom);
+      }
+      Object.assign(outline.style, {left: `${rect.left}px`, top: `${top}px`, width: `${rect.width}px`, height: `${bottom - top + 3}px`});
+      outlineFrame = window.requestAnimationFrame(drawOutline);
+    }
     function folderFeedback(folder, event) {
       if (hoveredFolder !== folder) {
         hoveredFolder?.removeAttribute('lt-folder-drop');
         hoveredFolder = folder;
         folder?.setAttribute('lt-folder-drop', 'true');
+        window.cancelAnimationFrame(outlineFrame);
+        outlineFrame = 0;
+        if (folder) drawOutline();
+        else { outline?.remove(); outline = null; }
       }
       const compact = !!folder;
       if (compact === imageInFolder) return;
@@ -55,6 +82,7 @@
     function stop() {
       window.cancelAnimationFrame(frame);
       frame = 0;
+      dragged?.removeAttribute('lt-source-original');
       dragged = null;
       folderFeedback(null, lastEvent);
       lastEvent = null;
@@ -147,6 +175,7 @@
       }
       if (!dragged) return;
       lastEvent = event;
+      dragged.setAttribute('lt-source-original', 'true');
       if (splitMode()) { suspendForSplit(); return; }
       let folder = event.target.closest?.('zen-folder');
       const moving = dragged._dragData?.movingTabs || [dragged];

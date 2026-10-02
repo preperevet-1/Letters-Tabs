@@ -841,10 +841,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   visibility: hidden !important;
 }
 :root[zen-letter-tabs-active] zen-folder[lt-folder-drop] {
-  outline: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .22)) !important;
-  outline-offset: -1px;
-  border-radius: 14px !important;
-  background-color: light-dark(rgba(0, 0, 0, .025), rgba(255, 255, 255, .035)) !important;
+  outline: none !important;
+}
+#lt-drag-folder-outline {
+  position: fixed;
+  pointer-events: none;
+  z-index: 2147483646;
+  box-sizing: border-box;
+  border: 1px solid light-dark(rgba(0, 0, 0, .14), rgba(255, 255, 255, .22));
+  border-radius: 14px;
+}
+:root[zen-letter-tabs-active] .tabbrowser-tab[lt-source-original]:not([drag-image]) > .tab-stack {
+  opacity: 0 !important;
 }
 :root[zen-letter-tabs-active] [drag-image][lt-folder-drag-image] {
   scale: .92 !important;
