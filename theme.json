@@ -2,10 +2,10 @@
   "id": "zen-letter-tabs",
   "name": "Letter Tabs",
   "description": "Text-only tabs and editable single-letter Essentials.",
-  "version": "1.3.10",
+  "version": "1.4.0",
   "author": "Local",
   "createdAt": "2026-09-24",
-  "updatedAt": "2026-10-02T00:46:09Z",
+  "updatedAt": "2026-10-02T01:04:39Z",
   "style": {
     "chrome": "chrome.css"
   },
@@ -47,13 +47,13 @@
       ]
     },
     "DragSpacing.uc.js": {
-      "name": "Smooth Tab Reordering",
+      "name": "Zia Folder and Drag Integration",
       "include": [
         "chrome://browser/content/browser.xhtml"
       ]
     }
   },
-  "supportsUnload": true,
+  "supportsUnload": false,
   "tags": [
     "JavaScript",
     "Tabs",
