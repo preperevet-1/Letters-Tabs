@@ -28,3 +28,7 @@ Validation: original 1.3.2 CSS retained verbatim, folder-module removal, JavaScr
 ## 1.4.2
 
 Hide Zen’s native accent-colored drag background behind the custom drag surface. Folder styling and drag logic are unchanged.
+
+## 1.4.3
+
+During a custom tab drag, mute native Zen haptics and emit the drag module’s throttled feedback instead. Restore the exact prior preference after drop, cancellation, unload or interrupted-session recovery. User-disabled haptics stay disabled. Mock preference lifecycle tests pass; physical trackpad feedback requires testing on macOS.

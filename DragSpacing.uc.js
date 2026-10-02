@@ -3932,7 +3932,7 @@ let HAPTIC_PREF = "zen.haptic-feedback.enabled";
 
 let hapticsWereOn = null;
 
-function muteZenHaptics() {}
+function muteZenHaptics(muted) { setDragHapticsMuted(muted); }
 
 function currentSeparator() {
     const own = window.gZenWorkspaces?.pinnedTabsContainer?.querySelector?.(".pinned-tabs-container-separator");
@@ -3948,6 +3948,48 @@ function currentSeparator() {
     }
     return all[0] || null;
   }
+  const hapticSnapshotKey = 'lettertabs.drag.haptic-snapshot';
+  function restoreDragHaptics() {
+    const saved = Services.prefs.getStringPref(hapticSnapshotKey, '');
+    if (saved) {
+      const snapshot = JSON.parse(saved);
+      if (snapshot.hadUserValue) Services.prefs.setBoolPref(HAPTIC_PREF, snapshot.value);
+      else Services.prefs.clearUserPref(HAPTIC_PREF);
+      Services.prefs.clearUserPref(hapticSnapshotKey);
+    }
+    hapticsWereOn = null;
+  }
+  function setDragHapticsMuted(muted) {
+    if (!muted) { restoreDragHaptics(); return; }
+    if (hapticsWereOn !== null) return;
+    const value = Services.prefs.getBoolPref(HAPTIC_PREF, true);
+    hapticsWereOn = value;
+    if (!value) return;
+    Services.prefs.setStringPref(hapticSnapshotKey, JSON.stringify({
+      value, hadUserValue: Services.prefs.prefHasUserValue(HAPTIC_PREF)
+    }));
+    Services.prefs.setBoolPref(HAPTIC_PREF, false);
+  }
+  function initializeDragHaptics() {
+    // Recover only a change made by this mod, including a quit mid-drag.
+    restoreDragHaptics();
+    zenHaptic = () => Services.zen.playHapticFeedback();
+    let timer = 0;
+    const recover = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => restoreDragHaptics(), 100);
+    };
+    for (const type of ['drop', 'dragend', 'mouseup']) window.addEventListener(type, recover, true);
+    window.addEventListener('dragstart', () => clearTimeout(timer), true);
+    window.addEventListener('mousemove', event => {
+      if (!event.buttons && hapticsWereOn !== null) recover();
+    }, true);
+    window.addEventListener('unload', () => {
+      clearTimeout(timer);
+      restoreDragHaptics();
+    }, {once: true});
+  }
+
   // Disable only drag-to-create-split. Menu/shortcut split commands stay native.
   function disableDragSplits() {
     const manager = gBrowser.tabContainer.tabDragAndDrop;
@@ -3969,6 +4011,7 @@ function currentSeparator() {
     if (window.__letterTabsZiaFolders || !window.gBrowser?.tabContainer) return;
     window.__letterTabsDrag?.destroy?.();
     window.__letterTabsZiaFolders = true;
+    initializeDragHaptics();
     disableDragSplits();
     closeSplitTabsInPlace();
     moveTabsLikeDia();
