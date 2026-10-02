@@ -5,12 +5,13 @@
 (() => {
   window.__letterTabsLoading?.destroy();
   const states = new Map();
+  const closed = new WeakSet();
   let disposed = false, registered = false;
   const flags = Ci.nsIWebProgressListener;
-  function eligible(tab) { return tab && !tab.hasAttribute('zen-essential') && !tab.hasAttribute('zen-glance-tab'); }
+  function eligible(tab) { return tab && !closed.has(tab) && !tab.closing && tab.isConnected !== false && !tab.hasAttribute("pending") && !tab.hasAttribute('zen-essential') && !tab.hasAttribute('zen-glance-tab'); }
   function remove(tab) {
     const state = states.get(tab);
-    if (!state) return;
+    if (!state) { tab?.removeAttribute("letter-tabs-loading"); return; }
     window.clearInterval(state.ticker);
     window.clearTimeout(state.finish);
     state.layer.remove();
@@ -32,7 +33,7 @@
     layer.style.width = '3%';
     // When no byte total is available, provide gentle estimated progress.
     state.ticker = window.setInterval(() => {
-      if (!eligible(tab)) { remove(tab); return; }
+      if (!eligible(tab) || !tab.hasAttribute("busy")) { remove(tab); return; }
       state.value += (90 - state.value) * .08;
       layer.style.width = `${state.value}%`;
     }, 180);
@@ -44,12 +45,15 @@
       if (stateFlags & flags.STATE_START) start(tab);
       if (stateFlags & flags.STATE_STOP) {
         const state = states.get(tab);
-        if (!state) return;
+        if (!state || state.finish !== null) return;
+        if (!eligible(tab)) { remove(tab); return; }
         window.clearInterval(state.ticker);
         state.layer.style.width = '100%';
         state.finish = window.setTimeout(() => {
+          if (states.get(tab) !== state) return;
+          if (!eligible(tab)) { remove(tab); return; }
           state.layer.classList.add('finished');
-          state.finish = window.setTimeout(() => remove(tab), 450);
+          state.finish = window.setTimeout(() => { if (states.get(tab) === state) remove(tab); }, 450);
         }, 280);
       }
     },
@@ -61,11 +65,15 @@
       state.layer.style.width = `${state.value}%`;
     },
   };
-  function tabClosed(event) { remove(event.target); }
+  function tabClosed(event) { closed.add(event.target); remove(event.target); }
+  function tabDiscarded(event) { remove(event.target); }
+  function tabChanged(event) { if (!eligible(event.target) || !event.target.hasAttribute('busy')) remove(event.target); }
   function initialize() {
     if (disposed || registered) return;
     window.gBrowser.addTabsProgressListener(listener);
     window.gBrowser.tabContainer.addEventListener('TabClose', tabClosed);
+    window.gBrowser.tabContainer.addEventListener('TabBrowserDiscarded', tabDiscarded);
+    window.gBrowser.tabContainer.addEventListener('TabAttrModified', tabChanged);
     registered = true;
     for (const tab of window.gBrowser.tabs) if (tab.hasAttribute('busy')) start(tab);
   }
@@ -77,6 +85,8 @@
     if (registered) {
       window.gBrowser.removeTabsProgressListener(listener);
       window.gBrowser.tabContainer.removeEventListener('TabClose', tabClosed);
+    window.gBrowser.tabContainer.removeEventListener('TabBrowserDiscarded', tabDiscarded);
+    window.gBrowser.tabContainer.removeEventListener('TabAttrModified', tabChanged);
     }
     for (const tab of [...states.keys()]) remove(tab);
     delete window.__letterTabsLoading;
