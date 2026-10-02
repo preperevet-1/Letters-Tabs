@@ -20,3 +20,11 @@ Type `!` to see available shortcuts. Matching pinned tabs in the current Space (
 Built from the supplied zen-mods/zen-letter-tabs-1.2.11-github folder. CSS, tab behavior, search and scroll scripts are unchanged. Only loading cleanup and an isolated native folder-animation timing module are added. No custom drag scripts or Zia modules.
 
 Replace the previous mod installation completely (remove obsolete DragSpacing, FolderPreview and Zia files if present) and restart Zen. Mock lifecycle tests pass; live Zen visual behavior remains unverified.
+
+## Inline translator (1.6.0)
+
+Type `/tr your text` or `/translate your text` in the floating search and press Enter. A two-column card displays the original and translation. The source defaults to automatic detection and the target to English; selectors allow changing languages. Use Copy or Cmd/Ctrl+C with no selected input text to copy the result. Escape exits translation mode. The swap button reverses languages and uses the translated text as the new source when available.
+
+Text is sent only when you press Enter or Translate, to Google's unauthenticated translate.googleapis.com endpoint. No API key is required. This is an unofficial endpoint with no availability or quota guarantee; errors are shown without falling back to another provider. Requests omit cookies and referrers and time out after 15 seconds. Input is limited to 1500 characters per request. Text/results are not persisted by the mod. Google processes submitted text.
+
+Verified with a live Ukrainian-to-English sample request and mocked UI tests for command activation, manual submission, Unicode, canceled/stale responses, clipboard, IME, server errors, escape and cleanup. Visual integration still requires checking in Zen. Existing folder/loading fixes remain; custom dragging is not included.
