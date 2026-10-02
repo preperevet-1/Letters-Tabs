@@ -947,5 +947,11 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #urlbar[letter-tabs-translate-handoff] {
   opacity:0 !important;pointer-events:none !important;
 }
-#lt-translator-panel[data-returning] > * {opacity:0 !important;pointer-events:none !important;}
+#lt-translator-panel[data-returning] > * {pointer-events:none !important;animation:lt-translate-content-exit 100ms ease-out forwards !important;}
+@keyframes lt-translate-content-exit {to{opacity:0;}}
 #lt-translator-panel[data-returning] {min-height:0 !important;overflow:hidden !important;}
+
+#lt-translator-panel[data-returning] {transform-origin:top left;will-change:transform;}
+@media(prefers-reduced-motion:reduce){
+  #lt-translator-panel[data-returning] > * {animation:none !important;}
+}

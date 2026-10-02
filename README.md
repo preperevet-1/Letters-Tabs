@@ -46,3 +46,7 @@ Smaller circular swap control matches the source panel. Copied dot glows twice (
 ## 1.6.6
 
 Return hides native search with opacity while restoring focus and shrinking the translator shell. Editor content is hidden during the handoff, and search becomes visible only once the overlay is removed. Cancelled/failed animations clean up rather than leaving both surfaces visible. Live Zen verification remains required.
+
+## 1.6.7
+
+Return measures only the search input row, excluding suggestions. A 180ms compositor transform replaces width/height layout animation; editor content fades rather than disappearing before motion starts. A bounded completion fallback prevents a stalled animation from stranding the surface. Live Zen verification remains required.

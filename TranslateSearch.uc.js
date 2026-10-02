@@ -83,9 +83,18 @@
       bar.setAttribute('letter-tabs-search-empty','true');input.focus();
         if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches && panel.animate){
           motion?.cancel();
-          motion=panel.animate([{width:panel.style.width,left:panel.style.left,top:panel.style.top,height:panel.getBoundingClientRect().height+'px'},
-            {width:anchor.width+'px',left:anchor.left+'px',top:anchor.top+'px',height:anchor.height+'px'}],{duration:260,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
-          await motion.finished;
+          const rect=panel.getBoundingClientRect();
+          // Transform the surface on the compositor instead of relaying out
+          // the entire editor on every width/height frame.
+          motion=panel.animate([
+            {transform:'translate(0,0) scale(1,1)'},
+            {transform:`translate(${anchor.left-rect.left}px,${anchor.top-rect.top}px) scale(${anchor.width/rect.width},${anchor.height/rect.height})`}
+          ],{duration:180,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+          let deadline;
+          try {
+            await Promise.race([motion.finished,new Promise(resolve=>{deadline=setTimeout(resolve,240);})]);
+          }finally{clearTimeout(deadline);}
+
         }
       }catch(error){
         // A cancelled or unsupported animation must never strand the overlay.
@@ -107,7 +116,9 @@
       bar.removeAttribute('letter-tabs-translate-return');
       searchWasNewTab=bar.hasAttribute('zen-newtab');
       const rect=bar.getBoundingClientRect();
-      anchor={left:rect.left,top:rect.top,width:rect.width,height:rect.height};
+      // The urlbar rect can include suggestions. Return to the input row only.
+      const row=bar.querySelector?.('.urlbar-input-container')?.getBoundingClientRect();
+      anchor={left:rect.left,top:rect.top,width:rect.width,height:row?.height || 48};
       const style=getComputedStyle(bar);
       for(const name of ['--lt-search-surface','--lt-search-border','--lt-search-shadow']){
         const value=style.getPropertyValue(name).trim();if(value)panel.style.setProperty(name,value);
