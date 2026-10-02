@@ -1229,3 +1229,7 @@ zen-split-fake-tab {
   --zia-text-size: 13px;
   --zia-tab-hover-bg: light-dark(rgb(0 0 0 / 5%), rgb(255 255 255 / 10%));
 }
+/* Zen paints an accent-colored strip behind the custom drag surface. */
+:root[zen-letter-tabs-active] #zen-dragover-background {
+  display: none !important;
+}

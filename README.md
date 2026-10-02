@@ -24,3 +24,7 @@ Smooth drag movement, narrowing and landing remain adapted from [Zia 2.81.2](htt
 **Restart Zen completely after updating or disabling this version.** The drag module patches browser prototypes and requires a restart to remove old hooks (`supportsUnload: false`). Upload all release files together.
 
 Validation: original 1.3.2 CSS retained verbatim, folder-module removal, JavaScript syntax/dependency closure, CSS parsing, embedded resources and mocked drag-to-split/startup checks. Native drag behavior has not been verified interactively in Zen.
+
+## 1.4.2
+
+Hide Zen’s native accent-colored drag background behind the custom drag surface. Folder styling and drag logic are unchanged.
