@@ -32,3 +32,9 @@ Source defaults to detection; target defaults to English. Translation runs autom
 Text is automatically sent to Google's unauthenticated translate.googleapis.com endpoint. No API key is required; this is an unofficial endpoint without guaranteed availability. Requests omit cookies/referrer, time out after 15 seconds, and allow up to 1500 characters. No local text history is stored by the mod. Google processes submitted text.
 
 Validation: JavaScript syntax and mocked activation, geometry, debounce, multiline, IME, stale responses, copy, language menu, swap, return-to-search and cleanup checks. Native Zen appearance and animation still require live verification.
+
+## 1.6.4
+
+Back reopens the native URL-bar query/view and restores new-tab search mode when applicable. The earlier startQuery:false call focused the input without reopening the view required for floating layout. Copied uses green text and a dot; the copy button has a pale hoverable background, swap uses a larger SVG in a circular button, and the source panel is lighter. Live Zen validation remains required.
+
+Word and character counters are removed from the translator.

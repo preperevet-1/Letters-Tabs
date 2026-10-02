@@ -48,18 +48,19 @@
     const fromMenu=languageMenu(from,'Source language'),toMenu=languageMenu(to,'Target language');
     const source=make('textarea','lt-translate-source');source.placeholder='Enter text to translate…';source.setAttribute('aria-label','Text to translate');source.spellcheck=false;
     const result=make('div','lt-translate-result');result.setAttribute('aria-live','polite');result.setAttribute('role','status');result.tabIndex=0;
-    const count=make('span','lt-translate-count');
-    const swap=button('lt-translate-swap','⇄','Swap languages');swap.title='Swap languages';
-    leftHead.append(back,fromMenu);rightHead.append(toMenu);left.append(leftHead,source,count);right.append(rightHead,result);body.append(left,right,swap);
+    const swap=button('lt-translate-swap','','Swap languages');swap.title='Swap languages';
+    const swapIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    for(const [key,value] of Object.entries({viewBox:'0 0 24 24',width:'24',height:'24',fill:'none',stroke:'currentColor','stroke-width':'1.7','stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true'}))swapIcon.setAttribute(key,value);
+    const arrows=document.createElementNS('http://www.w3.org/2000/svg','path');arrows.setAttribute('d','M5 7h14m-4-4 4 4-4 4M19 17H5m4-4-4 4 4 4');swapIcon.append(arrows);swap.append(swapIcon);
+    leftHead.append(back,fromMenu);rightHead.append(toMenu);left.append(leftHead,source);right.append(rightHead,result);body.append(left,right,swap);
     const footer=make('div','lt-translate-footer');const translate=make('span','lt-translate-submit','Translate');
     const status=make('span','lt-translate-status');status.setAttribute('aria-live','polite');
     const copy=button('lt-translate-copy','Copy Translation');copy.title='Copy Translation (⌘/Ctrl+C)';copy.disabled=true;
     footer.append(translate,status,copy);panel.append(body,footer);document.documentElement.append(panel);
     let active=false,revision=0,controller=null,translated='',detected='',focusFrame=0, debounce=0, motion=null, returning=false, composing=false;
     const stop=e=>{e.preventDefault();e.stopImmediatePropagation();};
-    function invalidate(){clearTimeout(debounce);result.removeAttribute('aria-busy');revision++;controller?.abort();controller=null;translated='';copy.disabled=true;}
-    function countText(){const value=source.value.trim();count.textContent=`${value?value.split(/\s+/u).length:0} Words · ${[...source.value].length} Characters`;}
-    function edited(){invalidate();detected='';auto.textContent='Detect language';result.textContent='';status.textContent='';countText();for(const menu of menus)menu.refresh();schedule();}
+    function invalidate(){status.removeAttribute('data-copied');clearTimeout(debounce);result.removeAttribute('aria-busy');revision++;controller?.abort();controller=null;translated='';copy.disabled=true;}
+    function edited(){invalidate();detected='';auto.textContent='Detect language';result.textContent='';status.textContent='';for(const menu of menus)menu.refresh();schedule();}
     function schedule(){clearTimeout(debounce);if(active && !composing && source.value.trim())debounce=setTimeout(run,500);}
     function hide(){for(const menu of menus)menu.close();motion?.cancel();returning=false;invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;bar.removeAttribute('letter-tabs-translate');}
     async function returnToSearch(){
@@ -75,12 +76,18 @@
       hide();
       // Restore visibility before focus: focusing a display:none native input is ignored.
       bar.getBoundingClientRect();
-      window.gURLBar.search('',{startQuery:false});
+      // Reopen the native search session, not only its input focus.
+      // startQuery:false leaves view.isOpen false, preventing layout expansion.
+      if(searchWasNewTab && window.gZenUIManager?.handleNewTab){
+        window.gZenUIManager.handleNewTab(false,false,'tab',true);
+      }
+      window.gURLBar.search('');
+      document.getElementById('Browser:OpenLocation')?.doCommand?.();
       window.gURLBar.userTypedValue='';input.value='';
       bar.setAttribute('letter-tabs-search-empty','true');input.focus();
     }
     function focusSource(){cancelAnimationFrame(focusFrame);focusFrame=requestAnimationFrame(()=>{if(active){source.focus();source.setSelectionRange(source.value.length,source.value.length);}});}
-    let anchor = null;
+    let anchor = null, searchWasNewTab=false;
     function positionPanel(){
       if(!anchor)return;
       const width=Math.max(280,Math.min(Math.max(800,anchor.width*1.25),window.innerWidth-32));
@@ -89,6 +96,7 @@
       panel.style.top=Math.max(16,Math.min(anchor.top,window.innerHeight-panel.getBoundingClientRect().height-16))+'px';
     }
     function activate(text){
+      searchWasNewTab=bar.hasAttribute('zen-newtab');
       const rect=bar.getBoundingClientRect();
       anchor={left:rect.left,top:rect.top,width:rect.width,height:rect.height};
       const style=getComputedStyle(bar);
@@ -128,7 +136,7 @@
       }catch(error){if(disposed || version!==revision)return;status.textContent=error.message || 'Unable to translate. Please try again.';}
       finally{if(version===revision){result.removeAttribute('aria-busy');}}
     }
-    function copyResult(){if(!translated)return;try{Cc['@mozilla.org/widget/clipboardhelper;1'].getService(Ci.nsIClipboardHelper).copyString(translated);status.textContent='Copied';}catch(_){status.textContent='Unable to copy translation';}}
+    function copyResult(){if(!translated)return;try{Cc['@mozilla.org/widget/clipboardhelper;1'].getService(Ci.nsIClipboardHelper).copyString(translated);status.textContent='Copied';status.setAttribute('data-copied','true');}catch(_){status.textContent='Unable to copy translation';}}
     function key(event){
       if(event.isComposing)return;
       if(!active){

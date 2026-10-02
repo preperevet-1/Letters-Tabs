@@ -846,7 +846,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-translator-panel .lt-translate-source::placeholder {color:var(--lt-tr-muted);opacity:.75;}
 #lt-translator-panel .lt-translate-result:empty::before {content:'Translation';color:var(--lt-tr-muted);opacity:.6;}
 #lt-translator-panel .lt-translate-result[aria-busy='true']::before {content:'Translating…';}
-#lt-translator-panel .lt-translate-count {text-align:right;font-size:11px;color:var(--lt-tr-muted);padding-top:12px;}
 #lt-translator-panel.lt-translate .lt-translate-swap {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:34px;height:36px;padding:0;background:light-dark(#e9e9e9,#3c3c40);box-shadow:0 0 0 5px var(--lt-search-surface,light-dark(#fff,#242424));font-size:21px;}
 #lt-translator-panel .lt-translate-footer {display:flex;align-items:center;gap:12px;padding:10px 14px;border-top:1px solid light-dark(#e9e9e9,#39393b);background:light-dark(#fafafa,#222225);}
 #lt-translator-panel.lt-translate .lt-translate-submit {padding-left:3px;}
@@ -904,3 +903,19 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-translator-panel .lt-translate-language-menu[hidden] {display:none !important;}
 #lt-translator-panel.lt-translate .lt-translate-language-option {display:block;width:100%;text-align:left;color:var(--lt-tr-ink);}
 #lt-translator-panel .lt-translate-language-option[aria-selected='true'] {background:light-dark(#eee,#3c3c40);}
+
+/* Translator feedback and controls. */
+#lt-translator-panel .lt-translate-left {background:light-dark(#f7f7f7,#343437);}
+#lt-translator-panel .lt-translate-status[data-copied='true'] {
+  color:light-dark(#27834a,#71c992);font-size:13px;display:flex;align-items:center;gap:6px;
+}
+#lt-translator-panel .lt-translate-status[data-copied='true']::before {
+  content:'';display:inline-block;flex:none;width:6px;height:6px;border-radius:50%;background:currentColor;
+}
+#lt-translator-panel.lt-translate .lt-translate-copy {
+  background:light-dark(#ededed,#353538) !important;border-radius:8px !important;
+  transition:background-color 140ms ease;
+}
+#lt-translator-panel.lt-translate .lt-translate-copy:hover:not(:disabled) {background:light-dark(#dedede,#46464a) !important;}
+#lt-translator-panel.lt-translate .lt-translate-swap {border-radius:50% !important;}
+#lt-translator-panel .lt-translate-swap svg {width:24px !important;height:24px !important;display:block;pointer-events:none;}
