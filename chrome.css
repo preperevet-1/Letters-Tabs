@@ -919,3 +919,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-translator-panel.lt-translate .lt-translate-copy:hover:not(:disabled) {background:light-dark(#dedede,#46464a) !important;}
 #lt-translator-panel.lt-translate .lt-translate-swap {border-radius:50% !important;}
 #lt-translator-panel .lt-translate-swap svg {width:24px !important;height:24px !important;display:block;pointer-events:none;}
+
+/* A single shrinking surface hands off to the already-open search. */
+#urlbar[letter-tabs-translate-return],
+#urlbar[letter-tabs-translate-return] * {
+  animation:none !important;transition:none !important;
+}
+#lt-translator-panel.lt-translate .lt-translate-swap {
+  width:36px !important;height:36px !important;min-width:36px !important;min-height:36px !important;
+  max-width:36px !important;max-height:36px !important;aspect-ratio:1;
+  border-radius:100% !important;background:light-dark(#f7f7f7,#343437) !important;
+  corner-shape:round !important;
+}
+#lt-translator-panel .lt-translate-swap svg {width:20px !important;height:20px !important;}
+#lt-translator-panel .lt-translate-status[data-copied='true']::before {
+  animation:lt-copied-glow 1.6s ease-in-out 2;
+}
+@keyframes lt-copied-glow {
+  0%,100% {box-shadow:0 0 0 0 transparent;}
+  50% {box-shadow:0 0 7px 2px color-mix(in srgb,currentColor 45%,transparent);}
+}
+@media(prefers-reduced-motion:reduce){
+  #lt-translator-panel .lt-translate-status[data-copied='true']::before {animation:none;}
+}

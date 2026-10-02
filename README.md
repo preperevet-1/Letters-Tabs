@@ -38,3 +38,7 @@ Validation: JavaScript syntax and mocked activation, geometry, debounce, multili
 Back reopens the native URL-bar query/view and restores new-tab search mode when applicable. The earlier startQuery:false call focused the input without reopening the view required for floating layout. Copied uses green text and a dot; the copy button has a pale hoverable background, swap uses a larger SVG in a circular button, and the source panel is lighter. Live Zen validation remains required.
 
 Word and character counters are removed from the translator.
+
+## 1.6.5
+
+Smaller circular swap control matches the source panel. Copied dot glows twice (respects reduced motion). Return restores native search beneath the overlay before shrinking, suppressing its separate entrance animation for that search session. Live Zen verification remains required.

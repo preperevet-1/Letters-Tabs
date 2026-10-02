@@ -65,19 +65,11 @@
     function hide(){for(const menu of menus)menu.close();motion?.cancel();returning=false;invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;bar.removeAttribute('letter-tabs-translate');}
     async function returnToSearch(){
       if(returning)return;returning=true;invalidate();
-      try {
-        if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches && panel.animate){
-          motion=panel.animate([{width:panel.style.width,left:panel.style.left,height:panel.getBoundingClientRect().height+'px'},
-            {width:anchor.width+'px',left:anchor.left+'px',height:anchor.height+'px'}],{duration:260,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
-          await motion.finished;
-        }
-      }catch(_){return;}
-      if(disposed || !active)return;
-      hide();
-      // Restore visibility before focus: focusing a display:none native input is ignored.
+      // Restore native search underneath the still-visible overlay. Its own
+      // entrance animation is suppressed throughout this search session.
+      bar.setAttribute('letter-tabs-translate-return','true');
+      bar.removeAttribute('letter-tabs-translate');
       bar.getBoundingClientRect();
-      // Reopen the native search session, not only its input focus.
-      // startQuery:false leaves view.isOpen false, preventing layout expansion.
       if(searchWasNewTab && window.gZenUIManager?.handleNewTab){
         window.gZenUIManager.handleNewTab(false,false,'tab',true);
       }
@@ -85,6 +77,16 @@
       document.getElementById('Browser:OpenLocation')?.doCommand?.();
       window.gURLBar.userTypedValue='';input.value='';
       bar.setAttribute('letter-tabs-search-empty','true');input.focus();
+      try {
+        if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches && panel.animate){
+          motion?.cancel();
+          motion=panel.animate([{width:panel.style.width,left:panel.style.left,top:panel.style.top,height:panel.getBoundingClientRect().height+'px'},
+            {width:anchor.width+'px',left:anchor.left+'px',top:anchor.top+'px',height:anchor.height+'px'}],{duration:260,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+          await motion.finished;
+        }
+      }catch(_){return;}
+      if(disposed || !active)return;
+      hide();
     }
     function focusSource(){cancelAnimationFrame(focusFrame);focusFrame=requestAnimationFrame(()=>{if(active){source.focus();source.setSelectionRange(source.value.length,source.value.length);}});}
     let anchor = null, searchWasNewTab=false;
@@ -96,6 +98,7 @@
       panel.style.top=Math.max(16,Math.min(anchor.top,window.innerHeight-panel.getBoundingClientRect().height-16))+'px';
     }
     function activate(text){
+      bar.removeAttribute('letter-tabs-translate-return');
       searchWasNewTab=bar.hasAttribute('zen-newtab');
       const rect=bar.getBoundingClientRect();
       anchor={left:rect.left,top:rect.top,width:rect.width,height:rect.height};
@@ -166,10 +169,12 @@
     source.addEventListener('compositionend',()=>{composing=false;edited();});
     window.addEventListener('input',onInput,true);window.addEventListener('keydown',key,true);input.addEventListener('compositionend',onInput);
     function outside(event){if(active && !panel.contains(event.target)){hide();}}
+    function searchBlur(){if(!returning)bar.removeAttribute('letter-tabs-translate-return');}
+    input.addEventListener('blur',searchBlur);
     window.addEventListener('mousedown',outside,true);
     window.addEventListener('resize',positionPanel);
     window.addEventListener('TabSelect',hide);
-    cleanup=()=>{hide();window.removeEventListener('mousedown',outside,true);window.removeEventListener('resize',positionPanel);window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);panel.remove();};
+    cleanup=()=>{hide();input.removeEventListener('blur',searchBlur);bar.removeAttribute('letter-tabs-translate-return');window.removeEventListener('mousedown',outside,true);window.removeEventListener('resize',positionPanel);window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);panel.remove();};
   }
   // Provider integration is configured separately from the search interface.
   async function translateText(text,source,target,signal) {
