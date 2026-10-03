@@ -50,3 +50,7 @@ Return hides native search with opacity while restoring focus and shrinking the 
 ## 1.6.7
 
 Return measures only the search input row, excluding suggestions. A 180ms compositor transform replaces width/height layout animation; editor content fades rather than disappearing before motion starts. A bounded completion fallback prevents a stalled animation from stranding the surface. Live Zen verification remains required.
+
+## 1.6.8
+
+Slash input opens a filterable command list with Translate, keyboard selection and click activation, suppressing native file/history suggestions in command mode. Language menus open on click or keyboard only. Icon motion respects reduced motion; return lasts 320ms. Translator hiding rules apply only to the expanded urlbar, leaving its collapsed sidebar field visible. Native Zen visual validation remains required.

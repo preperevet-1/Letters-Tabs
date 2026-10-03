@@ -14,7 +14,7 @@
     const panel=make('section','lt-translate');panel.id='lt-translator-panel';panel.hidden=true;panel.setAttribute('aria-label','Translator');panel.setAttribute('role','dialog');
     const body=make('div','lt-translate-body'),left=make('div','lt-translate-left'),right=make('div','lt-translate-right');
     const leftHead=make('div','lt-translate-header'),rightHead=make('div','lt-translate-header');
-    const back=button('lt-translate-back','←','Back to search');back.title='Back to search (Escape)';
+    const back=button('lt-translate-back','','Back to search');back.append(make('span','lt-back-icon','←'));back.title='Back to search (Escape)';
     const from=make('select'),to=make('select');from.setAttribute('aria-label','Source language');to.setAttribute('aria-label','Target language');
     const languages={en:'English',uk:'Ukrainian',pl:'Polish',de:'German',fr:'French',es:'Spanish',it:'Italian',ja:'Japanese',ko:'Korean',zh:'Chinese',pt:'Portuguese'};
     for(const [code,name] of Object.entries(languages))for(const select of [from,to]){const option=make('option','',name);option.value=code;select.append(option);}
@@ -34,7 +34,7 @@
         entries.push([option.value,item]);menu.append(item);
       }
       trigger.addEventListener('click',()=>menu.hidden?open():close());
-      wrap.addEventListener('mouseenter',open);wrap.addEventListener('mouseleave',close);
+      // Language menus open only on click or keyboard input.
       wrap.addEventListener('focusout',event=>{if(!wrap.contains(event.relatedTarget))close();});
       wrap.addEventListener('keydown',event=>{
         if(event.key==='Escape' && !menu.hidden){stop(event);close();trigger.focus();}
@@ -57,12 +57,28 @@
     const status=make('span','lt-translate-status');status.setAttribute('aria-live','polite');
     const copy=button('lt-translate-copy','Copy Translation');copy.title='Copy Translation (⌘/Ctrl+C)';copy.disabled=true;
     footer.append(translate,status,copy);panel.append(body,footer);document.documentElement.append(panel);
+    const commands=[{name:'Translate',aliases:['/tr','/translate'],run:()=>activate('')}];
+    const commandList=make('div','lt-command-list');commandList.hidden=true;commandList.setAttribute('role','listbox');commandList.setAttribute('aria-label','Commands');bar.append(commandList);
+    let matches=[],commandIndex=0;
+    function clearCommands(){commandList.hidden=true;bar.removeAttribute('letter-tabs-commands');input.removeAttribute('aria-activedescendant');}
+    function showCommands(value){
+      matches=commands.filter(command=>command.aliases.some(alias=>alias.startsWith(value.toLowerCase())));commandIndex=0;
+      commandList.replaceChildren();bar.setAttribute('letter-tabs-commands','true');commandList.hidden=false;
+      for(const [index,command] of matches.entries()){
+        const item=button('lt-command-item','');item.id='lt-command-'+index;item.setAttribute('role','option');item.setAttribute('aria-selected',String(index===commandIndex));
+        item.append(make('span','',command.name),make('span','lt-command-alias',command.aliases[0]));
+        item.addEventListener('mousedown',event=>event.preventDefault());item.addEventListener('click',command.run);commandList.append(item);
+      }
+      if(matches.length)input.setAttribute('aria-activedescendant','lt-command-0');
+      else {input.removeAttribute('aria-activedescendant');commandList.append(make('span','lt-command-empty','No matching commands'));}
+      window.gURLBar.controller?.cancelQuery?.();window.gURLBar.view?.clearSelection?.();
+    }
     let active=false,revision=0,controller=null,translated='',detected='',focusFrame=0, debounce=0, motion=null, returning=false, composing=false;
     const stop=e=>{e.preventDefault();e.stopImmediatePropagation();};
     function invalidate(){status.removeAttribute('data-copied');clearTimeout(debounce);result.removeAttribute('aria-busy');revision++;controller?.abort();controller=null;translated='';copy.disabled=true;}
     function edited(){invalidate();detected='';auto.textContent='Detect language';result.textContent='';status.textContent='';for(const menu of menus)menu.refresh();schedule();}
     function schedule(){clearTimeout(debounce);if(active && !composing && source.value.trim())debounce=setTimeout(run,500);}
-    function hide(){for(const menu of menus)menu.close();motion?.cancel();returning=false;invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;panel.removeAttribute('data-returning');bar.removeAttribute('letter-tabs-translate-handoff');bar.removeAttribute('letter-tabs-translate');}
+    function hide(){clearCommands();for(const menu of menus)menu.close();motion?.cancel();returning=false;invalidate();active=false;cancelAnimationFrame(focusFrame);panel.hidden=true;panel.removeAttribute('data-returning');bar.removeAttribute('letter-tabs-translate-handoff');bar.removeAttribute('letter-tabs-translate');}
     async function returnToSearch(){
       if(returning)return;returning=true;invalidate();
       cancelAnimationFrame(focusFrame);
@@ -89,10 +105,10 @@
           motion=panel.animate([
             {transform:'translate(0,0) scale(1,1)'},
             {transform:`translate(${anchor.left-rect.left}px,${anchor.top-rect.top}px) scale(${anchor.width/rect.width},${anchor.height/rect.height})`}
-          ],{duration:180,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+          ],{duration:320,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
           let deadline;
           try {
-            await Promise.race([motion.finished,new Promise(resolve=>{deadline=setTimeout(resolve,240);})]);
+            await Promise.race([motion.finished,new Promise(resolve=>{deadline=setTimeout(resolve,400);})]);
           }finally{clearTimeout(deadline);}
 
         }
@@ -113,6 +129,7 @@
       panel.style.top=Math.max(16,Math.min(anchor.top,window.innerHeight-panel.getBoundingClientRect().height-16))+'px';
     }
     function activate(text){
+      clearCommands();
       bar.removeAttribute('letter-tabs-translate-return');
       searchWasNewTab=bar.hasAttribute('zen-newtab');
       const rect=bar.getBoundingClientRect();
@@ -137,13 +154,12 @@
     function onInput(event){
       if(event.target===source){event.stopImmediatePropagation();if(event.isComposing || composing){invalidate();return;}edited();return;}
       if(event.target!==input || event.isComposing || bar.hasAttribute('letter-tabs-bang'))return;
-      // A trailing space activates /tr; Enter also activates a bare command.
-      if (/^\/(?:tr|translate)$/i.test(input.value)) {
-        event.stopImmediatePropagation();window.gURLBar.controller?.cancelQuery?.();window.gURLBar.view?.clearSelection?.();return;
-      }
       const match=/^\/(?:tr|translate)\s+([\s\S]*)$/i.exec(input.value);
-      if(match){event.stopImmediatePropagation();activate(match[1]);}
+      if(match){event.stopImmediatePropagation();activate(match[1]);return;}
+      if(/^\/[^\s/]*$/.test(input.value)){event.stopImmediatePropagation();showCommands(input.value);return;}
+      clearCommands();
     }
+
     async function run(){
       const text=source.value.trim();if(!active || returning || composing || !text)return;
       invalidate();const version=revision;controller=new AbortController();
@@ -160,6 +176,11 @@
     function key(event){
       if(event.isComposing)return;
       if(!active){
+        if(event.target===input && !commandList.hidden){
+          if(event.key==='Escape'){stop(event);clearCommands();return;}
+          if(event.key==='ArrowDown' || event.key==='ArrowUp'){stop(event);if(matches.length){commandIndex=(commandIndex+(event.key==='ArrowDown'?1:matches.length-1))%matches.length;for(const [i,item] of [...commandList.children].entries())item.setAttribute('aria-selected',String(i===commandIndex));input.setAttribute('aria-activedescendant','lt-command-'+commandIndex);}return;}
+          if(event.key==='Enter'){stop(event);matches[commandIndex]?.run();return;}
+        }
         if(event.target===input && event.key==='Enter' && !bar.hasAttribute('letter-tabs-bang')){
           const match=/^\/(?:tr|translate)(?:\s+([\s\S]*))?$/i.exec(input.value);
           if(match){stop(event);activate(match[1]||'');}
@@ -177,6 +198,7 @@
     function languageChanged(){invalidate();result.textContent='';status.textContent='';result.removeAttribute('aria-busy');for(const menu of menus)menu.refresh();schedule();}
     from.addEventListener('change',()=>{detected='';auto.textContent='Detect language';languageChanged();});to.addEventListener('change',languageChanged);
     swap.addEventListener('click',()=>{
+      if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)swapIcon.animate?.([{transform:'rotate(0deg)'},{transform:'rotate(180deg)'}],{duration:300,easing:'ease-in-out'});
       const old=from.value==='auto'?detected:from.value;
       if(!languages[old]){status.textContent='Choose a source language or translate first';return;}
       const value=translated;from.value=to.value;to.value=old;if(value)source.value=value;edited();focusSource();
@@ -186,12 +208,12 @@
     source.addEventListener('compositionend',()=>{composing=false;edited();});
     window.addEventListener('input',onInput,true);window.addEventListener('keydown',key,true);input.addEventListener('compositionend',onInput);
     function outside(event){if(active && !panel.contains(event.target)){hide();}}
-    function searchBlur(){if(!returning)bar.removeAttribute('letter-tabs-translate-return');}
+    function searchBlur(){clearCommands();if(!returning)bar.removeAttribute('letter-tabs-translate-return');}
     input.addEventListener('blur',searchBlur);
     window.addEventListener('mousedown',outside,true);
     window.addEventListener('resize',positionPanel);
     window.addEventListener('TabSelect',hide);
-    cleanup=()=>{hide();input.removeEventListener('blur',searchBlur);bar.removeAttribute('letter-tabs-translate-return');window.removeEventListener('mousedown',outside,true);window.removeEventListener('resize',positionPanel);window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);panel.remove();};
+    cleanup=()=>{hide();input.removeEventListener('blur',searchBlur);bar.removeAttribute('letter-tabs-translate-return');window.removeEventListener('mousedown',outside,true);window.removeEventListener('resize',positionPanel);window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);commandList.remove();panel.remove();};
   }
   // Provider integration is configured separately from the search interface.
   async function translateText(text,source,target,signal) {

@@ -821,8 +821,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 }
 
 /* /tr replaces the complete floating search surface. */
-#urlbar[letter-tabs-translate] > :not(.lt-translate) { display: none !important; }
-#urlbar[letter-tabs-translate] { height: auto !important; min-height: 0 !important; }
+#urlbar[letter-tabs-translate][breakout-extend] > :not(.lt-translate) { display: none !important; }
+#urlbar[letter-tabs-translate][breakout-extend] { height: auto !important; min-height: 0 !important; }
 #lt-translator-panel.lt-translate[hidden],  #lt-translator-panel[hidden] { display: none !important; }
 #lt-translator-panel.lt-translate {
   --lt-tr-ink: light-dark(#343434,#eee);
@@ -954,4 +954,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-translator-panel[data-returning] {transform-origin:top left;will-change:transform;}
 @media(prefers-reduced-motion:reduce){
   #lt-translator-panel[data-returning] > * {animation:none !important;}
+}
+
+#lt-translator-panel .lt-back-icon {display:block;transition:transform 200ms ease;}
+#lt-translator-panel .lt-translate-back:hover .lt-back-icon {transform:translateX(-3px);}
+#lt-translator-panel .lt-translate-language-trigger::after {transition:transform 200ms ease;}
+#lt-translator-panel .lt-translate-language-trigger[aria-expanded='true']::after {transform:translateY(1px) rotate(225deg);}
+#lt-translator-panel .lt-translate-swap svg {transition:transform 200ms ease;}
+#lt-translator-panel .lt-translate-swap:hover svg {transform:rotate(12deg);}
+#urlbar .lt-command-list[hidden] {display:none !important;}
+#urlbar[letter-tabs-commands] .urlbarView {display:none !important;}
+#urlbar .lt-command-list {margin-top:10px;padding:6px;border-radius:14px;background:var(--lt-search-surface,light-dark(#fff,#242424));box-shadow:var(--lt-search-shadow,0 8px 28px #0002);}
+#urlbar .lt-command-item {appearance:none !important;display:flex;width:100%;align-items:center;justify-content:space-between;border:0 !important;border-radius:9px;padding:12px 16px;margin:0;background:transparent;color:light-dark(#444,#ddd);font:14px system-ui;cursor:pointer;}
+#urlbar .lt-command-item:is(:hover,[aria-selected='true']) {background:light-dark(#f1f1f1,#38383b);}
+#urlbar .lt-command-alias,#urlbar .lt-command-empty {color:#929292;font:12px system-ui;}
+#urlbar .lt-command-empty {display:block;padding:12px;}
+@media(prefers-reduced-motion:reduce){
+ #lt-translator-panel .lt-back-icon,#lt-translator-panel .lt-translate-language-trigger::after,#lt-translator-panel .lt-translate-swap svg {transition:none;}
 }
