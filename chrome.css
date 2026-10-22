@@ -972,3 +972,6 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @media(prefers-reduced-motion:reduce){
  #lt-translator-panel .lt-back-icon,#lt-translator-panel .lt-translate-language-trigger::after,#lt-translator-panel .lt-translate-swap svg {transition:none;}
 }
+
+#urlbar[letter-tabs-minimal-search][breakout-extend] .urlbarView-body-inner {border-top:0 !important;}
+#urlbar[letter-tabs-minimal-search][breakout-extend] .urlbarView-body-inner::before {display:none !important;}

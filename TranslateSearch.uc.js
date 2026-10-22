@@ -213,6 +213,7 @@
     window.addEventListener('mousedown',outside,true);
     window.addEventListener('resize',positionPanel);
     window.addEventListener('TabSelect',hide);
+    window.__letterTabsTranslate.reset=hide;
     cleanup=()=>{hide();input.removeEventListener('blur',searchBlur);bar.removeAttribute('letter-tabs-translate-return');window.removeEventListener('mousedown',outside,true);window.removeEventListener('resize',positionPanel);window.removeEventListener('input',onInput,true);window.removeEventListener('keydown',key,true);input.removeEventListener('compositionend',onInput);window.removeEventListener('TabSelect',hide);commandList.remove();panel.remove();};
   }
   // Provider integration is configured separately from the search interface.

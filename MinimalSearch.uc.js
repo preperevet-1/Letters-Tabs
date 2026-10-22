@@ -26,6 +26,17 @@
       event.stopImmediatePropagation();
     }
   }
+  function prepareNewTab(event) {
+    if (event.target?.id !== "cmd_newNavigatorTab") return;
+    window.__letterTabsTranslate?.reset?.();
+    if (document.activeElement !== input || !floating()) {
+      if (bar.hasAttribute("zen-newtab")) {
+        bar._zenHandleUrlbarClose?.();
+        bar.removeAttribute("zen-newtab");
+      }
+    }
+  }
+  window.addEventListener("command", prepareNewTab, true);
   const observer = new MutationObserver(sync);
   observer.observe(bar, { attributes: true, attributeFilter: ['open', 'breakout-extend', 'zen-floating-urlbar'] });
   input.addEventListener('input', sync);
@@ -36,6 +47,7 @@
   function destroy() {
     if (disposed) return;
     disposed = true;
+    window.removeEventListener("command", prepareNewTab, true);
     observer.disconnect();
     input.removeEventListener('input', sync);
     input.removeEventListener('focus', sync);
