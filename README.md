@@ -58,3 +58,7 @@ Slash input opens a filterable command list with Translate, keyboard selection a
 ## 1.6.10
 
 Removed the native top separator from the `.urlbarView-results` scrollport in floating minimal search. Verified the source selector against the installed Zen browser stylesheet; live appearance remains unverified.
+
+## 1.6.11
+
+Removed native top padding from the floating results container and scrollport, retaining a compact 4px top margin above the first row.

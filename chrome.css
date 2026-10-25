@@ -982,3 +982,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   border-top: 0 !important;
   border-block-start: 0 !important;
 }
+
+/* Match the first row's top inset to the card's compact side inset. */
+#urlbar[letter-tabs-minimal-search][breakout-extend] > .urlbarView {
+  padding-block-start: 0 !important;
+}
+#urlbar[letter-tabs-minimal-search][breakout-extend] .urlbarView-results,
+#urlbar[letter-tabs-minimal-search][breakout-extend] #urlbar-results {
+  padding-block-start: 0 !important;
+  margin-block-start: 4px !important;
+}
