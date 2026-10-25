@@ -54,3 +54,7 @@ Return measures only the search input row, excluding suggestions. A 180ms compos
 ## 1.6.8
 
 Slash input opens a filterable command list with Translate, keyboard selection and click activation, suppressing native file/history suggestions in command mode. Language menus open on click or keyboard only. Icon motion respects reduced motion; return lasts 320ms. Translator hiding rules apply only to the expanded urlbar, leaving its collapsed sidebar field visible. Native Zen visual validation remains required.
+
+## 1.6.10
+
+Removed the native top separator from the `.urlbarView-results` scrollport in floating minimal search. Verified the source selector against the installed Zen browser stylesheet; live appearance remains unverified.

@@ -975,3 +975,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 #urlbar[letter-tabs-minimal-search][breakout-extend] .urlbarView-body-inner {border-top:0 !important;}
 #urlbar[letter-tabs-minimal-search][breakout-extend] .urlbarView-body-inner::before {display:none !important;}
+
+/* Zen's proton URL-bar view draws its separator on the results scrollport. */
+#urlbar[letter-tabs-minimal-search][breakout-extend][open] > .urlbarView > .urlbarView-results,
+#urlbar[letter-tabs-minimal-search][breakout-extend] #urlbar-results {
+  border-top: 0 !important;
+  border-block-start: 0 !important;
+}
