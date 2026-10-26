@@ -1017,3 +1017,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-tab-hover-card svg {width:19px;height:19px;pointer-events:none;}
 @keyframes lt-tab-hover-enter {from{opacity:0;transform:translateX(-2px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#lt-tab-hover-popup #lt-tab-hover-card {animation:none;}#lt-tab-hover-card .lt-tab-hover-action {transition:none;}}
+
+/* Hide only the Space heading row, preserving its tabs and workspace switcher. */
+:root[zen-letter-tabs-active] zen-workspace .zen-current-workspace-indicator {
+  display: none !important;
+}

@@ -90,3 +90,7 @@ Hover actions inherit native Zen arrow-panel background, text and border colors,
 ## 1.7.6
 
 The hover panel now uses the folder popup’s type=arrow, nonnative and orient=vertical attributes. Removed all custom popup appearance/background/shadow overrides and the opaque card surface. Installed Zen zen-panel-ui.css now supplies macOS Menu material, native translucency, border and shadow, as for zen-folder-tabs-popup. Existing solid SVG states remain. Live visual verification is required.
+
+## 1.7.7
+
+Hide the Space heading row (name, chevron and actions) inside the sidebar workspace. Tab sections and the bottom workspace switcher are unchanged.
