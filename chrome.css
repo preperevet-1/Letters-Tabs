@@ -1131,7 +1131,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /* Quick directional entrance and a short fade, shared by both hover menus. */
 #lt-tab-hover-popup,#lt-folder-hover-card {
  backdrop-filter:blur(64px) saturate(1.6);
- animation:lt-hover-slide-in 160ms cubic-bezier(.2,.8,.2,1) both;
+ animation:lt-hover-slide-in 160ms cubic-bezier(.2,.8,.2,1) backwards;
 }
 #lt-tab-hover-popup #lt-tab-hover-card {animation:none !important;}
 #lt-tab-hover-popup[data-closing],#lt-folder-hover-card[data-closing] {
@@ -1158,3 +1158,14 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /* Balanced optical size and compact spacing even for a single folder row. */
 #lt-folder-hover-card .lt-folder-row + .lt-folder-row {margin-top:3px;}
 #lt-tab-hover-card [data-action='copy'] svg {width:17px;height:17px;}
+
+/* Zia's remote-page compositing prerequisite for chrome backdrop filtering.
+   The web-content surface must participate in the backdrop composition too.
+   Keep its layer stable across entry/exit; do not transform its geometry. */
+:root[zen-letter-tabs-active] #tabbrowser-tabpanels .browserSidebarContainer {
+  will-change: transform !important;
+  backface-visibility: hidden !important;
+}
+#lt-tab-hover-popup,#lt-folder-hover-card {
+  backdrop-filter: blur(64px) saturate(1.6) !important;
+}

@@ -137,3 +137,7 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 - Folder hover padding reduced to 6px; row gaps only between rows.
 - Softer, smaller icon motion; 17px paperclip.
 - Hover surfaces: 16px corners and 64px blur.
+
+### 1.8.3
+- Add Zia remote-page compositing prerequisite for hover-card backdrop blur.
+- Stop retaining the entrance transform after the animation completes.
