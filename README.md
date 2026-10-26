@@ -82,3 +82,7 @@ First hover waits 600ms; switching remains immediate. Popup placement uses expli
 ## 1.7.4
 
 Reset the native popup shadow-root content margins, padding and background directly so only the card paints a surface. Active actions use explicit solid SVG paths and path-level fill instead of inherited SVG fill. Native visual verification remains required.
+
+## 1.7.5
+
+Hover actions inherit native Zen arrow-panel background, text and border colors, with the native panel radius and macOS window shadow. The compact layout and filled active actions remain. Styling references the installed Zen folder and popup styles; live visual verification remains required.

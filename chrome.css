@@ -1032,8 +1032,23 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-tab-hover-popup {
  background-color:transparent !important;background-image:none !important;
  --panel-background:transparent !important;--panel-background-color:transparent !important;
- --arrowpanel-background:transparent !important;--panel-padding:0px !important;
+ --panel-padding:0px !important;
  --panel-padding-block:0px !important;--panel-box-shadow-margin:0px !important;
 }
 #lt-tab-hover-popup::before,#lt-tab-hover-popup::after {display:none !important;}
 #lt-tab-hover-popup #lt-tab-hover-card {background-clip:padding-box;}
+
+/* Use the same theme colors as Zen's native folder-search panel. */
+#lt-tab-hover-popup {
+ -moz-window-shadow:default !important;
+}
+#lt-tab-hover-popup #lt-tab-hover-card {
+ background:var(--arrowpanel-background,light-dark(#e9eaf0,#29292f)) !important;
+ color:var(--arrowpanel-color,light-dark(#202024,#eee)) !important;
+ border:1px solid var(--arrowpanel-border-color,light-dark(#a9a9af,#5c5c65)) !important;
+ border-radius:var(--panel-border-radius,12px) !important;
+}
+#lt-tab-hover-card .lt-tab-hover-domain {color:inherit;opacity:.6;}
+#lt-tab-hover-card .lt-tab-hover-action {color:inherit;opacity:.6;}
+#lt-tab-hover-card .lt-tab-hover-action:is(:hover,[aria-pressed='true']) {color:inherit;opacity:1;}
+#lt-tab-hover-card .lt-tab-hover-action:hover {background:color-mix(in srgb,currentColor 10%,transparent);}
