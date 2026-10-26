@@ -121,3 +121,9 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 
 ### 1.7.14
 - Restore Translate opening behavior exactly from 1.7.11; retain equal footer button sizes.
+
+### 1.8.0
+- Zia-inspired hover surfaces: 76% surface, 24px blur, soft glass edge and shadow.
+- Collapsed-folder hover lists tabs with switch, close and New Tab actions.
+- Bookmark action replaced by Copy Link.
+- Source: https://github.com/z1n-k/zia/blob/main/src/js/27-hover-cards.js and chrome.css; attribution and MIT terms in ZIA-LICENSE.txt.

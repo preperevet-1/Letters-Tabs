@@ -1096,3 +1096,34 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   margin: 0 !important;
   padding: 0 !important;
 }
+
+/* Zia hover-card surface, adapted from chrome.css (MIT, ZIA-LICENSE.txt). */
+:root {
+ --lt-card-bg: light-dark(rgb(250,250,251),rgb(38,38,38));
+ --lt-card-edge: inset 0 1px .5px -.5px rgba(255,255,255,.85), inset 0 -1px .5px -.5px rgba(255,255,255,.7), inset 0 3px 2px -2px rgba(255,255,255,.3), inset 0 -3px 2px -2px rgba(255,255,255,.22), -.5px 0 .5px rgba(0,0,0,.08), .5px 0 .5px rgba(0,0,0,.08), 0 0 .5px .25px rgba(0,0,0,.04);
+}
+#lt-tab-hover-popup, #lt-folder-hover-card {
+ position:fixed !important;z-index:2147483647;box-sizing:border-box;
+ border:0 !important;border-radius:13px !important;
+ background:color-mix(in srgb,var(--lt-card-bg) 76%,transparent) !important;
+ backdrop-filter:blur(24px) saturate(1.6);
+ box-shadow:var(--lt-card-edge),0 10px 30px rgba(0,0,0,.16) !important;
+ color:light-dark(#303030,#eee);font:13px system-ui,sans-serif;
+ pointer-events:auto;-moz-window-dragging:no-drag;
+}
+#lt-tab-hover-popup[hidden],#lt-folder-hover-card[hidden] {display:none !important;}
+#lt-tab-hover-popup #lt-tab-hover-card {color:inherit;}
+#lt-folder-hover-card {width:222px;padding:9px;max-height:min(390px,80vh);overflow-y:auto;scrollbar-width:thin;}
+#lt-folder-hover-card .lt-folder-row {display:flex;align-items:center;border-radius:9px;margin:3px 0;height:34px;}
+#lt-folder-hover-card .lt-folder-row:is(:hover,[selected]) {background:light-dark(rgba(0,0,0,.065),rgba(255,255,255,.13));}
+#lt-folder-hover-card button {appearance:none !important;border:0 !important;background:transparent;color:inherit;font:inherit;margin:0;min-width:0;min-height:0;box-shadow:none;cursor:pointer;}
+#lt-folder-hover-card .lt-folder-pick {display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:100%;padding:0 9px;text-align:start;}
+#lt-folder-hover-card .lt-folder-label {white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#lt-folder-hover-card .lt-folder-icon {width:16px;height:16px;flex:none;object-fit:contain;}
+#lt-folder-hover-card .lt-folder-close {width:24px;height:24px;padding:0;margin-right:4px;border-radius:6px;font-size:20px;opacity:0;}
+#lt-folder-hover-card .lt-folder-row:is(:hover,:focus-within) .lt-folder-close {opacity:1;}
+#lt-folder-hover-card .lt-folder-close:hover {background:light-dark(rgba(0,0,0,.09),rgba(255,255,255,.12));}
+#lt-folder-hover-card .lt-folder-new {display:flex;align-items:center;gap:8px;width:100%;height:34px;padding:0 9px;border-radius:9px;opacity:.65;text-align:start;}
+#lt-folder-hover-card .lt-folder-new:hover {background:light-dark(rgba(0,0,0,.065),rgba(255,255,255,.13));opacity:1;}
+#lt-folder-hover-card .lt-folder-plus {width:16px;font-size:23px;text-align:center;}
+#lt-folder-hover-card button:focus-visible {outline:2px solid currentColor !important;outline-offset:-2px;}

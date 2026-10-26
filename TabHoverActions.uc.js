@@ -13,21 +13,20 @@
     const card=make('section','lt-tab-hover-card');card.id='lt-tab-hover-card';card.hidden=true;card.setAttribute('aria-label','Tab actions');
     const title=make('div','lt-tab-hover-title'),domain=make('div','lt-tab-hover-domain'),actions=make('div','lt-tab-hover-buttons');
     card.append(title,domain,actions);
-    const popup=document.createXULElement('panel');popup.id='lt-tab-hover-popup';
-    popup.setAttribute('type','arrow');popup.setAttribute('nonnative','');popup.setAttribute('orient','vertical');popup.setAttribute('side','left');popup.setAttribute('animate','false');popup.setAttribute('flip','both');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
-    popup.append(card);(document.getElementById('mainPopupSet') || document.documentElement).append(popup);
+    const popup=make('div','lt-hover-shell');popup.id='lt-tab-hover-popup';popup.hidden=true;
+    popup.append(card);document.documentElement.append(popup);
     let tab=null,showTimer=0,hideTimer=0;
     const nativePreviews=new Set(['tabbrowser-tab-tooltip','tab-preview-panel']);
     function suppressTooltip(event){if(nativePreviews.has(event.target.id)){event.preventDefault();event.stopImmediatePropagation();}}
     window.addEventListener('popupshowing',suppressTooltip,true);
     for(const id of nativePreviews)document.getElementById(id)?.hidePopup?.();
     const buttons={};
-    const icons={pin:'M9 3h6l-1 6 4 4v2H6v-2l4-4-1-6M12 15v6',heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z',split:'M4 4h16v16H4zM12 4v16',bookmark:'M6 3h12v18l-6-4-6 4z'};
+    const icons={pin:'M9 3h6l-1 6 4 4v2H6v-2l4-4-1-6M12 15v6',heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z',split:'M4 4h16v16H4zM12 4v16',copy:'M9 9h11v12H9zM15 9V3H4v12h5'};
     const solidIcons={
       pin:'M8 2h8l-1 7 4 4v3h-6v6h-2v-6H5v-3l4-4-1-7Z',
       heart:icons.heart,
       split:'M3 3h18v18H3V3Zm8 2v14h2V5h-2Z',
-      bookmark:'M5 2h14v20l-7-5-7 5V2Z'
+      copy:'M5 2h14v20l-7-5-7 5V2Z'
     };
     function setPressed(name,active){
       const button=buttons[name],path=button.querySelector('path');
@@ -43,13 +42,9 @@
       setPressed('pin',Boolean(tab.pinned && !essential));buttons.pin.title=tab.pinned?'Unpin tab':'Pin tab';
       setPressed('heart',essential);buttons.heart.title=essential?'Remove from Essentials':'Add to Essentials';
       setPressed('split',Boolean(tab.splitView || tab.closest?.('[split-view-group]')));
-      setPressed('bookmark',false);
-      const current=tab;
-      try{const places=window.PlacesUtils || ChromeUtils.importESModule('resource://gre/modules/PlacesUtils.sys.mjs').PlacesUtils;
-        Promise.resolve(places.bookmarks.fetch({url:tab.linkedBrowser.currentURI.spec})).then(mark=>{if(tab===current && valid())setPressed('bookmark',Boolean(mark));}).catch(()=>{});
-      }catch(_){}
+
     }
-    function hide(){clearTimeout(showTimer);clearTimeout(hideTimer);card.hidden=true;tab=null;if(popup.state==='open' || popup.state==='showing')popup.hidePopup();}
+    function hide(){clearTimeout(showTimer);clearTimeout(hideTimer);card.hidden=true;tab=null;popup.hidden=true;}
     function deferHide(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!card.contains(document.activeElement))hide();},180);}
     function position(){
       if(!valid() || card.hidden)return;
@@ -61,14 +56,14 @@
       const essential=tab.hasAttribute('zen-essential');
       const x=Math.max(8,Math.min(essential?r.left:r.right+10,window.innerWidth-width-8));
       const y=Math.max(8,Math.min(essential?r.bottom+6:r.top+(r.height-height)/2,window.innerHeight-height-8));
-      const screenX=window.mozInnerScreenX+x,screenY=window.mozInnerScreenY+y;
-      if(popup.state==='open' || popup.state==='showing')popup.moveTo(screenX,screenY);
-      else popup.openPopupAtScreen(screenX,screenY,false);
+      popup.hidden=false;
+      popup.style.left=x+'px';popup.style.top=y+'px';
     }
     const tabOf=node=>node?.closest?.('.tabbrowser-tab');
     function enter(event){
       const target=(event.composedPath?.() || [event.target]).map(tabOf).find(Boolean);
       if(!target || target.closing || target.hidden)return;
+      window.__letterTabsFolderHover?.hide();
       clearTimeout(hideTimer);
       if(target===tab)return;
       clearTimeout(showTimer);
@@ -92,9 +87,9 @@
       pin(target){if(target.hasAttribute('zen-essential')){window.gZenPinnedTabManager.removeEssentials(target,false);return;}target.pinned?gBrowser.unpinTab(target):gBrowser.pinTab(target);},
       heart(target){const manager=window.gZenPinnedTabManager;target.hasAttribute('zen-essential')?manager.removeEssentials(target):manager.addToEssentials(target);},
       split(target){gBrowser.selectedTab=target;window.gZenViewSplitter.createEmptySplit();},
-      bookmark(target){return window.PlacesCommandHook.bookmarkLink(target.linkedBrowser.currentURI.spec,target.label);}
+      copy(target){const helper=Components.classes['@mozilla.org/widget/clipboardhelper;1'].getService(Components.interfaces.nsIClipboardHelper);helper.copyString(target.linkedBrowser.currentURI.spec);}
     };
-    for(const [name,label] of [['pin','Pin'],['heart','Essential'],['split','Split View'],['bookmark','Bookmark']]){
+    for(const [name,label] of [['pin','Pin'],['heart','Essential'],['split','Split View'],['copy','Copy Link']]){
       const button=make('button','lt-tab-hover-action');button.type='button';button.title=label;button.setAttribute('aria-label',label);
       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');for(const [k,v] of Object.entries({viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'1.6','stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true'}))svg.setAttribute(k,v);
       const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',icons[name]);svg.append(path);button.append(svg);actions.append(button);buttons[name]=button;
@@ -109,8 +104,9 @@
     window.addEventListener('keydown',key,true);window.addEventListener('deactivate',hide);window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);function popupHidden(event){if(event.target===popup)hide();}
     popup.addEventListener('popuphidden',popupHidden);
     cleanup=()=>{hide();container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();};
+    cleanup.hide=hide;
   }
   function destroy(){disposed=true;clearTimeout(retry);window.removeEventListener('load',initialize);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsHoverActions;}
-  window.__letterTabsHoverActions={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
+  window.__letterTabsHoverActions={destroy,hide:()=>cleanup.hide?.()};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
   if(document.readyState==='complete')initialize();else window.addEventListener('load',initialize,{once:true});
 })();
