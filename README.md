@@ -94,3 +94,7 @@ The hover panel now uses the folder popup’s type=arrow, nonnative and orient=v
 ## 1.7.7
 
 Hide the Space heading row (name, chevron and actions) inside the sidebar workspace. Tab sections and the bottom workspace switcher are unchanged.
+
+## 1.7.8
+
+Hide Translate This Page in the urlbar. Compact the tab context menu around pin/Essential, split/duplicate, grouping/moving, existing copy-link, rename/icon/pinned-page and close commands. Native names and handlers are retained; no icons added. Workspace indicator strip scales to 80%, preserving centering.

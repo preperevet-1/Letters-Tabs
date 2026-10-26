@@ -1022,3 +1022,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] zen-workspace .zen-current-workspace-indicator {
   display: none !important;
 }
+
+/* Hide only the page-translation entry point in the address field. */
+#urlbar #translations-button {display:none !important;}
+#tabContextMenu > [lt-menu-hidden] {display:none !important;}
+/* Keep the workspace strip centered, scaling dots and spacing together. */
+:root[zen-letter-tabs-active] #zen-workspaces-button {scale:.8;transform-origin:center;}
