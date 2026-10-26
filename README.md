@@ -98,3 +98,12 @@ Hide the Space heading row (name, chevron and actions) inside the sidebar worksp
 ## 1.7.8
 
 Hide Translate This Page in the urlbar. Compact the tab context menu around pin/Essential, split/duplicate, grouping/moving, existing copy-link, rename/icon/pinned-page and close commands. Native names and handlers are retained; no icons added. Workspace indicator strip scales to 80%, preserving centering.
+
+
+### 1.7.9
+- Broom uses an SVG mask instead of context paint; retains 0.9 stroke and separator-only hover.
+- Compact tab menu hides unwanted entries using native XUL visibility and restores it after dismissal. Essentials remains next to Pin.
+
+### 1.7.10
+- Hide audio indicators only in Essentials.
+- Reduce the left inset of audio tabs from 14px to 8px to align their controls with the opposite edge.
