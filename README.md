@@ -78,3 +78,7 @@ Compact 170px arrowless hover card with tighter icon spacing and filled active i
 ## 1.7.3
 
 First hover waits 600ms; switching remains immediate. Popup placement uses explicit screen coordinates and moveTo, avoiding a stale first-tab anchor. Native macOS menu appearance, shadow, margins and wrapper borders are disabled so only the custom card draws the surface. Native visual verification is still required.
+
+## 1.7.4
+
+Reset the native popup shadow-root content margins, padding and background directly so only the card paints a surface. Active actions use explicit solid SVG paths and path-level fill instead of inherited SVG fill. Native visual verification remains required.

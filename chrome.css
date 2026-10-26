@@ -1027,3 +1027,13 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-tab-hover-popup::part(arrow),#lt-tab-hover-popup::part(arrowbox),
 #lt-tab-hover-popup .panel-arrowcontainer,#lt-tab-hover-popup .panel-arrowbox,
 #lt-tab-hover-popup .panel-arrow {display:none !important;}
+
+/* Only the card paints a surface; suppress the native popup's extra backdrop. */
+#lt-tab-hover-popup {
+ background-color:transparent !important;background-image:none !important;
+ --panel-background:transparent !important;--panel-background-color:transparent !important;
+ --arrowpanel-background:transparent !important;--panel-padding:0px !important;
+ --panel-padding-block:0px !important;--panel-box-shadow-margin:0px !important;
+}
+#lt-tab-hover-popup::before,#lt-tab-hover-popup::after {display:none !important;}
+#lt-tab-hover-popup #lt-tab-hover-card {background-clip:padding-box;}
