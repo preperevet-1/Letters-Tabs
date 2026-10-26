@@ -66,3 +66,7 @@ Removed native top padding from the floating results container and scrollport, r
 ## 1.7.0
 
 Hover a tab for 420ms to show its title, domain and Pin, Essential, Split View and Bookmark actions. Move into the card to use its buttons. Split View selects the hovered tab and opens Zen’s native second-tab picker. Bookmark opens the native add/edit bookmark dialog for the hovered URL. Pin on an Essential converts it to a regular pin. The card closes on drag, tab closure, scrolling, window blur and Escape. Mock lifecycle/action tests pass; native Zen visual behavior is unverified.
+
+## 1.7.1
+
+Hover actions use a native chrome panel anchored to the hovered tab and capture hover events at window level, including tabs relocated by Zen workspaces. Initialization retries until the tab container is ready. Native visual validation remains required.

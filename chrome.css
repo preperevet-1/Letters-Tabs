@@ -1010,3 +1010,9 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-tab-hover-card svg {width:22px;height:22px;pointer-events:none;}
 @keyframes lt-tab-hover-enter {from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#lt-tab-hover-card {animation:none;}#lt-tab-hover-card .lt-tab-hover-action {transition:none;}}
+
+/* Native chrome popup stays above browser content and outside sidebar clipping. */
+#lt-tab-hover-popup {appearance:none !important;padding:0 !important;border:0 !important;background:transparent !important;--panel-padding:0;--panel-background:transparent;--panel-border-color:transparent;}
+#lt-tab-hover-popup::part(content) {padding:0 !important;border:0 !important;background:transparent !important;box-shadow:none !important;}
+#lt-tab-hover-popup #lt-tab-hover-card {display:block;position:relative;left:auto;top:auto;margin:0;}
+#lt-tab-hover-popup #lt-tab-hover-card[hidden] {display:none !important;}
