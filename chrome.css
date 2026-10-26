@@ -1104,7 +1104,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 }
 #lt-tab-hover-popup, #lt-folder-hover-card {
  position:fixed !important;z-index:2147483647;box-sizing:border-box;
- border:0 !important;border-radius:13px !important;
+ border:0 !important;border-radius:16px !important;
  background:color-mix(in srgb,var(--lt-card-bg) 76%,transparent) !important;
  backdrop-filter:blur(24px) saturate(1.6);
  box-shadow:var(--lt-card-edge),0 10px 30px rgba(0,0,0,.16) !important;
@@ -1113,8 +1113,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 }
 #lt-tab-hover-popup[hidden],#lt-folder-hover-card[hidden] {display:none !important;}
 #lt-tab-hover-popup #lt-tab-hover-card {color:inherit;}
-#lt-folder-hover-card {width:222px;padding:9px;max-height:min(390px,80vh);overflow-y:auto;scrollbar-width:thin;}
-#lt-folder-hover-card .lt-folder-row {display:flex;align-items:center;border-radius:9px;margin:3px 0;height:34px;}
+#lt-folder-hover-card {width:222px;padding:6px;max-height:min(390px,80vh);overflow-y:auto;scrollbar-width:thin;}
+#lt-folder-hover-card .lt-folder-row {display:flex;align-items:center;border-radius:10px;margin:0;height:34px;}
 #lt-folder-hover-card .lt-folder-row:is(:hover,[selected]) {background:light-dark(rgba(0,0,0,.065),rgba(255,255,255,.13));}
 #lt-folder-hover-card button {appearance:none !important;border:0 !important;background:transparent;color:inherit;font:inherit;margin:0;min-width:0;min-height:0;box-shadow:none;cursor:pointer;}
 #lt-folder-hover-card .lt-folder-pick {display:flex;align-items:center;gap:8px;flex:1;min-width:0;height:100%;padding:0 9px;text-align:start;}
@@ -1130,7 +1130,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 /* Quick directional entrance and a short fade, shared by both hover menus. */
 #lt-tab-hover-popup,#lt-folder-hover-card {
- backdrop-filter:blur(40px) saturate(1.6);
+ backdrop-filter:blur(64px) saturate(1.6);
  animation:lt-hover-slide-in 160ms cubic-bezier(.2,.8,.2,1) both;
 }
 #lt-tab-hover-popup #lt-tab-hover-card {animation:none !important;}
@@ -1141,16 +1141,20 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @keyframes lt-hover-fade-out {from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-3px)}}
 #lt-folder-hover-card .lt-folder-empty {padding:10px 9px;opacity:.55;}
 #lt-tab-hover-card .lt-tab-hover-action svg {overflow:visible;transform-origin:center;}
-#lt-tab-hover-card [data-action='pin']:hover svg {animation:lt-pin-drop 360ms ease-out;}
-#lt-tab-hover-card [data-action='heart']:hover svg {animation:lt-heart-beat 460ms ease-in-out;}
-#lt-tab-hover-card [data-action='copy']:hover svg {animation:lt-clip-sway 420ms ease-in-out;}
-#lt-tab-hover-card [data-action='split']:hover .lt-split-left {animation:lt-split-left 340ms ease-in-out;}
-#lt-tab-hover-card [data-action='split']:hover .lt-split-right {animation:lt-split-right 340ms ease-in-out;}
-@keyframes lt-pin-drop {0%,100%{transform:translateY(0)}55%{transform:translateY(-3px)}72%{transform:translateY(1px)}}
-@keyframes lt-heart-beat {0%,100%{transform:scale(1)}25%{transform:scale(1.15)}45%{transform:scale(1)}65%{transform:scale(1.1)}}
-@keyframes lt-clip-sway {0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg)}65%{transform:rotate(9deg)}}
-@keyframes lt-split-left {0%,100%{transform:translateX(0)}50%{transform:translateX(-2px)}}
-@keyframes lt-split-right {0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+#lt-tab-hover-card [data-action='pin']:hover svg {animation:lt-pin-drop 520ms cubic-bezier(.4,0,.2,1);}
+#lt-tab-hover-card [data-action='heart']:hover svg {animation:lt-heart-beat 650ms ease-in-out;}
+#lt-tab-hover-card [data-action='copy']:hover svg {animation:lt-clip-sway 650ms ease-in-out;}
+#lt-tab-hover-card [data-action='split']:hover .lt-split-left {animation:lt-split-left 520ms ease-in-out;}
+#lt-tab-hover-card [data-action='split']:hover .lt-split-right {animation:lt-split-right 520ms ease-in-out;}
+@keyframes lt-pin-drop {0%,100%{transform:translateY(0)}55%{transform:translateY(-1.5px)}78%{transform:translateY(.3px)}}
+@keyframes lt-heart-beat {0%,100%{transform:scale(1)}25%{transform:scale(1.055)}45%{transform:scale(1)}65%{transform:scale(1.035)}}
+@keyframes lt-clip-sway {0%,100%{transform:rotate(0)}30%{transform:rotate(-5deg)}65%{transform:rotate(4deg)}}
+@keyframes lt-split-left {0%,100%{transform:translateX(0)}50%{transform:translateX(-.8px)}}
+@keyframes lt-split-right {0%,100%{transform:translateX(0)}50%{transform:translateX(.8px)}}
 @media(prefers-reduced-motion:reduce){
  #lt-tab-hover-popup,#lt-folder-hover-card,#lt-tab-hover-card .lt-tab-hover-action svg,#lt-tab-hover-card .lt-tab-hover-action path {animation:none !important;}
 }
+
+/* Balanced optical size and compact spacing even for a single folder row. */
+#lt-folder-hover-card .lt-folder-row + .lt-folder-row {margin-top:3px;}
+#lt-tab-hover-card [data-action='copy'] svg {width:17px;height:17px;}

@@ -132,3 +132,8 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 - Remove New Tab from folder hover menus; show a quiet empty state.
 - Increase hover-card blur to 40px; 160ms slide-in and 110ms fade-out with cancelable dismissal.
 - Paperclip for Copy Link; separate pin, heart, split and paperclip hover animations. Reduced motion respected.
+
+### 1.8.2
+- Folder hover padding reduced to 6px; row gaps only between rows.
+- Softer, smaller icon motion; 17px paperclip.
+- Hover surfaces: 16px corners and 64px blur.
