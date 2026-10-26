@@ -994,61 +994,26 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 }
 
 
-/* Compact, arrowless hover actions. Native popup provides placement only. */
-#lt-tab-hover-popup {appearance:none !important;padding:0 !important;border:0 !important;background:transparent !important;--panel-padding:0;--panel-background:transparent;--panel-border-color:transparent;--panel-shadow:0 6px 20px #0002;}
-#lt-tab-hover-popup::part(content) {padding:0 !important;border:0 !important;border-radius:12px !important;background:transparent !important;box-shadow:none !important;}
-#lt-tab-hover-popup #lt-tab-hover-card {display:block;position:relative;width:170px;box-sizing:border-box;margin:0;padding:14px 13px 10px;border:1px solid light-dark(#fff,#48484c);border-radius:12px;background:light-dark(#f5f5f5,#29292c);color:light-dark(#303030,#eee);font:13px system-ui,sans-serif;animation:lt-tab-hover-enter 100ms ease-out;}
+
+/* Same native shell as #zen-folder-tabs-popup: type=arrow + nonnative.
+ * zen-panel-ui.css supplies macOS Menu vibrancy and the native border/shadow.
+ * Paint no additional card surface over the native material. */
+#lt-tab-hover-popup {--panel-padding:0; width:170px;}
+#lt-tab-hover-popup #lt-tab-hover-card {
+ display:block;position:relative;width:170px;box-sizing:border-box;margin:0;
+ padding:14px 13px 10px;border:0 !important;background:transparent !important;
+ box-shadow:none !important;color:var(--arrowpanel-color,light-dark(#303030,#eee));
+ font:13px system-ui,sans-serif;animation:lt-tab-hover-enter 100ms ease-out;
+}
 #lt-tab-hover-popup #lt-tab-hover-card[hidden] {display:none !important;}
 #lt-tab-hover-popup #lt-tab-hover-card[data-switching] {animation:none !important;}
 #lt-tab-hover-card .lt-tab-hover-title {font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-#lt-tab-hover-card .lt-tab-hover-domain {margin-top:2px;color:light-dark(#888,#aaa);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#lt-tab-hover-card .lt-tab-hover-domain {margin-top:2px;color:inherit;opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 #lt-tab-hover-card .lt-tab-hover-buttons {display:flex;justify-content:space-between;margin-top:13px;gap:6px;}
-#lt-tab-hover-card .lt-tab-hover-action {appearance:none !important;box-sizing:border-box;min-width:0 !important;min-height:0 !important;display:grid;place-items:center;width:27px;height:27px;margin:0 !important;padding:4px !important;border:0 !important;border-radius:6px !important;background:transparent;color:light-dark(#888,#aaa);cursor:pointer;transition:background-color 100ms,color 100ms;}
-#lt-tab-hover-card .lt-tab-hover-action:hover {color:light-dark(#222,#fff);background:light-dark(#e6e6e6,#404044);}
-#lt-tab-hover-card .lt-tab-hover-action[aria-pressed='true'] {color:light-dark(#555,#ddd);}
-#lt-tab-hover-card .lt-tab-hover-action[aria-pressed='true'] svg {fill:currentColor;}
+#lt-tab-hover-card .lt-tab-hover-action {appearance:none !important;box-sizing:border-box;min-width:0 !important;min-height:0 !important;display:grid;place-items:center;width:27px;height:27px;margin:0 !important;padding:4px !important;border:0 !important;border-radius:6px !important;background:transparent;color:inherit;opacity:.6;cursor:pointer;transition:background-color 100ms,opacity 100ms;}
+#lt-tab-hover-card .lt-tab-hover-action:is(:hover,[aria-pressed='true']) {opacity:1;}
+#lt-tab-hover-card .lt-tab-hover-action:hover {background:color-mix(in srgb,currentColor 10%,transparent);}
 #lt-tab-hover-card .lt-tab-hover-action:focus-visible {outline:2px solid #999;outline-offset:2px;}
 #lt-tab-hover-card svg {width:19px;height:19px;pointer-events:none;}
 @keyframes lt-tab-hover-enter {from{opacity:0;transform:translateX(-2px)}to{opacity:1;transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){#lt-tab-hover-popup #lt-tab-hover-card {animation:none;}#lt-tab-hover-card .lt-tab-hover-action {transition:none;}}
-
-/* Fully custom popup surface: disable native macOS menu decoration. */
-#lt-tab-hover-popup {
- appearance:none !important;-moz-default-appearance:none !important;
- -moz-window-shadow:none !important;margin:0 !important;padding:0 !important;
- border:0 !important;border-radius:12px !important;background:transparent !important;
- --panel-background-color:transparent;--panel-border-color:transparent;
- --panel-border-radius:12px;--panel-box-shadow:none;--panel-box-shadow-margin:0px;
-}
-#lt-tab-hover-popup::part(content) {
- appearance:none !important;margin:0 !important;padding:0 !important;border:0 !important;
- background:transparent !important;box-shadow:none !important;
-}
-#lt-tab-hover-popup::part(arrow),#lt-tab-hover-popup::part(arrowbox),
-#lt-tab-hover-popup .panel-arrowcontainer,#lt-tab-hover-popup .panel-arrowbox,
-#lt-tab-hover-popup .panel-arrow {display:none !important;}
-
-/* Only the card paints a surface; suppress the native popup's extra backdrop. */
-#lt-tab-hover-popup {
- background-color:transparent !important;background-image:none !important;
- --panel-background:transparent !important;--panel-background-color:transparent !important;
- --panel-padding:0px !important;
- --panel-padding-block:0px !important;--panel-box-shadow-margin:0px !important;
-}
-#lt-tab-hover-popup::before,#lt-tab-hover-popup::after {display:none !important;}
-#lt-tab-hover-popup #lt-tab-hover-card {background-clip:padding-box;}
-
-/* Use the same theme colors as Zen's native folder-search panel. */
-#lt-tab-hover-popup {
- -moz-window-shadow:default !important;
-}
-#lt-tab-hover-popup #lt-tab-hover-card {
- background:var(--arrowpanel-background,light-dark(#e9eaf0,#29292f)) !important;
- color:var(--arrowpanel-color,light-dark(#202024,#eee)) !important;
- border:1px solid var(--arrowpanel-border-color,light-dark(#a9a9af,#5c5c65)) !important;
- border-radius:var(--panel-border-radius,12px) !important;
-}
-#lt-tab-hover-card .lt-tab-hover-domain {color:inherit;opacity:.6;}
-#lt-tab-hover-card .lt-tab-hover-action {color:inherit;opacity:.6;}
-#lt-tab-hover-card .lt-tab-hover-action:is(:hover,[aria-pressed='true']) {color:inherit;opacity:1;}
-#lt-tab-hover-card .lt-tab-hover-action:hover {background:color-mix(in srgb,currentColor 10%,transparent);}

@@ -86,3 +86,7 @@ Reset the native popup shadow-root content margins, padding and background direc
 ## 1.7.5
 
 Hover actions inherit native Zen arrow-panel background, text and border colors, with the native panel radius and macOS window shadow. The compact layout and filled active actions remain. Styling references the installed Zen folder and popup styles; live visual verification remains required.
+
+## 1.7.6
+
+The hover panel now uses the folder popup’s type=arrow, nonnative and orient=vertical attributes. Removed all custom popup appearance/background/shadow overrides and the opaque card surface. Installed Zen zen-panel-ui.css now supplies macOS Menu material, native translucency, border and shadow, as for zen-folder-tabs-popup. Existing solid SVG states remain. Live visual verification is required.

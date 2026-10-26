@@ -14,7 +14,7 @@
     const title=make('div','lt-tab-hover-title'),domain=make('div','lt-tab-hover-domain'),actions=make('div','lt-tab-hover-buttons');
     card.append(title,domain,actions);
     const popup=document.createXULElement('panel');popup.id='lt-tab-hover-popup';
-    popup.setAttribute('type','panel');popup.setAttribute('animate','false');popup.setAttribute('flip','both');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
+    popup.setAttribute('type','arrow');popup.setAttribute('nonnative','');popup.setAttribute('orient','vertical');popup.setAttribute('side','left');popup.setAttribute('animate','false');popup.setAttribute('flip','both');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
     popup.append(card);(document.getElementById('mainPopupSet') || document.documentElement).append(popup);
     let tab=null,showTimer=0,hideTimer=0;
     const nativePreviews=new Set(['tabbrowser-tab-tooltip','tab-preview-panel']);
@@ -37,14 +37,6 @@
       path.style.setProperty('fill',active?'currentColor':'none','important');
       path.style.setProperty('stroke',active?'none':'currentColor','important');
     }
-    function resetPopupSurface(){
-      popup.ensureInitialized?.();
-      const surface=popup.shadowRoot?.querySelector('[part="content"]');
-      if(!surface)return;
-      for(const [name,value] of Object.entries({margin:'0',padding:'0',border:'0',background:'transparent','box-shadow':'none','border-radius':'12px'}))surface.style.setProperty(name,value,'important');
-    }
-    resetPopupSurface();
-    popup.addEventListener('popupshowing',resetPopupSurface);
     function valid(){return tab?.isConnected && !tab.closing;}
     function refresh(){if(!valid()){hide();return;}title.textContent=tab.label || 'Untitled';try{domain.textContent=new URL(tab.linkedBrowser.currentURI.spec).hostname || tab.linkedBrowser.currentURI.spec;}catch(_){domain.textContent='';}
       const essential=tab.hasAttribute('zen-essential');
@@ -113,7 +105,7 @@
     card.addEventListener('mouseenter',keep);card.addEventListener('mouseleave',deferHide);card.addEventListener('focusin',keep);card.addEventListener('focusout',deferHide);
     window.addEventListener('keydown',key,true);window.addEventListener('deactivate',hide);window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);function popupHidden(event){if(event.target===popup)hide();}
     popup.addEventListener('popuphidden',popupHidden);
-    cleanup=()=>{hide();container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.removeEventListener('popupshowing',resetPopupSurface);popup.remove();};
+    cleanup=()=>{hide();container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();};
   }
   function destroy(){disposed=true;clearTimeout(retry);window.removeEventListener('load',initialize);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsHoverActions;}
   window.__letterTabsHoverActions={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
