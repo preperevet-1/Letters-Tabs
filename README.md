@@ -111,3 +111,7 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 ### 1.7.11
 - Site menu: Translate replaces Share; permissions and cookies are removed from the main panel. Settings opens native site permissions. Footer order: Boosts, Security, Settings, More.
 - Essentials hover actions open below their tile, avoiding neighboring Essentials.
+
+### 1.7.12
+- Anchor site-menu translations to the site-data button.
+- Give all footer actions the same fixed 34 × 30 px footprint.

@@ -1075,3 +1075,24 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   -moz-context-properties: fill, stroke;
   fill: currentColor; stroke: currentColor;
 }
+
+/* Equal fixed footprints: native labels must not widen icon-only actions. */
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-footer > toolbarbutton {
+  box-sizing: border-box !important;
+  flex: 0 0 34px !important;
+  width: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  justify-content: center !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-footer > toolbarbutton .toolbarbutton-text {
+  display: none !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-footer > toolbarbutton .toolbarbutton-icon {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}

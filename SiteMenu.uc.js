@@ -22,12 +22,21 @@
     translate.setAttribute('class','zen-squircle-before');translate.setAttribute('flex','1');
     share.before(translate);
     settings.addEventListener('command',()=>{panel.hidePopup();window.BrowserCommands.pageInfo(null,'permTab');});
+    let translateRequested=false;
+    function anchorTranslation(event){
+      if(!translateRequested || event.target.id!=='full-page-translations-panel')return;
+      translateRequested=false;
+      const anchor=document.getElementById('zen-site-data-icon-button');
+      if(anchor)event.target.moveToAnchor(anchor,'bottomright topright',0,0);
+    }
+    window.addEventListener('popupshown',anchorTranslation);
     translate.addEventListener('command',event=>{
+      translateRequested=true;
       panel.hidePopup();
-      window.FullPageTranslationsPanel.open(event).catch(console.error);
+      window.FullPageTranslationsPanel.open(event).catch(error=>{translateRequested=false;console.error(error);});
     });
     panel.setAttribute('lt-site-menu','true');
-    cleanup=()=>{settings.remove();translate.remove();panel.removeAttribute('lt-site-menu');};
+    cleanup=()=>{translateRequested=false;window.removeEventListener('popupshown',anchorTranslation);settings.remove();translate.remove();panel.removeAttribute('lt-site-menu');};
   }
   function destroy(){window.removeEventListener('load',init);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsSiteMenu;}
   window.__letterTabsSiteMenu={destroy};window.addUnloadListener?.(destroy);window.addEventListener('unload',destroy,{once:true});
