@@ -14,9 +14,13 @@
     const title=make('div','lt-tab-hover-title'),domain=make('div','lt-tab-hover-domain'),actions=make('div','lt-tab-hover-buttons');
     card.append(title,domain,actions);
     const popup=document.createXULElement('panel');popup.id='lt-tab-hover-popup';
-    popup.setAttribute('type','arrow');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
+    popup.setAttribute('animate','false');popup.setAttribute('flip','both');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
     popup.append(card);(document.getElementById('mainPopupSet') || document.documentElement).append(popup);
     let tab=null,showTimer=0,hideTimer=0;
+    const nativePreviews=new Set(['tabbrowser-tab-tooltip','tab-preview-panel']);
+    function suppressTooltip(event){if(nativePreviews.has(event.target.id)){event.preventDefault();event.stopImmediatePropagation();}}
+    window.addEventListener('popupshowing',suppressTooltip,true);
+    for(const id of nativePreviews)document.getElementById(id)?.hidePopup?.();
     const buttons={};
     const icons={pin:'M9 3h6l-1 6 4 4v2H6v-2l4-4-1-6M12 15v6',heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z',split:'M4 4h16v16H4zM12 4v16',bookmark:'M6 3h12v18l-6-4-6 4z'};
     function valid(){return tab?.isConnected && !tab.closing;}
@@ -24,12 +28,45 @@
       const essential=tab.hasAttribute('zen-essential');
       buttons.pin.setAttribute('aria-pressed',String(tab.pinned && !essential));buttons.pin.title=tab.pinned?'Unpin tab':'Pin tab';
       buttons.heart.setAttribute('aria-pressed',String(essential));buttons.heart.title=essential?'Remove from Essentials':'Add to Essentials';
+      buttons.split.setAttribute('aria-pressed',String(Boolean(tab.splitView || tab.closest?.('[split-view-group]'))));
+      buttons.bookmark.setAttribute('aria-pressed','false');
+      const current=tab;
+      try{const places=window.PlacesUtils || ChromeUtils.importESModule('resource://gre/modules/PlacesUtils.sys.mjs').PlacesUtils;
+        Promise.resolve(places.bookmarks.fetch({url:tab.linkedBrowser.currentURI.spec})).then(mark=>{if(tab===current && valid())buttons.bookmark.setAttribute('aria-pressed',String(Boolean(mark)));}).catch(()=>{});
+      }catch(_){}
     }
     function hide(){clearTimeout(showTimer);clearTimeout(hideTimer);card.hidden=true;tab=null;if(popup.state==='open' || popup.state==='showing')popup.hidePopup();}
     function deferHide(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!card.contains(document.activeElement))hide();},180);}
-    function position(){if(valid() && !card.hidden)popup.openPopup(tab,'end_before',10,0,false,false);}
-    function enter(event){const target=(event.composedPath?.() || [event.target]).map(node=>node.closest?.('.tabbrowser-tab')).find(Boolean);if(!target || target.closing || target.hidden)return;if(target===tab)return;hide();tab=target;showTimer=setTimeout(()=>{if(!valid())return;refresh();card.hidden=false;position();},420);}
-    function leave(event){if(!event.target.closest?.('.tabbrowser-tab'))return;if(card.contains(event.relatedTarget) || tab?.contains(event.relatedTarget))return;deferHide();}
+    function position(){
+      if(!valid() || card.hidden)return;
+      if(popup.state==='open' || popup.state==='showing'){
+        if(popup.moveToAnchor)popup.moveToAnchor(tab,'end_before',10,0);
+        else {const r=tab.getBoundingClientRect();popup.moveTo?.(window.mozInnerScreenX+r.right+10,window.mozInnerScreenY+r.top);}
+      }else popup.openPopup(tab,'end_before',10,0,false,false);
+    }
+    const tabOf=node=>node?.closest?.('.tabbrowser-tab');
+    function enter(event){
+      const target=(event.composedPath?.() || [event.target]).map(tabOf).find(Boolean);
+      if(!target || target.closing || target.hidden)return;
+      clearTimeout(hideTimer);
+      if(target===tab)return;
+      clearTimeout(showTimer);
+      const switching=!card.hidden;
+      tab=target;
+      const show=()=>{if(!valid())return;refresh();card.hidden=false;position();};
+      if(switching){card.setAttribute('data-switching','true');show();}
+      else {card.removeAttribute('data-switching');showTimer=setTimeout(show,260);}
+    }
+    function leave(event){
+      const origin=tabOf(event.target);if(!origin)return;
+      const related=event.relatedTarget;
+      if(tabOf(related)===tab || card.contains(related) || popup.contains(related))return;
+      // Anonymous XUL children may retarget mouseout to the window. Ignore
+      // that boundary if the pointer is still geometrically inside the tab.
+      const r=tab?.getBoundingClientRect();
+      if(r && Number.isFinite(event.clientX) && event.clientX>=r.left && event.clientX<=r.right && event.clientY>=r.top && event.clientY<=r.bottom)return;
+      deferHide();
+    }
     const handlers={
       pin(target){if(target.hasAttribute('zen-essential')){window.gZenPinnedTabManager.removeEssentials(target,false);return;}target.pinned?gBrowser.unpinTab(target):gBrowser.pinTab(target);},
       heart(target){const manager=window.gZenPinnedTabManager;target.hasAttribute('zen-essential')?manager.removeEssentials(target):manager.addToEssentials(target);},
@@ -48,8 +85,9 @@
     const container=window;
     container.addEventListener('mouseover',enter,true);container.addEventListener('mouseout',leave,true);container.addEventListener('dragstart',hide,true);container.addEventListener('TabClose',close);
     card.addEventListener('mouseenter',keep);card.addEventListener('mouseleave',deferHide);card.addEventListener('focusin',keep);card.addEventListener('focusout',deferHide);
-    window.addEventListener('keydown',key,true);window.addEventListener('blur',hide);window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);popup.addEventListener('popuphidden',hide);
-    cleanup=()=>{hide();container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('blur',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);popup.removeEventListener('popuphidden',hide);popup.remove();};
+    window.addEventListener('keydown',key,true);window.addEventListener('deactivate',hide);window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);function popupHidden(event){if(event.target===popup)hide();}
+    popup.addEventListener('popuphidden',popupHidden);
+    cleanup=()=>{hide();container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();};
   }
   function destroy(){disposed=true;clearTimeout(retry);window.removeEventListener('load',initialize);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsHoverActions;}
   window.__letterTabsHoverActions={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);

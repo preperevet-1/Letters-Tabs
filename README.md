@@ -70,3 +70,7 @@ Hover a tab for 420ms to show its title, domain and Pin, Essential, Split View a
 ## 1.7.1
 
 Hover actions use a native chrome panel anchored to the hovered tab and capture hover events at window level, including tabs relocated by Zen workspaces. Initialization retries until the tab container is ready. Native visual validation remains required.
+
+## 1.7.2
+
+Compact 170px arrowless hover card with tighter icon spacing and filled active icons. First hover waits 260ms with a 100ms entrance; moving between tabs updates the existing popup immediately without replaying animation. Internal tab movement cancels pending dismissal; window focus changes no longer dismiss the panel. Native tab tooltips and tab preview popups are suppressed while this module is installed. Native appearance remains unverified; mocked hover, switching, tooltip suppression, native actions and cleanup pass.
