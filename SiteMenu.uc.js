@@ -22,21 +22,49 @@
     translate.setAttribute('class','zen-squircle-before');translate.setAttribute('flex','1');
     share.before(translate);
     settings.addEventListener('command',()=>{panel.hidePopup();window.BrowserCommands.pageInfo(null,'permTab');});
-    let translateRequested=false;
-    function anchorTranslation(event){
-      if(!translateRequested || event.target.id!=='full-page-translations-panel')return;
-      translateRequested=false;
+    let pending=false, disposed=false, openTimer=0, restoreOpen=null;
+    async function openTranslation(){
+      if(disposed)return;
       const anchor=document.getElementById('zen-site-data-icon-button');
-      if(anchor)event.target.moveToAnchor(anchor,'bottomright topright',0,0);
+      const multiView=window.PanelMultiView;
+      const original=multiView.openPopup;
+      // Supply the stable anchor before the native popup opens. Moving an
+      // already visible panel can dismiss it on macOS.
+      function anchoredOpen(popup,target,options,...rest){
+        if(popup.id==='full-page-translations-panel' && anchor){
+          target=anchor;
+          options={...options,position:'bottomright topright'};
+        }
+        return original.call(this,popup,target,options,...rest);
+      }
+      multiView.openPopup=anchoredOpen;
+      restoreOpen=()=>{if(multiView.openPopup===anchoredOpen)multiView.openPopup=original;};
+      try{
+        await window.FullPageTranslationsPanel.open({
+          type:'command',target:anchor,stopPropagation(){}
+        });
+      }catch(error){console.error('Letter Tabs translation:',error);}
+      finally{restoreOpen?.();restoreOpen=null;pending=false;}
     }
-    window.addEventListener('popupshown',anchorTranslation);
+    function afterSiteHidden(event){
+      if(event.target!==panel || !pending)return;
+      // Finish the old popup's dismissal and originating command first.
+      panel.removeEventListener('popuphidden',afterSiteHidden);
+      openTimer=setTimeout(openTranslation,0);
+    }
     translate.addEventListener('command',event=>{
-      translateRequested=true;
-      panel.hidePopup();
-      window.FullPageTranslationsPanel.open(event).catch(error=>{translateRequested=false;console.error(error);});
+      event.preventDefault();event.stopPropagation();
+      if(pending)return;
+      pending=true;
+      if(panel.state==='closed')openTimer=setTimeout(openTranslation,0);
+      else {panel.addEventListener('popuphidden',afterSiteHidden);panel.hidePopup();}
     });
     panel.setAttribute('lt-site-menu','true');
-    cleanup=()=>{translateRequested=false;window.removeEventListener('popupshown',anchorTranslation);settings.remove();translate.remove();panel.removeAttribute('lt-site-menu');};
+    cleanup=()=>{
+      disposed=true;pending=false;clearTimeout(openTimer);restoreOpen?.();
+      panel.removeEventListener('popuphidden',afterSiteHidden);
+      settings.remove();translate.remove();panel.removeAttribute('lt-site-menu');
+    };
   }
   function destroy(){window.removeEventListener('load',init);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsSiteMenu;}
   window.__letterTabsSiteMenu={destroy};window.addUnloadListener?.(destroy);window.addEventListener('unload',destroy,{once:true});

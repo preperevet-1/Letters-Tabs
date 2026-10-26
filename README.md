@@ -115,3 +115,6 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 ### 1.7.12
 - Anchor site-menu translations to the site-data button.
 - Give all footer actions the same fixed 34 × 30 px footprint.
+
+### 1.7.13
+- Wait for site-panel dismissal before opening Translate; supply its anchor before opening instead of moving the visible popup.
