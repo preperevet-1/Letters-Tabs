@@ -127,3 +127,8 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 - Collapsed-folder hover lists tabs with switch, close and New Tab actions.
 - Bookmark action replaced by Copy Link.
 - Source: https://github.com/z1n-k/zia/blob/main/src/js/27-hover-cards.js and chrome.css; attribution and MIT terms in ZIA-LICENSE.txt.
+
+### 1.8.1
+- Remove New Tab from folder hover menus; show a quiet empty state.
+- Increase hover-card blur to 40px; 160ms slide-in and 110ms fade-out with cancelable dismissal.
+- Paperclip for Copy Link; separate pin, heart, split and paperclip hover animations. Reduced motion respected.

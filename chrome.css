@@ -1127,3 +1127,30 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-folder-hover-card .lt-folder-new:hover {background:light-dark(rgba(0,0,0,.065),rgba(255,255,255,.13));opacity:1;}
 #lt-folder-hover-card .lt-folder-plus {width:16px;font-size:23px;text-align:center;}
 #lt-folder-hover-card button:focus-visible {outline:2px solid currentColor !important;outline-offset:-2px;}
+
+/* Quick directional entrance and a short fade, shared by both hover menus. */
+#lt-tab-hover-popup,#lt-folder-hover-card {
+ backdrop-filter:blur(40px) saturate(1.6);
+ animation:lt-hover-slide-in 160ms cubic-bezier(.2,.8,.2,1) both;
+}
+#lt-tab-hover-popup #lt-tab-hover-card {animation:none !important;}
+#lt-tab-hover-popup[data-closing],#lt-folder-hover-card[data-closing] {
+ animation:lt-hover-fade-out 110ms ease-out both;pointer-events:none;
+}
+@keyframes lt-hover-slide-in {from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes lt-hover-fade-out {from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-3px)}}
+#lt-folder-hover-card .lt-folder-empty {padding:10px 9px;opacity:.55;}
+#lt-tab-hover-card .lt-tab-hover-action svg {overflow:visible;transform-origin:center;}
+#lt-tab-hover-card [data-action='pin']:hover svg {animation:lt-pin-drop 360ms ease-out;}
+#lt-tab-hover-card [data-action='heart']:hover svg {animation:lt-heart-beat 460ms ease-in-out;}
+#lt-tab-hover-card [data-action='copy']:hover svg {animation:lt-clip-sway 420ms ease-in-out;}
+#lt-tab-hover-card [data-action='split']:hover .lt-split-left {animation:lt-split-left 340ms ease-in-out;}
+#lt-tab-hover-card [data-action='split']:hover .lt-split-right {animation:lt-split-right 340ms ease-in-out;}
+@keyframes lt-pin-drop {0%,100%{transform:translateY(0)}55%{transform:translateY(-3px)}72%{transform:translateY(1px)}}
+@keyframes lt-heart-beat {0%,100%{transform:scale(1)}25%{transform:scale(1.15)}45%{transform:scale(1)}65%{transform:scale(1.1)}}
+@keyframes lt-clip-sway {0%,100%{transform:rotate(0)}30%{transform:rotate(-12deg)}65%{transform:rotate(9deg)}}
+@keyframes lt-split-left {0%,100%{transform:translateX(0)}50%{transform:translateX(-2px)}}
+@keyframes lt-split-right {0%,100%{transform:translateX(0)}50%{transform:translateX(2px)}}
+@media(prefers-reduced-motion:reduce){
+ #lt-tab-hover-popup,#lt-folder-hover-card,#lt-tab-hover-card .lt-tab-hover-action svg,#lt-tab-hover-card .lt-tab-hover-action path {animation:none !important;}
+}

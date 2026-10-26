@@ -15,22 +15,29 @@
     card.append(title,domain,actions);
     const popup=make('div','lt-hover-shell');popup.id='lt-tab-hover-popup';popup.hidden=true;
     popup.append(card);document.documentElement.append(popup);
-    let tab=null,showTimer=0,hideTimer=0;
+    let tab=null,showTimer=0,hideTimer=0,closeTimer=0;
     const nativePreviews=new Set(['tabbrowser-tab-tooltip','tab-preview-panel']);
     function suppressTooltip(event){if(nativePreviews.has(event.target.id)){event.preventDefault();event.stopImmediatePropagation();}}
     window.addEventListener('popupshowing',suppressTooltip,true);
     for(const id of nativePreviews)document.getElementById(id)?.hidePopup?.();
     const buttons={};
-    const icons={pin:'M9 3h6l-1 6 4 4v2H6v-2l4-4-1-6M12 15v6',heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z',split:'M4 4h16v16H4zM12 4v16',copy:'M9 9h11v12H9zM15 9V3H4v12h5'};
+    const icons={pin:'M9 3h6l-1 6 4 4v2H6v-2l4-4-1-6M12 15v6',heart:'M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z',split:'M4 4h16v16H4zM12 4v16',copy:'M21.4 11.6l-9.2 9.2a6 6 0 0 1-8.5-8.5L13.6 2.4a4 4 0 0 1 5.7 5.7l-9.9 9.9a2 2 0 0 1-2.8-2.8l9.2-9.2'};
     const solidIcons={
       pin:'M8 2h8l-1 7 4 4v3h-6v6h-2v-6H5v-3l4-4-1-7Z',
       heart:icons.heart,
       split:'M3 3h18v18H3V3Zm8 2v14h2V5h-2Z',
-      copy:'M5 2h14v20l-7-5-7 5V2Z'
+      copy:icons.copy
     };
     function setPressed(name,active){
       const button=buttons[name],path=button.querySelector('path');
       button.setAttribute('aria-pressed',String(active));
+      if(name==='split'){
+        for(const half of button.querySelectorAll('path')){
+          half.style.setProperty('fill',active?'currentColor':'none','important');
+          half.style.setProperty('stroke','currentColor','important');
+        }
+        return;
+      }
       path.setAttribute('d',active?solidIcons[name]:icons[name]);
       path.setAttribute('fill-rule','evenodd');
       path.style.setProperty('fill',active?'currentColor':'none','important');
@@ -44,7 +51,12 @@
       setPressed('split',Boolean(tab.splitView || tab.closest?.('[split-view-group]')));
 
     }
-    function hide(){clearTimeout(showTimer);clearTimeout(hideTimer);card.hidden=true;tab=null;popup.hidden=true;}
+    function hide(){
+      clearTimeout(showTimer);clearTimeout(hideTimer);tab=null;
+      if(popup.hidden || popup.hasAttribute('data-closing'))return;
+      popup.setAttribute('data-closing','true');
+      closeTimer=setTimeout(()=>{popup.hidden=true;card.hidden=true;popup.removeAttribute('data-closing');},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:110);
+    }
     function deferHide(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!card.contains(document.activeElement))hide();},180);}
     function position(){
       if(!valid() || card.hidden)return;
@@ -69,7 +81,7 @@
       clearTimeout(showTimer);
       const switching=!card.hidden;
       tab=target;
-      const show=()=>{if(!valid())return;refresh();card.hidden=false;position();};
+      const show=()=>{if(!valid())return;refresh();clearTimeout(closeTimer);popup.removeAttribute('data-closing');card.hidden=false;position();};
       if(switching){card.setAttribute('data-switching','true');show();}
       else {card.removeAttribute('data-switching');showTimer=setTimeout(show,600);}
     }
@@ -90,9 +102,14 @@
       copy(target){const helper=Components.classes['@mozilla.org/widget/clipboardhelper;1'].getService(Components.interfaces.nsIClipboardHelper);helper.copyString(target.linkedBrowser.currentURI.spec);}
     };
     for(const [name,label] of [['pin','Pin'],['heart','Essential'],['split','Split View'],['copy','Copy Link']]){
-      const button=make('button','lt-tab-hover-action');button.type='button';button.title=label;button.setAttribute('aria-label',label);
+      const button=make('button','lt-tab-hover-action');button.type='button';button.dataset.action=name;button.title=label;button.setAttribute('aria-label',label);
       const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');for(const [k,v] of Object.entries({viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'1.6','stroke-linecap':'round','stroke-linejoin':'round','aria-hidden':'true'}))svg.setAttribute(k,v);
-      const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',icons[name]);svg.append(path);button.append(svg);actions.append(button);buttons[name]=button;
+      const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',icons[name]);svg.append(path);
+      if(name==='split'){
+        path.setAttribute('d','M4 4h7v16H4z');path.setAttribute('class','lt-split-left');
+        const half=document.createElementNS(svg.namespaceURI,'path');half.setAttribute('d','M13 4h7v16h-7z');half.setAttribute('class','lt-split-right');svg.append(half);
+      }
+      button.append(svg);actions.append(button);buttons[name]=button;
       button.addEventListener('click',async()=>{if(!valid())return;const target=tab;hide();try{await handlers[name](target);}catch(error){console.error('Letter Tabs tab action:',name,error);}});
     }
     function keep(){clearTimeout(hideTimer);}
@@ -103,7 +120,7 @@
     card.addEventListener('mouseenter',keep);card.addEventListener('mouseleave',deferHide);card.addEventListener('focusin',keep);card.addEventListener('focusout',deferHide);
     window.addEventListener('keydown',key,true);window.addEventListener('deactivate',hide);window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);function popupHidden(event){if(event.target===popup)hide();}
     popup.addEventListener('popuphidden',popupHidden);
-    cleanup=()=>{hide();container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();};
+    cleanup=()=>{hide();clearTimeout(closeTimer);container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();};
     cleanup.hide=hide;
   }
   function destroy(){disposed=true;clearTimeout(retry);window.removeEventListener('load',initialize);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsHoverActions;}

@@ -8,8 +8,13 @@
   const make=(tag,cls,text)=>{const n=document.createElementNS('http://www.w3.org/1999/xhtml',tag);n.className=cls;if(text)n.textContent=text;return n;};
   const card=make('section','lt-folder-hover-card');card.id='lt-folder-hover-card';card.hidden=true;
   document.documentElement.append(card);
-  let folder=null,showTimer=0,hideTimer=0;
-  function hide(){clearTimeout(showTimer);clearTimeout(hideTimer);card.hidden=true;folder=null;}
+  let folder=null,showTimer=0,hideTimer=0,closeTimer=0;
+  function hide(){
+    clearTimeout(showTimer);clearTimeout(hideTimer);folder=null;
+    if(card.hidden || card.hasAttribute('data-closing'))return;
+    card.setAttribute('data-closing','true');
+    closeTimer=setTimeout(()=>{card.hidden=true;card.removeAttribute('data-closing');},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:110);
+  }
   function later(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!card.matches(':hover')&&!card.contains(document.activeElement))hide();},300);}
   function position(){
     const label=folder?.querySelector(':scope > .tab-group-label-container');if(!label)return hide();
@@ -31,35 +36,25 @@
       const close=make('button','lt-folder-close','×');close.type='button';close.title='Close tab';close.setAttribute('aria-label','Close '+(tab.label||'tab'));
       close.addEventListener('click',()=>{gBrowser.removeTab(tab,{animate:true});fill();position();});row.append(pick,close);card.append(row);
     }
-    const add=make('button','lt-folder-new');add.type='button';add.append(make('span','lt-folder-plus','+'),make('span','','New Tab'));
-    add.addEventListener('click',()=>{
-      const target=folder;if(!target?.isConnected)return;
-      const pinned=target.tabs?.some(t=>t.pinned)??true;
-      const tab=gBrowser.addTrustedTab('about:newtab',{pinned});
-      if(pinned&&!tab.pinned)gBrowser.pinTab(tab);
-      const collapsed=target.collapsed||target.hasAttribute('collapsed');
-      if(collapsed&&!target.hasAttribute('has-active')){target.setAttribute('has-active','true');target.activeTabs=[];}
-      target.addTabs([tab]);gBrowser.selectedTab=tab;
-      if(collapsed&&!target.collapsed)target.collapsed=true;
-      hide();
-    });card.append(add);card.scrollTop=scroll;
+    if(!card.children.length)card.append(make('div','lt-folder-empty','No tabs'));
+    card.scrollTop=scroll;
   }
   function enter(e){
     const label=e.target.closest?.('.tab-group-label-container'),next=label?.parentElement;
     if(!next?.matches('zen-folder')||!next.hasAttribute('collapsed')||next.hasAttribute('split-view-group'))return;
     clearTimeout(hideTimer);if(next===folder)return;clearTimeout(showTimer);
     const switching=!card.hidden;folder=next;
-    const show=()=>{if(folder!==next||!next.isConnected)return;window.__letterTabsHoverActions?.hide();fill();card.hidden=false;position();};
+    const show=()=>{if(folder!==next||!next.isConnected)return;window.__letterTabsHoverActions?.hide();clearTimeout(closeTimer);card.removeAttribute('data-closing');fill();card.hidden=false;position();};
     if(switching)show();else showTimer=setTimeout(show,600);
   }
   function leave(e){const label=e.target.closest?.('.tab-group-label-container');if(!label)return;if(label.contains(e.relatedTarget)||card.contains(e.relatedTarget))return;later();}
   function suppress(e){if(e.target.id==='zen-folder-tabs-popup'){e.preventDefault();e.stopImmediatePropagation();}}
   function key(e){if(e.key==='Escape')hide();}
-  function changed(){if(!card.hidden){fill();position();}}
+  function changed(){if(folder && !card.hidden){fill();position();}}
   window.addEventListener('mouseover',enter,true);window.addEventListener('mouseout',leave,true);window.addEventListener('popupshowing',suppress,true);
   window.addEventListener('keydown',key,true);window.addEventListener('dragstart',hide,true);window.addEventListener('resize',hide);window.addEventListener('deactivate',hide);
   window.addEventListener('TabClose',changed);window.addEventListener('TabAttrModified',changed);
   card.addEventListener('mouseenter',()=>clearTimeout(hideTimer));card.addEventListener('mouseleave',later);
-  function destroy(){hide();card.remove();window.removeEventListener('mouseover',enter,true);window.removeEventListener('mouseout',leave,true);window.removeEventListener('popupshowing',suppress,true);window.removeEventListener('keydown',key,true);window.removeEventListener('dragstart',hide,true);window.removeEventListener('resize',hide);window.removeEventListener('deactivate',hide);window.removeEventListener('TabClose',changed);window.removeEventListener('TabAttrModified',changed);window.removeEventListener('unload',destroy);delete window.__letterTabsFolderHover;}
+  function destroy(){hide();clearTimeout(closeTimer);card.remove();window.removeEventListener('mouseover',enter,true);window.removeEventListener('mouseout',leave,true);window.removeEventListener('popupshowing',suppress,true);window.removeEventListener('keydown',key,true);window.removeEventListener('dragstart',hide,true);window.removeEventListener('resize',hide);window.removeEventListener('deactivate',hide);window.removeEventListener('TabClose',changed);window.removeEventListener('TabAttrModified',changed);window.removeEventListener('unload',destroy);delete window.__letterTabsFolderHover;}
   window.__letterTabsFolderHover={hide,destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();
