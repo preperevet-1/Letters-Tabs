@@ -14,7 +14,7 @@
     const title=make('div','lt-tab-hover-title'),domain=make('div','lt-tab-hover-domain'),actions=make('div','lt-tab-hover-buttons');
     card.append(title,domain,actions);
     const popup=document.createXULElement('panel');popup.id='lt-tab-hover-popup';
-    popup.setAttribute('animate','false');popup.setAttribute('flip','both');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
+    popup.setAttribute('type','panel');popup.setAttribute('animate','false');popup.setAttribute('flip','both');popup.setAttribute('noautofocus','true');popup.setAttribute('consumeoutsideclicks','false');popup.setAttribute('role','group');
     popup.append(card);(document.getElementById('mainPopupSet') || document.documentElement).append(popup);
     let tab=null,showTimer=0,hideTimer=0;
     const nativePreviews=new Set(['tabbrowser-tab-tooltip','tab-preview-panel']);
@@ -39,10 +39,14 @@
     function deferHide(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!card.contains(document.activeElement))hide();},180);}
     function position(){
       if(!valid() || card.hidden)return;
-      if(popup.state==='open' || popup.state==='showing'){
-        if(popup.moveToAnchor)popup.moveToAnchor(tab,'end_before',10,0);
-        else {const r=tab.getBoundingClientRect();popup.moveTo?.(window.mozInnerScreenX+r.right+10,window.mozInnerScreenY+r.top);}
-      }else popup.openPopup(tab,'end_before',10,0,false,false);
+      // Explicit screen coordinates avoid retaining the first popup anchor.
+      const r=tab.getBoundingClientRect(),c=card.getBoundingClientRect();
+      const width=c.width || 170,height=c.height || 110;
+      const x=Math.max(8,Math.min(r.right+10,window.innerWidth-width-8));
+      const y=Math.max(8,Math.min(r.top+(r.height-height)/2,window.innerHeight-height-8));
+      const screenX=window.mozInnerScreenX+x,screenY=window.mozInnerScreenY+y;
+      if(popup.state==='open' || popup.state==='showing')popup.moveTo(screenX,screenY);
+      else popup.openPopupAtScreen(screenX,screenY,false);
     }
     const tabOf=node=>node?.closest?.('.tabbrowser-tab');
     function enter(event){
@@ -55,7 +59,7 @@
       tab=target;
       const show=()=>{if(!valid())return;refresh();card.hidden=false;position();};
       if(switching){card.setAttribute('data-switching','true');show();}
-      else {card.removeAttribute('data-switching');showTimer=setTimeout(show,260);}
+      else {card.removeAttribute('data-switching');showTimer=setTimeout(show,600);}
     }
     function leave(event){
       const origin=tabOf(event.target);if(!origin)return;

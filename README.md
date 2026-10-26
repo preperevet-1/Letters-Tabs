@@ -74,3 +74,7 @@ Hover actions use a native chrome panel anchored to the hovered tab and capture 
 ## 1.7.2
 
 Compact 170px arrowless hover card with tighter icon spacing and filled active icons. First hover waits 260ms with a 100ms entrance; moving between tabs updates the existing popup immediately without replaying animation. Internal tab movement cancels pending dismissal; window focus changes no longer dismiss the panel. Native tab tooltips and tab preview popups are suppressed while this module is installed. Native appearance remains unverified; mocked hover, switching, tooltip suppression, native actions and cleanup pass.
+
+## 1.7.3
+
+First hover waits 600ms; switching remains immediate. Popup placement uses explicit screen coordinates and moveTo, avoiding a stale first-tab anchor. Native macOS menu appearance, shadow, margins and wrapper borders are disabled so only the custom card draws the surface. Native visual verification is still required.
