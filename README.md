@@ -107,3 +107,7 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 ### 1.7.10
 - Hide audio indicators only in Essentials.
 - Reduce the left inset of audio tabs from 14px to 8px to align their controls with the opposite edge.
+
+### 1.7.11
+- Site menu: Translate replaces Share; permissions and cookies are removed from the main panel. Settings opens native site permissions. Footer order: Boosts, Security, Settings, More.
+- Essentials hover actions open below their tile, avoiding neighboring Essentials.

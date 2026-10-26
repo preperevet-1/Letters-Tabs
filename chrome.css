@@ -1049,3 +1049,29 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:not([zen-essential]):is([soundplaying], [muted], [activemedia-blocked]) .tab-content {
   padding-inline-start: 8px !important;
 }
+
+/* Keep site permissions (including cookies) in the dedicated Settings action. */
+#zen-unified-site-data-panel[lt-site-menu] .zen-site-data-section:has(#zen-site-data-settings-list),
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header-share,
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-security-info .toolbarbutton-text {
+  display: none !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-boost { order: 0 !important; }
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-security-info { order: 1 !important; }
+#zen-unified-site-data-panel[lt-site-menu] #lt-site-settings { order: 2 !important; }
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-actions { order: 3 !important; margin-inline-start: auto !important; }
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-footer > toolbarbutton {
+  border-radius: 7px !important;
+  min-width: 34px !important;
+  height: 30px !important;
+  padding: 7px 10px !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-actions::before {
+  border-radius: 7px !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #lt-site-settings .toolbarbutton-icon,
+#zen-unified-site-data-panel[lt-site-menu] #lt-site-translate .toolbarbutton-icon {
+  width: 16px !important; height: 16px !important;
+  -moz-context-properties: fill, stroke;
+  fill: currentColor; stroke: currentColor;
+}

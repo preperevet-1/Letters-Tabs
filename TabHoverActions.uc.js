@@ -56,8 +56,11 @@
       // Explicit screen coordinates avoid retaining the first popup anchor.
       const r=tab.getBoundingClientRect(),c=card.getBoundingClientRect();
       const width=c.width || 170,height=c.height || 110;
-      const x=Math.max(8,Math.min(r.right+10,window.innerWidth-width-8));
-      const y=Math.max(8,Math.min(r.top+(r.height-height)/2,window.innerHeight-height-8));
+      // Essentials form a horizontal row: a side popup crosses adjacent tabs.
+      // Put it directly below its own tile so the pointer has a clear route.
+      const essential=tab.hasAttribute('zen-essential');
+      const x=Math.max(8,Math.min(essential?r.left:r.right+10,window.innerWidth-width-8));
+      const y=Math.max(8,Math.min(essential?r.bottom+6:r.top+(r.height-height)/2,window.innerHeight-height-8));
       const screenX=window.mozInnerScreenX+x,screenY=window.mozInnerScreenY+y;
       if(popup.state==='open' || popup.state==='showing')popup.moveTo(screenX,screenY);
       else popup.openPopupAtScreen(screenX,screenY,false);

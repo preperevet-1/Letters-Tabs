@@ -2,10 +2,10 @@
   "id": "zen-letter-tabs",
   "name": "Letter Tabs",
   "description": "Text-only tabs and editable single-letter Essentials.",
-  "version": "1.7.10",
+  "version": "1.7.11",
   "author": "Local",
   "createdAt": "2026-09-24",
-  "updatedAt": "2026-10-26T09:25:59Z",
+  "updatedAt": "2026-10-26T14:40:16Z",
   "style": {
     "chrome": "chrome.css"
   },
@@ -60,6 +60,12 @@
     },
     "CompactTabMenu.uc.js": {
       "name": "Compact Tab Context Menu",
+      "include": [
+        "chrome://browser/content/browser.xhtml"
+      ]
+    },
+    "SiteMenu.uc.js": {
+      "name": "Compact Site Menu",
       "include": [
         "chrome://browser/content/browser.xhtml"
       ]
