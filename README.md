@@ -118,3 +118,6 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 
 ### 1.7.13
 - Wait for site-panel dismissal before opening Translate; supply its anchor before opening instead of moving the visible popup.
+
+### 1.7.14
+- Restore Translate opening behavior exactly from 1.7.11; retain equal footer button sizes.
