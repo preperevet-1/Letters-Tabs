@@ -992,3 +992,21 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   padding-block-start: 0 !important;
   margin-block-start: 4px !important;
 }
+
+#lt-tab-hover-card[hidden] {display:none !important;}
+#lt-tab-hover-card {
+ position:fixed;z-index:2147483646;width:258px;box-sizing:border-box;padding:17px 18px 12px;
+ border:1px solid light-dark(#e7e7e7,#49494c);border-radius:18px;background:light-dark(#fafafa,#29292c);
+ color:light-dark(#333,#eee);box-shadow:0 10px 28px #0002;font:14px system-ui,sans-serif;
+ animation:lt-tab-hover-enter 140ms ease-out;
+}
+#lt-tab-hover-card .lt-tab-hover-title {font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#lt-tab-hover-card .lt-tab-hover-domain {margin-top:3px;color:light-dark(#888,#aaa);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#lt-tab-hover-card .lt-tab-hover-buttons {display:flex;justify-content:space-between;margin-top:14px;gap:10px;}
+#lt-tab-hover-card .lt-tab-hover-action {appearance:none !important;min-width:0 !important;min-height:0 !important;display:grid;place-items:center;width:36px;height:34px;margin:0 !important;padding:7px !important;border:0 !important;border-radius:9px !important;background:transparent;color:light-dark(#888,#aaa);cursor:pointer;transition:background-color 140ms,color 140ms;}
+#lt-tab-hover-card .lt-tab-hover-action:hover {color:light-dark(#222,#fff);background:light-dark(#ebebeb,#404044);}
+#lt-tab-hover-card .lt-tab-hover-action[aria-pressed='true'] {color:light-dark(#333,#fff);background:light-dark(#eee,#3b3b40);}
+#lt-tab-hover-card .lt-tab-hover-action:focus-visible {outline:2px solid #999;outline-offset:2px;}
+#lt-tab-hover-card svg {width:22px;height:22px;pointer-events:none;}
+@keyframes lt-tab-hover-enter {from{opacity:0;transform:translateX(-4px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){#lt-tab-hover-card {animation:none;}#lt-tab-hover-card .lt-tab-hover-action {transition:none;}}
