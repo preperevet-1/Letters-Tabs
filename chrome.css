@@ -1169,3 +1169,27 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-tab-hover-popup,#lt-folder-hover-card {
   backdrop-filter: blur(64px) saturate(1.6) !important;
 }
+
+/* Site actions: Boost, Translate, Screenshot, Reader View. */
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header-bookmark,
+#zen-unified-site-data-panel[lt-site-menu] .zen-site-data-section:has(#zen-site-data-boost-list) {display:none !important;}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header {display:flex !important;flex-direction:row !important;}
+#lt-site-toggle-boost {order:0 !important;}
+#lt-site-translate {order:1 !important;}
+#zen-site-data-header-screenshot {order:2 !important;}
+#zen-site-data-header-reader-mode {order:3 !important;}
+#lt-site-toggle-boost[aria-pressed='true'] {background:#505050 !important;color:white !important;fill:white !important;}
+#lt-site-toggle-boost[disabled] {opacity:.35 !important;pointer-events:none;}
+#lt-site-toggle-boost .toolbarbutton-icon {width:16px;height:16px;-moz-context-properties:fill,stroke;fill:currentColor;stroke:currentColor;}
+#lt-site-toggle-boost .toolbarbutton-text {display:none !important;}
+/* Reserve broom space only while interacting with the separator. */
+:root[zen-letter-tabs-active] #navigator-toolbox .pinned-tabs-container-separator:not(:hover):not(:focus-within) toolbarbutton[command='cmd_zenCloseUnpinnedTabs'] {display:none !important;}
+:root[zen-letter-tabs-active] .pinned-tabs-container-separator toolbarseparator {flex:1 !important;}
+/* All four action icons now share a gentle tilt and 15% growth. */
+#lt-tab-hover-card .lt-tab-hover-action svg {transition:transform 220ms cubic-bezier(.2,.7,.2,1);}
+#lt-tab-hover-card .lt-tab-hover-action:hover svg {animation:none !important;transform:scale(1.15) rotate(7deg);}
+#lt-tab-hover-card .lt-tab-hover-action:hover path {animation:none !important;}
+.letter-tabs-loading-line {position:absolute;left:0;bottom:0;height:2px;background:light-dark(#a9adb3,#a5abb5);border-radius:2px;pointer-events:none;transition:width 280ms linear,opacity 420ms ease-out;}
+.letter-tabs-loading-line.finished {opacity:0;}
+:root[zen-letter-tabs-active] zen-library [data-l10n-id='library-footer-donate-button'] {display:none !important;}
+@media(prefers-reduced-motion:reduce){#lt-tab-hover-card .lt-tab-hover-action svg {transition:none !important;transform:none !important;}}

@@ -45,7 +45,7 @@
     clearTimeout(hideTimer);if(next===folder)return;clearTimeout(showTimer);
     const switching=!card.hidden;folder=next;
     const show=()=>{if(folder!==next||!next.isConnected)return;window.__letterTabsHoverActions?.hide();clearTimeout(closeTimer);card.removeAttribute('data-closing');fill();card.hidden=false;position();};
-    if(switching)show();else showTimer=setTimeout(show,600);
+    if(switching)show();else showTimer=setTimeout(show,800);
   }
   function leave(e){const label=e.target.closest?.('.tab-group-label-container');if(!label)return;if(label.contains(e.relatedTarget)||card.contains(e.relatedTarget))return;later();}
   function suppress(e){if(e.target.id==='zen-folder-tabs-popup'){e.preventDefault();e.stopImmediatePropagation();}}

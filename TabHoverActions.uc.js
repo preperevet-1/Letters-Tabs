@@ -83,7 +83,7 @@
       tab=target;
       const show=()=>{if(!valid())return;refresh();clearTimeout(closeTimer);popup.removeAttribute('data-closing');card.hidden=false;position();};
       if(switching){card.setAttribute('data-switching','true');show();}
-      else {card.removeAttribute('data-switching');showTimer=setTimeout(show,600);}
+      else {card.removeAttribute('data-switching');showTimer=setTimeout(show,800);}
     }
     function leave(event){
       const origin=tabOf(event.target);if(!origin)return;

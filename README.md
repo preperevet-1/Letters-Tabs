@@ -141,3 +141,10 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 ### 1.8.3
 - Add Zia remote-page compositing prerequisite for hover-card backdrop blur.
 - Stop retaining the entrance transform after the animation completes.
+
+### 1.9.0
+- Top Boost toggle replaces Bookmark, followed by Translate. Native boost rows hidden; unsupported or unconfigured sites disable the toggle.
+- 800ms hover delay; icons gently grow 15% and tilt right.
+- Bottom loading line shares progress and cleanup with the wave.
+- Hide Zen Library donation button; extend the separator when not hovered.
+- Native heuristic URL suggestions for common sites after three matching letters (e.g. pin → Pinterest); unmatched text stays a search.

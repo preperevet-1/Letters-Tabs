@@ -26,8 +26,36 @@
       panel.hidePopup();
       window.FullPageTranslationsPanel.open(event).catch(console.error);
     });
+    const boost=make('lt-site-toggle-boost','Enable Boost','');
+    boost.setAttribute('class','zen-squircle-before');boost.setAttribute('flex','1');boost.setAttribute('closemenu','none');
+    const header=document.getElementById('zen-site-data-header');header.append(boost,translate);
+    const list=document.getElementById('zen-site-data-boost-list');
+    const nativeBoost=document.getElementById('zen-site-data-boost');
+    function boostRows(){return [...list.querySelectorAll('[data-action-id="zen-site-data-toggle-boost"]')];}
+    let lastBoostId=null;
+    function updateBoost(){
+      const rows=boostRows(),active=rows.find(row=>row.getAttribute('state')==='enabled');
+      if(active)lastBoostId=active.getAttribute('data-boost-id');
+      boost.disabled=nativeBoost.disabled || !rows.length;
+      boost.setAttribute('aria-pressed',String(Boolean(active)));
+      boost.setAttribute('tooltiptext',boost.disabled?'No Boost available':active?'Disable Boost':'Enable Boost');
+      const image=getComputedStyle(nativeBoost).listStyleImage;
+      boost.style.listStyleImage=image;
+    }
+    boost.addEventListener('command',()=>{
+      if(boost.disabled)return;
+      const rows=boostRows();
+      const row=rows.find(r=>r.getAttribute('state')==='enabled') || rows.find(r=>r.getAttribute('data-boost-id')===lastBoostId) || rows[0];
+      row?.dispatchEvent(new MouseEvent('click',{bubbles:true,button:0}));updateBoost();
+    });
+    const observer=new MutationObserver(updateBoost);
+    observer.observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:['state']});
+    observer.observe(nativeBoost,{attributes:true,attributeFilter:['disabled','boosting']});
+    function shown(e){if(e.target===panel)updateBoost();}
+    panel.addEventListener('popupshown',shown);
+    updateBoost();
     panel.setAttribute('lt-site-menu','true');
-    cleanup=()=>{settings.remove();translate.remove();panel.removeAttribute('lt-site-menu');};
+    cleanup=()=>{observer.disconnect();panel.removeEventListener('popupshown',shown);boost.remove();settings.remove();translate.remove();panel.removeAttribute('lt-site-menu');};
   }
   function destroy(){window.removeEventListener('load',init);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsSiteMenu;}
   window.__letterTabsSiteMenu={destroy};window.addUnloadListener?.(destroy);window.addEventListener('unload',destroy,{once:true});

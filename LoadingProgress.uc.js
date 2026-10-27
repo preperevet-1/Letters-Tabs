@@ -15,6 +15,7 @@
     window.clearInterval(state.ticker);
     window.clearTimeout(state.finish);
     state.layer.remove();
+    state.line.remove();
     tab.removeAttribute('letter-tabs-loading');
     states.delete(tab);
   }
@@ -26,16 +27,18 @@
     const layer = document.createElementNS('http://www.w3.org/1999/xhtml', 'div');
     layer.className = 'letter-tabs-loading-fill';
     layer.setAttribute('aria-hidden', 'true');
-    background.append(layer);
-    const state = { layer, value: 3, ticker: null, finish: null };
+    const line=document.createElementNS('http://www.w3.org/1999/xhtml','div');
+    line.className='letter-tabs-loading-line';line.setAttribute('aria-hidden','true');
+    background.append(layer,line);
+    const state = { layer, line, value: 3, ticker: null, finish: null };
     states.set(tab, state);
     tab.setAttribute('letter-tabs-loading', 'true');
-    layer.style.width = '3%';
+    layer.style.width = line.style.width = '3%';
     // When no byte total is available, provide gentle estimated progress.
     state.ticker = window.setInterval(() => {
       if (!eligible(tab) || !tab.hasAttribute("busy")) { remove(tab); return; }
       state.value += (90 - state.value) * .08;
-      layer.style.width = `${state.value}%`;
+      layer.style.width = line.style.width = `${state.value}%`;
     }, 180);
   }
   const listener = {
@@ -48,11 +51,11 @@
         if (!state || state.finish !== null) return;
         if (!eligible(tab)) { remove(tab); return; }
         window.clearInterval(state.ticker);
-        state.layer.style.width = '100%';
+        state.line.style.width = state.layer.style.width = '100%';
         state.finish = window.setTimeout(() => {
           if (states.get(tab) !== state) return;
           if (!eligible(tab)) { remove(tab); return; }
-          state.layer.classList.add('finished');
+          state.layer.classList.add('finished');state.line.classList.add('finished');
           state.finish = window.setTimeout(() => { if (states.get(tab) === state) remove(tab); }, 450);
         }, 280);
       }
@@ -62,7 +65,7 @@
       const state = states.get(window.gBrowser.getTabForBrowser(browser));
       if (!state || state.finish !== null) return;
       state.value = Math.max(state.value, Math.min(95, total / totalMaximum * 100));
-      state.layer.style.width = `${state.value}%`;
+      state.line.style.width = state.layer.style.width = `${state.value}%`;
     },
   };
   function tabClosed(event) { closed.add(event.target); remove(event.target); }
