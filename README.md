@@ -148,3 +148,7 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 - Bottom loading line shares progress and cleanup with the wave.
 - Hide Zen Library donation button; extend the separator when not hovered.
 - Native heuristic URL suggestions for common sites after three matching letters (e.g. pin → Pinterest); unmatched text stays a search.
+
+## 1.9.1
+- Unified top Boost action creates or toggles an existing boost; native disabled styling and corrected active background. Removed footer Boost button.
+- Fixed asynchronous site-provider activation and added native inline address completion with selected suffix.

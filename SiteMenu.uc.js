@@ -36,9 +36,9 @@
     function updateBoost(){
       const rows=boostRows(),active=rows.find(row=>row.getAttribute('state')==='enabled');
       if(active)lastBoostId=active.getAttribute('data-boost-id');
-      boost.disabled=nativeBoost.disabled || !rows.length;
+      boost.disabled=nativeBoost.disabled;
       boost.setAttribute('aria-pressed',String(Boolean(active)));
-      boost.setAttribute('tooltiptext',boost.disabled?'No Boost available':active?'Disable Boost':'Enable Boost');
+      boost.setAttribute('tooltiptext',boost.disabled?'Boost unavailable':active?'Disable Boost':rows.length?'Enable Boost':'Create Boost');
       const image=getComputedStyle(nativeBoost).listStyleImage;
       boost.style.listStyleImage=image;
     }
@@ -46,7 +46,9 @@
       if(boost.disabled)return;
       const rows=boostRows();
       const row=rows.find(r=>r.getAttribute('state')==='enabled') || rows.find(r=>r.getAttribute('data-boost-id')===lastBoostId) || rows[0];
-      row?.dispatchEvent(new MouseEvent('click',{bubbles:true,button:0}));updateBoost();
+      if(row)row.dispatchEvent(new MouseEvent('click',{bubbles:true,button:0}));
+      else nativeBoost.doCommand();
+      updateBoost();
     });
     const observer=new MutationObserver(updateBoost);
     observer.observe(list,{childList:true,subtree:true,attributes:true,attributeFilter:['state']});

@@ -1178,8 +1178,10 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #lt-site-translate {order:1 !important;}
 #zen-site-data-header-screenshot {order:2 !important;}
 #zen-site-data-header-reader-mode {order:3 !important;}
-#lt-site-toggle-boost[aria-pressed='true'] {background:#505050 !important;color:white !important;fill:white !important;}
-#lt-site-toggle-boost[disabled] {opacity:.35 !important;pointer-events:none;}
+#lt-site-toggle-boost[aria-pressed='true'] {color:white !important;fill:white !important;}
+#zen-site-data-header #lt-site-toggle-boost[aria-pressed='true']::before {background:#505050 !important;}
+/* Disabled styling is inherited from Zen's header, exactly like Reader Mode. */
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-boost {display:none !important;}
 #lt-site-toggle-boost .toolbarbutton-icon {width:16px;height:16px;-moz-context-properties:fill,stroke;fill:currentColor;stroke:currentColor;}
 #lt-site-toggle-boost .toolbarbutton-text {display:none !important;}
 /* Reserve broom space only while interacting with the separator. */

@@ -11,18 +11,22 @@
   const sites=[['Pinterest','pinterest.com'],['YouTube','youtube.com'],['ChatGPT','chatgpt.com'],['Perplexity','perplexity.ai'],['Genius','genius.com'],['GitHub','github.com'],['Google','google.com'],['Gmail','mail.google.com'],['Drive','drive.google.com'],['Sheets','sheets.google.com'],['Claude','claude.ai'],['Mobbin','mobbin.com'],['Reddit','reddit.com'],['Threads','threads.com'],['Figma','figma.com'],['Notion','notion.so'],['LinkedIn','linkedin.com'],['Behance','behance.net']];
   function match(context){
     const q=context.searchString.toLowerCase();
-    if(q.length<3 || !/^[a-z0-9.]+$/.test(q) || context.searchMode || context.restrictInSearchMode?.())return null;
+    if(q.length<3 || !/^[a-z0-9.]+$/.test(q) || context.searchMode || context.allowAutofill===false)return null;
     return sites.find(([name,host])=>name.toLowerCase().startsWith(q)||host.startsWith(q));
   }
   class LetterTabsSites extends UrlbarProvider {
     get name(){return 'LetterTabsSites';}
     get type(){return S.PROVIDER_TYPE.HEURISTIC;}
     getPriority(){return 2;}
-    isActive(context){return Boolean(match(context));}
+    async isActive(context){return Boolean(match(context));}
     async startQuery(context,add){
       const found=match(context);if(!found)return;
       const [title,host]=found,url='https://'+host+'/';
-      add(this,new UrlbarResult({type:S.RESULT_TYPE.URL,source:S.RESULT_SOURCE.OTHER_LOCAL,heuristic:true,payload:{title,url,icon:S.getIconForUrl(Services.io.newURI(url))},highlights:{title:S.HIGHLIGHT.TYPED,url:S.HIGHLIGHT.TYPED}}));
+      const q=context.searchString;
+      // Inline completion must preserve the typed prefix, including its case.
+      const completion=host.toLowerCase().startsWith(q.toLowerCase())?host:title.toLowerCase();
+      const value=q+completion.slice(q.length);
+      add(this,new UrlbarResult({type:S.RESULT_TYPE.URL,source:S.RESULT_SOURCE.OTHER_LOCAL,heuristic:true,autofill:{value,selectionStart:q.length,selectionEnd:value.length,type:'origin'},payload:{title,url,icon:S.getIconForUrl(url)},highlights:{title:S.HIGHLIGHT.TYPED,url:S.HIGHLIGHT.TYPED}}));
     }
   }
   // The providers manager is shared across browser windows.
