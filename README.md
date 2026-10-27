@@ -161,3 +161,6 @@ Restores original Zen Boost brush geometry with active fill. Uses the installed 
 
 ## 1.9.4
 Equal-width site-header actions with symmetric padding, softer continuous corners, and a raised gradient surface for active Boost.
+
+## 1.9.5
+Consistent corners on all site-menu action surfaces and extension tiles. Symmetric footer insets. Active Boost shares the white buttons shadow and highlight with a gray gradient.
