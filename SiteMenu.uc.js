@@ -28,7 +28,8 @@
     });
     const boost=make('lt-site-toggle-boost','Enable Boost','');
     boost.setAttribute('class','zen-squircle-before');boost.setAttribute('flex','1');boost.setAttribute('closemenu','none');
-    for(let i=0;i<3;i++){const star=document.createXULElement('box');star.setAttribute('class','lt-boost-star lt-boost-star-'+i);star.setAttribute('aria-hidden','true');boost.append(star);}
+    const sparkle=document.createXULElement('box');sparkle.setAttribute('class','lt-native-boost-animation');sparkle.setAttribute('aria-hidden','true');
+    const strip=document.createXULElement('box');strip.setAttribute('class','lt-native-boost-strip');sparkle.append(strip);boost.append(sparkle);
     const header=document.getElementById('zen-site-data-header');header.append(boost,translate);
     const list=document.getElementById('zen-site-data-boost-list');
     const nativeBoost=document.getElementById('zen-site-data-boost');

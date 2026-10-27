@@ -155,3 +155,6 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 
 ## 1.9.2
 Active Boost uses a filled brush and three staggered sparkle animations. Reduced-motion preference keeps the stars static.
+
+## 1.9.3
+Restores original Zen Boost brush geometry with active fill. Uses the installed native boost-indicator sprite (90 frames, 3 seconds); removes custom stars. Respects reduced motion.

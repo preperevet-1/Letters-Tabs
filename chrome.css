@@ -1196,12 +1196,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] zen-library [data-l10n-id='library-footer-donate-button'] {display:none !important;}
 @media(prefers-reduced-motion:reduce){#lt-tab-hover-card .lt-tab-hover-action svg {transition:none !important;transform:none !important;}}
 
-/* Filled active brush and staggered, decorative sparkles. */
-#lt-site-toggle-boost[aria-pressed='true'] {list-style-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20fill%3D%22white%22%20transform%3D%22rotate%2840%2012%2012%29%22%3E%3Cpath%20d%3D%22M8%202h8v9H8zM6%2012h12v4H6zM10%2015h4v6a2%202%200%200%201-4%200z%22/%3E%3Cpath%20d%3D%22M8%202Q12%205%2016%202v3H8z%22/%3E%3C/g%3E%3C/svg%3E") !important;}
-#lt-site-toggle-boost .lt-boost-star {display:none;position:absolute;width:5px;height:5px;background:white;pointer-events:none;z-index:2;mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20d%3D%22M6%200%207.6%204.4%2012%206%207.6%207.6%206%2012%204.4%207.6%200%206%204.4%204.4Z%22/%3E%3C/svg%3E") center/contain no-repeat;}
-#lt-site-toggle-boost[aria-pressed='true']:not([disabled]) .lt-boost-star {display:block;animation:lt-boost-twinkle 2400ms ease-in-out infinite;}
-#lt-site-toggle-boost .lt-boost-star-0 {left:calc(50% - 14px);top:7px;}
-#lt-site-toggle-boost .lt-boost-star-1 {left:calc(50% + 9px);top:6px;animation-delay:-800ms !important;}
-#lt-site-toggle-boost .lt-boost-star-2 {left:calc(50% + 10px);bottom:6px;width:4px;height:4px;animation-delay:-1600ms !important;}
-@keyframes lt-boost-twinkle {0%,100%{opacity:.25;transform:scale(.65) rotate(-12deg)}45%{opacity:1;transform:scale(1) rotate(12deg)}70%{opacity:.4;transform:scale(.75)}}
-@media(prefers-reduced-motion:reduce){#lt-site-toggle-boost .lt-boost-star {animation:none !important;opacity:.65;}}
+/* Original Zen brush geometry, filled only while active. */
+#lt-site-toggle-boost[aria-pressed='true'] {list-style-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2014.7%2016.72%22%3E%3Cpath%20fill%3D%22white%22%20stroke%3D%22white%22%20stroke-width%3D%22.65%22%20stroke-linejoin%3D%22round%22%20fill-rule%3D%22evenodd%22%20d%3D%22M%203.4%2C14.17%20A%200.86000001%2C0.86000001%200%200%201%202.54%2C15.03%200.86000001%2C0.86000001%200%200%201%201.6799999%2C14.17%200.86000001%2C0.86000001%200%200%201%202.54%2C13.31%200.86000001%2C0.86000001%200%200%201%203.4%2C14.17%20Z%20M%2010.53%2C11.6%20C%2011.76%2C10.89%2013.88%2C8.39%2014.12%2C7.61%2014.46%2C6.52%2013.63%2C5.97%2012.86%2C5.52%2012.22%2C5.13%2010.95%2C6.95%2010.25%2C7.72%20m%20-0.01%2C0%20C%2010.79%2C7.17%2011.75%2C5.7%2011.75%2C5.18%2011.75%2C2.67%206.38%2C-0.99%206.8%2C1.16%207.09%2C2.63%205.72%2C5.24%205.17%2C6.11%20M%205.08%2C6.35%20C%204.76%2C6.03%204.24%2C6.02%203.91%2C6.33%20L%203.22%2C6.98%20C%202.88%2C7.3%202.87%2C7.85%203.2%2C8.18%20l%201.69%2C1.69%20-3.54%2C2.65%20c%20-1.02%2C0.73%20-1.15%2C2.2%20-0.27%2C3.09%20v%200%20c%200.87%2C0.88%202.31%2C0.79%203.06%2C-0.18%20l%202.71%2C-3.63%201.6%2C1.6%20c%200.33%2C0.33%200.85%2C0.33%201.18%2C0%20l%200.64%2C-0.63%20c%200.33%2C-0.33%200.33%2C-0.86%200%2C-1.19%20L%205.06%2C6.33%20Z%22/%3E%3C/svg%3E") !important;}
+#lt-site-toggle-boost .lt-native-boost-animation {display:none;pointer-events:none;}
+@media not (prefers-reduced-motion:reduce) {
+ #lt-site-toggle-boost[aria-pressed='true']:not([disabled]) .lt-native-boost-animation {
+  position:absolute;display:block;top:0;left:50%;height:100%;aspect-ratio:1;translate:-50%;overflow:clip;z-index:2;pointer-events:none;
+ }
+ #lt-site-toggle-boost .lt-native-boost-strip {
+  display:block;flex:none;width:calc(90 * 100%);height:100%;color:white;-moz-context-properties:fill;fill:currentColor;
+  background-image:url("chrome://browser/content/zen-images/boost-indicator.svg");background-repeat:no-repeat;background-size:100% 100%;
+  animation:lt-native-boost-sprite 3s steps(90,jump-none) infinite;
+ }
+}
+@keyframes lt-native-boost-sprite {from{transform:translateX(0)}to{transform:translateX(calc(-89 / 90 * 100%))}}
