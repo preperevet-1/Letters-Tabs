@@ -152,3 +152,6 @@ Hide Translate This Page in the urlbar. Compact the tab context menu around pin/
 ## 1.9.1
 - Unified top Boost action creates or toggles an existing boost; native disabled styling and corrected active background. Removed footer Boost button.
 - Fixed asynchronous site-provider activation and added native inline address completion with selected suffix.
+
+## 1.9.2
+Active Boost uses a filled brush and three staggered sparkle animations. Reduced-motion preference keeps the stars static.
