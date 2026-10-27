@@ -1210,3 +1210,35 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  }
 }
 @keyframes lt-native-boost-sprite {from{transform:translateX(0)}to{transform:translateX(calc(-89 / 90 * 100%))}}
+
+/* Even header spacing and softly rounded, raised action surfaces. */
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header {
+ box-sizing:border-box !important;
+ padding-inline:10px !important;
+ gap:8px !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header > toolbarbutton {
+ flex:1 1 0 !important;
+ min-width:0 !important;
+ width:0 !important;
+ margin:0 !important;
+ border-radius:9px !important;
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header > toolbarbutton::before {
+ inset:0 !important;
+ width:auto !important;
+ height:auto !important;
+ border-radius:9px !important;
+ box-shadow:0 1px 2px rgb(0 0 0 / .12),inset 0 1px 0 rgb(255 255 255 / .35) !important;
+}
+@supports (corner-shape:superellipse(1.5)) {
+ #zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header > toolbarbutton,
+ #zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header > toolbarbutton::before {
+  corner-shape:superellipse(1.5) !important;
+ }
+}
+#zen-unified-site-data-panel[lt-site-menu] #zen-site-data-header #lt-site-toggle-boost[aria-pressed='true']::before {
+ background:linear-gradient(to bottom,#626262,#484848) !important;
+ border-color:rgb(0 0 0 / .32) !important;
+ box-shadow:0 1px 2px rgb(0 0 0 / .16),inset 0 1px 0 rgb(255 255 255 / .24) !important;
+}

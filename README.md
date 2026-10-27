@@ -158,3 +158,6 @@ Active Boost uses a filled brush and three staggered sparkle animations. Reduced
 
 ## 1.9.3
 Restores original Zen Boost brush geometry with active fill. Uses the installed native boost-indicator sprite (90 frames, 3 seconds); removes custom stars. Respects reduced motion.
+
+## 1.9.4
+Equal-width site-header actions with symmetric padding, softer continuous corners, and a raised gradient surface for active Boost.
