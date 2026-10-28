@@ -11,7 +11,7 @@
     ['context_zenMoveToFolder','context_moveTabToNewGroup','context_moveSplitViewToNewGroup','context_moveTabToGroup','context_reopenInContainer'],
     [],
     ['context_zen-edit-tab-title','context_zen-edit-tab-icon','context_zen-edit-pinned-page'],
-    ['context_closeTab']
+    ['context_unloadTab','context_closeTab']
   ];
   function restoreHidden(){
     for(const [node,value] of hiddenStates){

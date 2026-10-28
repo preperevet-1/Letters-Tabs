@@ -853,12 +853,8 @@
   document.addEventListener("visibilitychange", updateBrowserActivity);
   setTimeout(updateBrowserActivity, 0);
 
-  const EYE_SVG =
-    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill' fill-opacity='context-fill-opacity'>" +
-    "<path d='M12 5c-7 0-11 7-11 7s4 7 11 7 11-7 11-7-4-7-11-7zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8z'/></svg>";
-  const EYE_OFF_SVG =
-    "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill' fill-opacity='context-fill-opacity'>" +
-    "<path d='M2 2l20 20-1.4 1.4-3.5-3.5A12 12 0 0 1 12 21C5 21 1 14 1 14a20 20 0 0 1 4.6-5.6L.6 3.4 2 2zm10 6a4 4 0 0 1 4 4c0 .6-.1 1.1-.3 1.6l-5.3-5.3c.5-.2 1-.3 1.6-.3zM12 5c7 0 11 7 11 7a20 20 0 0 1-3.7 4.6l-2.1-2.1A8 8 0 0 0 12 7c-.7 0-1.4.1-2 .3L7.7 5C9 4.4 10.4 5 12 5z'/></svg>";
+  const EYE_SVG = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>";
+  const EYE_OFF_SVG = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='m3 3 18 18M10 5.2A11 11 0 0 1 12 5c6.5 0 10 7 10 7a19 19 0 0 1-3 3.9M6.1 6.1A23 23 0 0 0 2 12s3.5 7 10 7a12 12 0 0 0 5.9-1.9M9.9 9.9a3 3 0 0 0 4.2 4.2'/></svg>";
   const eyeUrl = (svg) =>
     `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
   const EYE_URL = eyeUrl(EYE_SVG);
@@ -927,7 +923,7 @@
       }
     }
 
-    const nativeButtons = musicPlayerUI.querySelectorAll(PIP_BUTTON_SELECTORS);
+    const nativeButtons = musicPlayerUI.querySelectorAll(".zen-media-pip-button");
     for (const nativeButton of nativeButtons) {
       if (nativeButton.hasAttribute("zenslop-toggle")) continue;
       const existingToggle = togglesByNativeButton.get(nativeButton);
@@ -1316,6 +1312,13 @@
   });
 
   window.ZenPiPController = {
+    followMediaBrowser(browser) {
+      if (!browser?.browsingContext) return;
+      const id=browser.browsingContext.id;
+      const candidate=[...availableSources.values()].find(s=>(s.bc.top || s.bc).id===id);
+      if(candidate && sourceBC?.id!==candidate.bc.id)
+        this._activateSource(candidate.width,candidate.height,candidate.bc);
+    },
     diagnostics() {
       return {
         renderer: nativeSession?.ready ? "native" : "canvas",

@@ -192,3 +192,6 @@ Separate header and transport layouts eliminate the shared seven-column minimum 
 
 ## 1.10.5
 Decorate every native media card, including newly inserted stack members. Reuse Zen’s computed PiP icon and native command. Transport buttons have hover backgrounds. Sound bars remain visible outside hover, use dark gray in light mode and become static gray dots when muted or paused. Browser visual verification remains pending.
+
+## 1.10.6
+Only the native front media card is displayed; stack offsets are removed. Footer: native close, previous/play/next, one outline eye. Eye discovery targets only the native PiP button (never its child images). Video source follows the current media card when an eligible video is available. Replaced accumulated media CSS with one layout; sound bars are always present and long titles scroll on hover. Restored native Unload Tab in the context menu. Video remains subject to source eligibility and background-tab rules. Live Zen verification remains pending.

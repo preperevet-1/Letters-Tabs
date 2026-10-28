@@ -9,7 +9,9 @@
   function update(){
     for(const [element,parts] of decorated)if(!element.isConnected){parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
     const front=window.gZenMediaController?.frontCard;
+    window.ZenPiPController?.followMediaBrowser?.(front?.browser);
     for(const element of document.querySelectorAll('#zen-media-controls-toolbar .zen-media-card')) {
+      element.toggleAttribute('lt-current-media',front?.element===element);
       const card=front?.element===element?front:decorated.get(element)?.card || {
         element,focusButton:element.querySelector('.zen-media-focus-button'),titleEl:element.querySelector('.zen-media-title')
       };
@@ -33,18 +35,12 @@
       const moved=[];
       const move=(selector,parent)=>{const n=card.element.querySelector(selector);if(!n)return;const marker=document.createComment('lt-media-position');n.before(marker);moved.push([n,marker]);parent.append(n);};
       move('.zen-media-focus-button',header);move('.zen-media-info-vbox',header);move('.zen-media-mute-button',header);
-      for(const selector of ['.zen-sidebar-pip-toggle','.zen-media-previoustrack-button','.zen-media-playpause-button','.zen-media-nexttrack-button','.zen-media-pip-button'])move(selector,footer);
-      const pip=document.createElementNS(bars.namespaceURI,'button');pip.className='lt-window-video-action';pip.type='button';pip.title='Picture-in-Picture';pip.setAttribute('aria-label','Picture-in-Picture');
-      const nativePip=card.element.querySelector('.zen-media-pip-button');
-      const pipIcon=document.createXULElement('image');pipIcon.classList.add('lt-native-pip-icon');pip.append(pipIcon);
-      pip.addEventListener('click',e=>{e.stopPropagation();nativePip?.doCommand();});footer.append(pip);
+      for(const selector of ['.zen-sidebar-pip-toggle','.zen-media-previoustrack-button','.zen-media-playpause-button','.zen-media-nexttrack-button','.zen-media-pip-button','.zen-media-close-button'])move(selector,footer);
       main.prepend(header);main.append(footer);
-      parts={art,bars,title,text,header,footer,moved,pipIcon,nativePip,card,url:'',failed:new Set()};
+      parts={art,bars,title,text,header,footer,moved,card,url:'',failed:new Set()};
       art.addEventListener('error',()=>{parts.failed.add(art.src);parts.url='';});decorated.set(card.element,parts);
     }
     if(card.controller)parts.card=card;
-    const nativeIcon=parts.nativePip && [parts.nativePip.querySelector('.toolbarbutton-icon'),parts.nativePip].filter(Boolean).map(n=>getComputedStyle(n).listStyleImage).find(icon=>icon && icon!=='none');
-    if(nativeIcon && nativeIcon!=='none')parts.pipIcon.style.listStyleImage=nativeIcon;
     // Zenslop can add the eye asynchronously, after the card was decorated.
     const eye=card.element.querySelector('.zen-sidebar-pip-toggle');
     if(eye && eye.parentElement!==parts.footer)parts.footer.prepend(eye);
@@ -55,7 +51,7 @@
       const url=[...images.map(a=>a.src),fallback,card.browser?.mIconURL].find(u=>u&&!parts.failed.has(u)) || '';
       const label=card.titleEl.textContent || '';
       if(parts.text.textContent!==label){parts.text.textContent=label;parts.failed.clear();}
-      const distance=Math.max(0,parts.text.scrollWidth-parts.title.clientWidth);
+      const distance=Math.max(0,parts.text.getBoundingClientRect().width-parts.title.clientWidth);
       parts.title.toggleAttribute('overflowing',distance>2);
       parts.title.style.setProperty('--lt-title-travel',-distance+'px');
       parts.title.style.setProperty('--lt-title-duration',Math.max(7,distance/22+4)+'s');
@@ -66,7 +62,7 @@
   const observer=new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.matches?.('.zen-media-card'))))update();});
   const toolbar=document.getElementById('zen-media-controls-toolbar');
   if(toolbar)observer.observe(toolbar,{childList:true});
-  const timer=setInterval(update,750);update();
-  function destroy(){observer.disconnect();clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
+  const timer=setInterval(update,250);update();
+  function destroy(){observer.disconnect();clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();
