@@ -180,3 +180,9 @@ Media layout/artwork inspiration: [Zia](https://github.com/z1n-k/zia), MIT (`ZIA
 ## 1.10.1 — mini-player controls
 
 Library downloads hide the player and video preview. Expanded controls place the sidebar eye on the left, transport buttons centrally and native PiP on the right. The top indicator toggles mute and uses the Space accent. Only the title scrolls automatically when overflowing. Timestamps are hidden; seeking stays available. Artwork tries alternate metadata images and YouTube thumbnails before falling back to the site icon. Controls expand and collapse with short transitions. Live Zen validation is still required.
+
+## 1.10.2
+Sound bars remain visible and turn static gray when paused or muted. Symmetric outer grid columns center transport controls. The native separate-window PiP action is visible in the expanded card. Video has 18px rounded clipping. Title scrolling now runs only while hovering the card. Live browser verification remains pending.
+
+## 1.10.3
+Constrain the seek slider intrinsic width to its grid track and include padding in its width, keeping both card insets equal.

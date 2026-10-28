@@ -1386,3 +1386,40 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  }
  .zen-media-card[media-position-hidden] .zen-media-progress-hbox {display:none !important;}
 }
+/* 1.10.2: symmetric transport row, persistent sound bars and video corners. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar {
+ .zen-media-main-vbox {grid-template-columns:44px minmax(0,1fr) 26px 26px 26px minmax(0,1fr) 44px;}
+ .zen-media-mute-button {justify-self:end;width:28px !important;height:28px !important;}
+ .zen-sidebar-pip-toggle {justify-self:start;}
+ .zen-media-pip-button {justify-self:end;}
+ .zen-media-card:is(:hover,:focus-within) .zen-media-pip-button {display:flex !important;visibility:visible !important;opacity:1 !important;}
+ .zen-media-card .zen-media-mute-button > :is(image,.toolbarbutton-icon) {opacity:0 !important;}
+ .zen-media-card .zen-media-mute-button .lt-media-equalizer {display:flex !important;}
+ .zen-media-card:not(.playing) .lt-media-equalizer i,
+ .zen-media-card[muted] .lt-media-equalizer i {animation:none !important;transform:none !important;background:#959595 !important;opacity:.65 !important;}
+ .lt-media-title-clip[overflowing] span {animation:none;transform:translateX(0);}
+ .zen-media-card:hover .lt-media-title-clip[overflowing] span {animation:lt-media-title-scroll var(--lt-title-duration) ease-in-out infinite;}
+}
+:root[zen-letter-tabs-active] #zen-sidebar-pip-container {
+ border-radius:18px !important;corner-shape:superellipse(1.5);overflow:hidden !important;
+ clip-path:inset(0 round 18px);
+}
+:root[zen-letter-tabs-active] #zen-sidebar-pip-container > :is(canvas,browser) {border-radius:inherit !important;}
+@media(prefers-reduced-motion:reduce){:root[zen-letter-tabs-active] .zen-media-card:hover .lt-media-title-clip span{animation:none !important;}}
+/* Keep the range input's intrinsic width inside its grid track. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-progress-hbox {
+  min-width:0 !important;
+  width:100% !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  padding-inline:2px !important;
+  margin-inline:0 !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-progress-bar {
+  flex:1 1 0% !important;
+  min-width:0 !important;
+  width:0 !important;
+  max-width:100% !important;
+  box-sizing:border-box !important;
+  margin-inline:0 !important;
+}
