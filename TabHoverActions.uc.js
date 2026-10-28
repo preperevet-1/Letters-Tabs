@@ -16,6 +16,12 @@
     const popup=make('div','lt-hover-shell');popup.id='lt-tab-hover-popup';popup.hidden=true;
     popup.append(card);document.documentElement.append(popup);
     let tab=null,showTimer=0,hideTimer=0,closeTimer=0;
+  // Participate in Zen's native compact-mode open-popup observer. Each menu
+  // owns its marker, so switching menus cannot release another menu's hold.
+  const compactHold=document.createElementNS('http://www.w3.org/1999/xhtml','span');
+  compactHold.hidden=true;
+  document.getElementById('navigator-toolbox').append(compactHold);
+
     const nativePreviews=new Set(['tabbrowser-tab-tooltip','tab-preview-panel']);
     function suppressTooltip(event){if(nativePreviews.has(event.target.id)){event.preventDefault();event.stopImmediatePropagation();}}
     window.addEventListener('popupshowing',suppressTooltip,true);
@@ -55,7 +61,7 @@
       clearTimeout(showTimer);clearTimeout(hideTimer);tab=null;
       if(popup.hidden || popup.hasAttribute('data-closing'))return;
       popup.setAttribute('data-closing','true');
-      closeTimer=setTimeout(()=>{popup.hidden=true;card.hidden=true;popup.removeAttribute('data-closing');},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:110);
+      closeTimer=setTimeout(()=>{popup.hidden=true;card.hidden=true;compactHold.removeAttribute('open');popup.removeAttribute('data-closing');},window.matchMedia('(prefers-reduced-motion: reduce)').matches?0:110);
     }
     function deferHide(){clearTimeout(showTimer);clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(!card.contains(document.activeElement))hide();},180);}
     function position(){
@@ -81,7 +87,7 @@
       clearTimeout(showTimer);
       const switching=!card.hidden;
       tab=target;
-      const show=()=>{if(!valid())return;refresh();clearTimeout(closeTimer);popup.removeAttribute('data-closing');card.hidden=false;position();};
+      const show=()=>{if(!valid())return;refresh();clearTimeout(closeTimer);popup.removeAttribute('data-closing');compactHold.setAttribute('open','true');card.hidden=false;position();};
       if(switching){card.setAttribute('data-switching','true');show();}
       else {card.removeAttribute('data-switching');showTimer=setTimeout(show,800);}
     }
@@ -120,7 +126,7 @@
     card.addEventListener('mouseenter',keep);card.addEventListener('mouseleave',deferHide);card.addEventListener('focusin',keep);card.addEventListener('focusout',deferHide);
     window.addEventListener('keydown',key,true);window.addEventListener('deactivate',hide);window.addEventListener('resize',hide);window.addEventListener('scroll',hide,true);function popupHidden(event){if(event.target===popup)hide();}
     popup.addEventListener('popuphidden',popupHidden);
-    cleanup=()=>{hide();clearTimeout(closeTimer);container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();};
+    cleanup=()=>{hide();clearTimeout(closeTimer);container.removeEventListener('mouseover',enter,true);container.removeEventListener('mouseout',leave,true);container.removeEventListener('dragstart',hide,true);container.removeEventListener('TabClose',close);window.removeEventListener('keydown',key,true);window.removeEventListener('deactivate',hide);window.removeEventListener('resize',hide);window.removeEventListener('scroll',hide,true);window.removeEventListener('popupshowing',suppressTooltip,true);popup.removeEventListener('popuphidden',popupHidden);popup.remove();compactHold.remove();};
     cleanup.hide=hide;
   }
   function destroy(){disposed=true;clearTimeout(retry);window.removeEventListener('load',initialize);window.removeEventListener('unload',destroy);cleanup();delete window.__letterTabsHoverActions;}

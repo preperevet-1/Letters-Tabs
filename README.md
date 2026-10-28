@@ -164,3 +164,15 @@ Equal-width site-header actions with symmetric padding, softer continuous corner
 
 ## 1.9.5
 Consistent corners on all site-menu action surfaces and extension tiles. Symmetric footer insets. Active Boost shares the white buttons shadow and highlight with a gray gradient.
+
+## 1.10.0 — compact hover menus and sidebar media
+
+Tab and folder hover menus now participate in Zen's native compact sidebar popup tracking. The sidebar remains revealed until the menu finishes closing; each menu has an independent hold which is removed on cleanup.
+
+The native media card gets a Zia-inspired compact layout: artwork, title, artist and an animated playback indicator. Hover or keyboard focus reveals the original playback, seek, mute, PiP and close controls. Missing artwork falls back to the native site icon. Reduced-motion preferences disable the equalizer animation.
+
+Sidebar video mirroring is adapted from [Zenslop](https://github.com/Firebolt9907/Zenslop). It uses the native visual clone with a canvas fallback and an eye toggle beside the media controls. It follows the active source and stops presenting when hidden. The upstream preferences `mod.zenslop.renderer`, `mod.zenslop.captions` and `mod.zenslop.captionsWhenPipHidden` remain supported through about:config. Do not install a second copy of Zenslop alongside this integration.
+
+**Restart Zen after installing, updating or disabling this version.** Window actors are registered for the browser process. The self-contained SidebarVideo script writes its bundled actor modules into `chrome/letter-tabs-video-actors` in the current profile; it downloads no runtime code. Live unloading is disabled for this release.
+
+Media layout/artwork inspiration: [Zia](https://github.com/z1n-k/zia), MIT (`ZIA-LICENSE.txt`). Video integration: Zenslop, MIT (`ZENSLOP-LICENSE.txt`). Native video and layout regression checks run with mocked Gecko objects; actual compositor rendering, audio playback and compact-mode pointer interaction still need verification in Zen.

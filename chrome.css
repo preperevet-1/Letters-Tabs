@@ -1269,3 +1269,65 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #zen-unified-site-data-panel[lt-site-menu] #zen-site-data-footer > toolbarbutton::before {
  inset:0 !important;width:auto !important;height:auto !important;
 }
+
+/* 1.10: compact Zia-inspired media card, retaining Zen's own controls. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar {
+  .zen-media-card {
+    border-radius: 13px !important;
+    corner-shape: superellipse(1.5);
+    padding: 9px 10px !important;
+    background: light-dark(rgba(255,255,255,.78),rgba(35,35,38,.88)) !important;
+    border: 1px solid light-dark(rgba(0,0,0,.13),rgba(255,255,255,.16)) !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,.08),inset 0 1px rgba(255,255,255,.35) !important;
+    backdrop-filter: blur(32px) !important;
+  }
+  .zen-media-main-vbox {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0,1fr) 28px;
+    align-items: center;
+    gap: 0 8px;
+  }
+  .zen-media-main-vbox > vbox,
+  .zen-media-info-container,
+  .zen-media-controls-hbox,
+  .zen-media-playback-buttons { display: contents !important; }
+  .zen-media-focus-button {
+    grid-column: 1; grid-row: 1;
+    position: relative;
+    width: 44px !important; height: 44px !important;
+    padding: 0 !important; margin: 0 !important;
+    border-radius: 10px !important; overflow: hidden;
+  }
+  .lt-media-art {position:absolute;inset:2px;width:40px;height:40px;object-fit:cover;border-radius:8px;pointer-events:none;background:var(--toolbar-bgcolor);}
+  .lt-media-art[hidden] {display:none !important;}
+  .zen-media-notes {display:none !important;}
+  .zen-media-info-vbox {grid-column:2;grid-row:1;min-width:0 !important;gap:3px;}
+  .zen-media-title,.zen-media-artist {margin:0 !important;line-height:1.25 !important;animation:none !important;}
+  .zen-media-title {font-size:13px !important;font-weight:600 !important;}
+  .zen-media-artist {font-size:11px !important;opacity:.6 !important;}
+  .zen-media-playpause-button {grid-column:3;grid-row:1;position:relative;}
+  .zen-media-progress-hbox {grid-column:1 / -1;grid-row:2;}
+  .zen-media-buttons-hbox {grid-column:2;grid-row:3;justify-content:center;}
+  .zen-media-previoustrack-button {grid-column:1;grid-row:3;}
+  .zen-media-nexttrack-button {grid-column:3;grid-row:3;}
+  .zen-media-mute-button {grid-column:2;grid-row:4;justify-self:center;}
+  .media-device-buttons {grid-column:1 / -1;grid-row:5;}
+  .zen-media-card:not(:hover):not(:focus-within) :is(.zen-media-progress-hbox,.zen-media-buttons-hbox,.zen-media-previoustrack-button,.zen-media-nexttrack-button,.zen-media-mute-button,.media-device-buttons) {display:none !important;}
+  .zen-media-card:is(:hover,:focus-within) .zen-media-progress-hbox {display:flex !important;max-height:50px !important;opacity:1 !important;transform:none !important;pointer-events:auto !important;}
+  .lt-media-equalizer {display:none;position:absolute;inset:0;align-items:center;justify-content:center;gap:2px;pointer-events:none;}
+  .playing:not(:hover):not(:focus-within) .lt-media-equalizer {display:flex;}
+  .playing:not(:hover):not(:focus-within) .zen-media-playpause-button > image {opacity:0;}
+  .lt-media-equalizer i {width:2px;height:9px;border-radius:2px;background:#b5c83a;animation:lt-media-level 850ms ease-in-out infinite alternate;}
+  .lt-media-equalizer i:nth-child(2) {height:15px;animation-delay:-250ms;}
+  .lt-media-equalizer i:nth-child(3) {height:11px;animation-delay:-550ms;}
+  .lt-media-equalizer i:nth-child(4) {height:6px;animation-delay:-100ms;}
+}
+@keyframes lt-media-level {from{transform:scaleY(.45)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.lt-media-equalizer i{animation:none !important;}}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar {
+  .zen-media-card {box-sizing:border-box !important;outline:none !important;}
+  .zen-media-info-container {opacity:1 !important;max-height:none !important;transform:none !important;pointer-events:auto !important;padding:0 !important;margin:0 !important;}
+  .zen-media-title,.zen-media-artist {height:auto !important;min-height:0 !important;}
+  .zen-media-focus-button {display:flex !important;}
+  .zen-media-card[media-position-hidden] .zen-media-progress-hbox {display:none !important;}
+}
