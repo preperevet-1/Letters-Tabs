@@ -23,7 +23,19 @@
       const title=document.createElementNS(bars.namespaceURI,'div');title.className='lt-media-title-clip';
       const text=document.createElementNS(bars.namespaceURI,'span');title.append(text);
       card.titleEl.before(title);
-      parts={art,bars,title,text,url:'',failed:new Set()};
+      const make=cls=>{const n=document.createElementNS(bars.namespaceURI,'div');n.className=cls;return n;};
+      const header=make('lt-player-header'),footer=make('lt-player-footer');
+      const main=card.element.querySelector('.zen-media-main-vbox');
+      const moved=[];
+      const move=(selector,parent)=>{const n=card.element.querySelector(selector);if(!n)return;const marker=document.createComment('lt-media-position');n.before(marker);moved.push([n,marker]);parent.append(n);};
+      move('.zen-media-focus-button',header);move('.zen-media-info-vbox',header);move('.zen-media-mute-button',header);
+      for(const selector of ['.zen-sidebar-pip-toggle','.zen-media-previoustrack-button','.zen-media-playpause-button','.zen-media-nexttrack-button','.zen-media-pip-button'])move(selector,footer);
+      const pip=document.createElementNS(bars.namespaceURI,'button');pip.className='lt-window-video-action';pip.type='button';pip.title='Picture-in-Picture';pip.setAttribute('aria-label','Picture-in-Picture');
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');
+      const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d','M3 3h18v18H3z M12 12h7v7h-7z');svg.append(path);pip.append(svg);
+      pip.addEventListener('click',e=>{e.stopPropagation();card.onPip();});footer.append(pip);
+      main.prepend(header);main.append(footer);
+      parts={art,bars,title,text,header,footer,moved,url:'',failed:new Set()};
       art.addEventListener('error',()=>{parts.failed.add(art.src);parts.url='';});decorated.set(card.element,parts);
     }
     try{
@@ -41,6 +53,6 @@
     }catch(_){ /* Metadata can disappear while the source tab closes. */ }
   }
   const timer=setInterval(update,750);update();
-  function destroy(){clearInterval(timer);for(const {art,bars,title} of decorated.values()){art.remove();bars.remove();title.remove();}decorated.clear();window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
+  function destroy(){clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();

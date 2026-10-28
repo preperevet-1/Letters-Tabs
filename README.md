@@ -186,3 +186,6 @@ Sound bars remain visible and turn static gray when paused or muted. Symmetric o
 
 ## 1.10.3
 Constrain the seek slider intrinsic width to its grid track and include padding in its width, keeping both card insets equal.
+
+## 1.10.4
+Separate header and transport layouts eliminate the shared seven-column minimum width. An explicit Picture-in-Picture button calls the native media card action. Existing playback controls retain native event handling. Layout still needs live verification in Zen.

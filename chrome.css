@@ -1423,3 +1423,23 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   box-sizing:border-box !important;
   margin-inline:0 !important;
 }
+/* 1.10.4: independent header/footer tracks avoid the seven-column minimum. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-card {
+ min-width:0 !important;max-width:100% !important;
+ .zen-media-main-vbox {display:flex !important;flex-direction:column !important;min-width:0 !important;width:100% !important;gap:0 !important;}
+ .lt-player-header {display:grid;grid-template-columns:44px minmax(0,1fr) 24px;gap:8px;align-items:center;width:100%;min-width:0;}
+ .lt-player-header > * {grid-column:auto !important;grid-row:auto !important;min-width:0 !important;}
+ .zen-media-info-vbox {width:auto !important;max-width:100% !important;}
+ .lt-player-footer {display:grid;grid-template-columns:minmax(0,1fr) repeat(3,26px) minmax(0,1fr);align-items:center;width:100%;min-width:0;max-height:32px;overflow:hidden;transition:max-height 200ms ease,opacity 150ms ease;}
+ .lt-player-footer > * {grid-row:1 !important;margin:0 !important;min-width:0 !important;}
+ .lt-player-footer > .zen-sidebar-pip-toggle {grid-column:1 !important;justify-self:start;}
+ .lt-player-footer > .zen-media-previoustrack-button {grid-column:2 !important;}
+ .lt-player-footer > .zen-media-playpause-button {grid-column:3 !important;}
+ .lt-player-footer > .zen-media-nexttrack-button {grid-column:4 !important;}
+ .lt-player-footer > .zen-media-pip-button {display:none !important;}
+ .lt-window-video-action {grid-column:5 !important;justify-self:end;appearance:none;border:0;background:transparent;color:inherit;padding:3px;width:26px;height:26px;border-radius:5px;cursor:pointer;}
+ .lt-window-video-action:hover {background:var(--toolbarbutton-hover-background);}
+ .lt-window-video-action svg {width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round;}
+ .zen-media-progress-hbox {flex:none !important;align-self:stretch;}
+ &:not(:hover):not(:focus-within) .lt-player-footer {max-height:0;opacity:0;pointer-events:none;}
+}
