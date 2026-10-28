@@ -176,3 +176,7 @@ Sidebar video mirroring is adapted from [Zenslop](https://github.com/Firebolt990
 **Restart Zen after installing, updating or disabling this version.** Window actors are registered for the browser process. The self-contained SidebarVideo script writes its bundled actor modules into `chrome/letter-tabs-video-actors` in the current profile; it downloads no runtime code. Live unloading is disabled for this release.
 
 Media layout/artwork inspiration: [Zia](https://github.com/z1n-k/zia), MIT (`ZIA-LICENSE.txt`). Video integration: Zenslop, MIT (`ZENSLOP-LICENSE.txt`). Native video and layout regression checks run with mocked Gecko objects; actual compositor rendering, audio playback and compact-mode pointer interaction still need verification in Zen.
+
+## 1.10.1 — mini-player controls
+
+Library downloads hide the player and video preview. Expanded controls place the sidebar eye on the left, transport buttons centrally and native PiP on the right. The top indicator toggles mute and uses the Space accent. Only the title scrolls automatically when overflowing. Timestamps are hidden; seeking stays available. Artwork tries alternate metadata images and YouTube thumbnails before falling back to the site icon. Controls expand and collapse with short transitions. Live Zen validation is still required.

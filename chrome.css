@@ -1331,3 +1331,58 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   .zen-media-focus-button {display:flex !important;}
   .zen-media-card[media-position-hidden] .zen-media-progress-hbox {display:none !important;}
 }
+
+/* 1.10.1: media controls and Library coexistence. */
+:root[zen-letter-tabs-active]:has(#zen-sidebar-foot-buttons:is([zen-library-stack-open],[zen-library-stack-closing])) :is(#zen-media-controls-toolbar,#zen-sidebar-pip-container) {
+  opacity:0 !important;visibility:hidden !important;pointer-events:none !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar {
+  transition:opacity 160ms ease,visibility 160ms ease !important;
+  .zen-media-card {
+    border-radius:16px !important;corner-shape:superellipse(1.5);
+    transition:transform 220ms cubic-bezier(.2,.8,.2,1),opacity 180ms ease,padding 220ms ease !important;
+  }
+  .zen-media-main-vbox {grid-template-columns:28px 1fr 28px 28px 28px 1fr 28px;row-gap:0;}
+  .zen-media-focus-button {grid-column:1 / 3;justify-self:start;}
+  .zen-media-info-vbox {grid-column:3 / 7;margin-left:0;}
+  .zen-media-mute-button {grid-column:7;grid-row:1;display:flex !important;position:relative;}
+  .zen-media-playpause-button {grid-column:4;grid-row:3;}
+  .zen-media-previoustrack-button {grid-column:3;grid-row:3;}
+  .zen-media-nexttrack-button {grid-column:5;grid-row:3;}
+  .zen-media-buttons-hbox {display:contents !important;}
+  .zen-sidebar-pip-toggle {grid-column:1;grid-row:3;}
+  .zen-media-pip-button {grid-column:7;grid-row:3;}
+  .zen-media-close-button,.zen-media-current-time,.zen-media-duration {display:none !important;}
+  .zen-media-progress-hbox {grid-row:2;grid-column:1 / -1;height:25px !important;padding:3px 0 !important;}
+  .zen-media-progress-bar {margin:0 !important;}
+  .zen-media-card:not(:hover):not(:focus-within) :is(.zen-media-playpause-button,.zen-sidebar-pip-toggle,.zen-media-pip-button) {display:none !important;}
+  .zen-media-card .zen-media-mute-button {display:flex !important;}
+  .zen-media-title {display:none !important;}
+  .lt-media-title-clip {overflow:hidden;min-width:0;width:100%;font-size:13px;font-weight:600;}
+  .lt-media-title-clip span {display:inline-block;white-space:nowrap;}
+  .lt-media-title-clip[overflowing] span {animation:lt-media-title-scroll var(--lt-title-duration) ease-in-out infinite;}
+  .zen-media-artist {animation:none !important;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+  .playing:not(:hover):not(:focus-within) .zen-media-playpause-button > image {opacity:1;}
+  .playing .zen-media-mute-button:not([muted]) > image {opacity:0;}
+  .playing .zen-media-mute-button .lt-media-equalizer {display:flex;}
+  .lt-media-equalizer i {background:var(--zen-primary-color,#7f8e9e) !important;}
+  .zen-media-card:is([muted],[media-muted]) .lt-media-equalizer i {animation-play-state:paused;opacity:.4;}
+  .zen-media-card:is(:hover,:focus-within) .zen-media-main-vbox {row-gap:4px;}
+  .zen-media-card:is(:hover,:focus-within) :is(.zen-media-progress-hbox,.zen-media-playpause-button,.zen-media-previoustrack-button,.zen-media-nexttrack-button,.zen-sidebar-pip-toggle,.zen-media-pip-button) {animation:lt-player-controls-in 180ms ease both;}
+}
+@keyframes lt-media-title-scroll {0%,18%{transform:translateX(0)}65%,82%{transform:translateX(var(--lt-title-travel))}100%{transform:translateX(0)}}
+@keyframes lt-player-controls-in {from{opacity:0;translate:0 4px}to{opacity:1;translate:0 0}}
+@media(prefers-reduced-motion:reduce){.lt-media-title-clip span,.zen-media-card *{animation:none !important;}}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar {
+ .zen-media-main-vbox {grid-template-columns:44px 1fr 26px 26px 26px 1fr 28px;}
+ .zen-media-focus-button {grid-column:1;}
+ .zen-media-info-vbox {grid-column:2 / 7;}
+ .zen-media-card :is(.zen-media-progress-hbox,.zen-media-playpause-button,.zen-media-previoustrack-button,.zen-media-nexttrack-button,.zen-sidebar-pip-toggle,.zen-media-pip-button) {
+   transition:max-height 200ms ease,opacity 150ms ease,padding 200ms ease !important;
+   overflow:hidden;max-height:32px;
+ }
+ .zen-media-card:not(:hover):not(:focus-within) :is(.zen-media-progress-hbox,.zen-media-playpause-button,.zen-media-previoustrack-button,.zen-media-nexttrack-button,.zen-sidebar-pip-toggle,.zen-media-pip-button) {
+   display:flex !important;max-height:0 !important;min-height:0 !important;padding-block:0 !important;margin-block:0 !important;opacity:0;pointer-events:none;
+ }
+ .zen-media-card[media-position-hidden] .zen-media-progress-hbox {display:none !important;}
+}

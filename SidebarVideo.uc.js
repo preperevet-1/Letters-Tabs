@@ -891,16 +891,11 @@
   }
 
   function parkNativePipButton(btn) {
-    if (!btn || btn.hasAttribute("zenslop-toggle")) return;
-    if (btn.getAttribute("zenslop-parked") !== "true") {
-      btn.setAttribute("zenslop-parked", "true");
-    }
-    if (btn.style.display !== "none") {
-      btn.style.display = "none";
-    }
-    if (btn.getAttribute("aria-hidden") !== "true") {
-      btn.setAttribute("aria-hidden", "true");
-    }
+    // Keep Zen's separate-window PiP action alongside the sidebar eye toggle.
+    if (!btn) return;
+    btn.removeAttribute('zenslop-parked');
+    btn.removeAttribute('aria-hidden');
+    btn.style.removeProperty('display');
   }
 
   function buildToggle(template) {
