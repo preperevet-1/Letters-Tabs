@@ -1443,3 +1443,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  .zen-media-progress-hbox {flex:none !important;align-self:stretch;}
  &:not(:hover):not(:focus-within) .lt-player-footer {max-height:0;opacity:0;pointer-events:none;}
 }
+/* 1.10.5: all stack cards share the same layout and sound state. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-card {
+ .zen-media-mute-button {visibility:visible !important;opacity:1 !important;}
+ .zen-media-mute-button .lt-media-equalizer {display:flex !important;visibility:visible !important;opacity:1 !important;}
+ .lt-media-equalizer i {background:light-dark(#606064,var(--zen-primary-color,#c7c7cc)) !important;animation:lt-media-level 850ms ease-in-out infinite alternate;}
+ &:is([muted],:not(.playing)) .lt-media-equalizer i {height:2px !important;width:2px !important;border-radius:50% !important;animation:none !important;background:#96969b !important;opacity:.65 !important;}
+ .lt-player-footer :is(toolbarbutton,.lt-window-video-action) {color:light-dark(#606064,#c7c7cc) !important;fill:currentColor !important;border-radius:6px !important;}
+ .lt-player-footer :is(toolbarbutton,.lt-window-video-action):not([disabled]):hover {background:light-dark(rgba(0,0,0,.07),rgba(255,255,255,.12)) !important;}
+ .lt-native-pip-icon {width:20px;height:20px;-moz-context-properties:fill,fill-opacity;fill:currentColor;fill-opacity:1;}
+ .lt-window-video-action {display:flex;align-items:center;justify-content:center;}
+}
+@media(prefers-reduced-motion:reduce){:root[zen-letter-tabs-active] .lt-media-equalizer i{animation:none !important;}}

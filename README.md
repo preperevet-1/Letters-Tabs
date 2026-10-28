@@ -189,3 +189,6 @@ Constrain the seek slider intrinsic width to its grid track and include padding 
 
 ## 1.10.4
 Separate header and transport layouts eliminate the shared seven-column minimum width. An explicit Picture-in-Picture button calls the native media card action. Existing playback controls retain native event handling. Layout still needs live verification in Zen.
+
+## 1.10.5
+Decorate every native media card, including newly inserted stack members. Reuse Zen’s computed PiP icon and native command. Transport buttons have hover backgrounds. Sound bars remain visible outside hover, use dark gray in light mode and become static gray dots when muted or paused. Browser visual verification remains pending.
