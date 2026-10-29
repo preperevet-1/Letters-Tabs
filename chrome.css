@@ -1348,3 +1348,12 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 }
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > toolbarbutton:not([disabled]),
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > toolbarbutton:not([disabled]) > image {opacity:1 !important;}
+/* Render the eye directly, without SVG-image context-color inheritance. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-sidebar-pip-toggle {position:relative;}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-sidebar-pip-toggle > :is(image,.toolbarbutton-icon) {display:none !important;}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-eye-icon {
+ position:absolute;inset:0;margin:auto;width:18px;height:18px;pointer-events:none;
+ color:light-dark(#606064,#c7c7cc);fill:none !important;stroke:currentColor !important;
+ stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-eye-path {fill:none !important;stroke:currentColor !important;}

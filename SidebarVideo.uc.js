@@ -853,12 +853,8 @@
   document.addEventListener("visibilitychange", updateBrowserActivity);
   setTimeout(updateBrowserActivity, 0);
 
-  const EYE_SVG = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z'/><circle cx='12' cy='12' r='3'/></svg>";
-  const EYE_OFF_SVG = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='m3 3 18 18M10 5.2A11 11 0 0 1 12 5c6.5 0 10 7 10 7a19 19 0 0 1-3 3.9M6.1 6.1A23 23 0 0 0 2 12s3.5 7 10 7a12 12 0 0 0 5.9-1.9M9.9 9.9a3 3 0 0 0 4.2 4.2'/></svg>";
-  const eyeUrl = (svg) =>
-    `url("data:image/svg+xml;utf8,${encodeURIComponent(svg)}")`;
-  const EYE_URL = eyeUrl(EYE_SVG);
-  const EYE_OFF_URL = eyeUrl(EYE_OFF_SVG);
+  const EYE_PATH = 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0';
+  const EYE_OFF_PATH = 'm3 3 18 18 M10 5.2A11 11 0 0 1 12 5c6.5 0 10 7 10 7a19 19 0 0 1-3 3.9 M6.1 6.1A23 23 0 0 0 2 12s3.5 7 10 7a12 12 0 0 0 5.9-1.9 M9.9 9.9a3 3 0 0 0 4.2 4.2';
   const STRIPPED_ATTRS = [
     "command",
     "oncommand",
@@ -879,10 +875,8 @@
         togglesByNativeButton.delete(nativeButton);
         continue;
       }
-      const icon = userHidden ? EYE_OFF_URL : EYE_URL;
-      if (toggle.style.listStyleImage !== icon) {
-        toggle.style.listStyleImage = icon;
-      }
+      toggle.querySelector('.lt-eye-path')?.setAttribute('d', userHidden ? EYE_OFF_PATH : EYE_PATH);
+      toggle.setAttribute('aria-pressed', String(!userHidden));
     }
   }
 
@@ -895,7 +889,8 @@
   }
 
   function buildToggle(template) {
-    const btn = template.cloneNode(true);
+    const btn = document.createXULElement('toolbarbutton');
+    btn.classList.add('toolbarbutton-1');
     btn.removeAttribute("id");
     btn.classList.remove("zen-media-pip-button");
     btn.classList.add("zen-sidebar-pip-toggle");
@@ -903,7 +898,12 @@
     btn.setAttribute("zenslop-toggle", "true");
     btn.setAttribute("tooltiptext", "Toggle sidebar PiP");
     for (const a of STRIPPED_ATTRS) btn.removeAttribute(a);
-    btn.style.listStyleImage = userHidden ? EYE_OFF_URL : EYE_URL;
+    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('class','lt-eye-icon');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
+    const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('class','lt-eye-path');
+    path.setAttribute('d',userHidden?EYE_OFF_PATH:EYE_PATH);svg.append(path);btn.append(svg);
+    btn.setAttribute('aria-label','Toggle sidebar video');
+    btn.setAttribute('aria-pressed',String(!userHidden));
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();

@@ -198,3 +198,6 @@ Only the native front media card is displayed; stack offsets are removed. Footer
 
 ## 1.10.7
 Unified footer icon color and opacity. Current-card selection excludes retiring/removing cards, observes visibility changes and tolerates delayed native controller setup. Preview exceptions cannot abort card selection. Native source visibility rules remain intact. Four selection regression cases pass; live browser verification is pending.
+
+## 1.10.8
+Eye toggle uses inline SVG with explicit currentColor stroke, avoiding external image context-color inheritance. Both visible/hidden states share the media-control color. Native video regression checks pass; live UI verification pending.
