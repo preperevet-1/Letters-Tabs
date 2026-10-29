@@ -8,10 +8,17 @@
   const decorated=new Map();
   function update(){
     for(const [element,parts] of decorated)if(!element.isConnected){parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
+    const toolbar=document.getElementById('zen-media-controls-toolbar');
+    const elements=[...document.querySelectorAll('#zen-media-controls-toolbar .zen-media-card')];
+    const eligible=elements.filter(el=>!el.hidden && !el.hasAttribute('zen-hiding') && !el.hasAttribute('zen-removing'));
     const front=window.gZenMediaController?.frontCard;
-    window.ZenPiPController?.followMediaBrowser?.(front?.browser);
-    for(const element of document.querySelectorAll('#zen-media-controls-toolbar .zen-media-card')) {
-      element.toggleAttribute('lt-current-media',front?.element===element);
+    const current=eligible.includes(front?.element)?front.element:eligible.at(-1);
+    // Mark every card before artwork/preview work: a stale controller must not
+    // leave the whole toolbar without a selected card.
+    for(const el of elements)el.toggleAttribute('lt-current-media',el===current);
+    if(current && toolbar?.hidden)window.gZenMediaController?.showMediaControls?.();
+    try{window.ZenPiPController?.followMediaBrowser?.(front?.element===current?front.browser:decorated.get(current)?.card?.browser);}catch(error){console.debug('Letter Tabs preview source unavailable',error);}
+    for(const element of elements) {
       const card=front?.element===element?front:decorated.get(element)?.card || {
         element,focusButton:element.querySelector('.zen-media-focus-button'),titleEl:element.querySelector('.zen-media-title')
       };
@@ -59,10 +66,15 @@
     }catch(_){ /* Metadata can disappear while the source tab closes. */ }
     }
   }
-  const observer=new MutationObserver(records=>{if(records.some(r=>[...r.addedNodes].some(n=>n.matches?.('.zen-media-card'))))update();});
+  let scheduled=0;
+  const observer=new MutationObserver(records=>{
+    if(records.some(r=>r.type==='attributes' || [...r.addedNodes].some(n=>n.matches?.('.zen-media-card')))) {
+      clearTimeout(scheduled);scheduled=setTimeout(update,0);
+    }
+  });
   const toolbar=document.getElementById('zen-media-controls-toolbar');
-  if(toolbar)observer.observe(toolbar,{childList:true});
+  if(toolbar)observer.observe(toolbar,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','zen-hiding','zen-removing']});
   const timer=setInterval(update,250);update();
-  function destroy(){observer.disconnect();clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
+  function destroy(){clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();

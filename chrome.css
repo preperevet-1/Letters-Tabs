@@ -1333,3 +1333,18 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 @keyframes lt-media-level {from{transform:scaleY(.45)}to{transform:scaleY(1)}}
 @keyframes lt-media-title-scroll {0%,18%{transform:translateX(0)}65%,82%{transform:translateX(var(--lt-title-travel))}100%{transform:translateX(0)}}
 @media(prefers-reduced-motion:reduce){:root[zen-letter-tabs-active] .lt-media-equalizer i,:root[zen-letter-tabs-active] .zen-media-card:hover .lt-media-title-clip span {animation:none !important;}}
+/* One foreground card must not inherit a retired stack card's faded state. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-card[lt-current-media]:not([hidden]):not([zen-hiding]):not([zen-removing]) {
+ display:flex !important;opacity:1 !important;translate:none !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > toolbarbutton,
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > toolbarbutton > image {
+ color:light-dark(#606064,#c7c7cc) !important;
+ fill:light-dark(#606064,#c7c7cc) !important;
+ fill-opacity:1 !important;
+ -moz-context-properties:fill,fill-opacity,stroke,stroke-opacity !important;
+ stroke:light-dark(#606064,#c7c7cc) !important;
+ stroke-opacity:1 !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > toolbarbutton:not([disabled]),
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > toolbarbutton:not([disabled]) > image {opacity:1 !important;}

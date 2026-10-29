@@ -195,3 +195,6 @@ Decorate every native media card, including newly inserted stack members. Reuse 
 
 ## 1.10.6
 Only the native front media card is displayed; stack offsets are removed. Footer: native close, previous/play/next, one outline eye. Eye discovery targets only the native PiP button (never its child images). Video source follows the current media card when an eligible video is available. Replaced accumulated media CSS with one layout; sound bars are always present and long titles scroll on hover. Restored native Unload Tab in the context menu. Video remains subject to source eligibility and background-tab rules. Live Zen verification remains pending.
+
+## 1.10.7
+Unified footer icon color and opacity. Current-card selection excludes retiring/removing cards, observes visibility changes and tolerates delayed native controller setup. Preview exceptions cannot abort card selection. Native source visibility rules remain intact. Four selection regression cases pass; live browser verification is pending.
