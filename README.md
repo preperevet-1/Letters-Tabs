@@ -201,3 +201,6 @@ Unified footer icon color and opacity. Current-card selection excludes retiring/
 
 ## 1.10.8
 Eye toggle uses inline SVG with explicit currentColor stroke, avoiding external image context-color inheritance. Both visible/hidden states share the media-control color. Native video regression checks pass; live UI verification pending.
+
+## 1.10.9
+Controls expand only on card hover, not retained focus. Eye toggle is now an HTML button with explicit dimensions and inline SVG, independent of XUL toolbarbutton child reconstruction. Live UI verification pending.

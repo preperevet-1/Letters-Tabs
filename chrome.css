@@ -1324,8 +1324,8 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  .lt-player-footer toolbarbutton {border-radius:6px !important;}
  .lt-player-footer toolbarbutton:not([disabled]):hover {background:light-dark(rgba(0,0,0,.07),rgba(255,255,255,.12)) !important;}
  .lt-player-footer image {width:24px !important;height:24px !important;padding:4px !important;-moz-context-properties:fill,fill-opacity;fill:currentColor !important;fill-opacity:1 !important;}
- .zen-media-card:is(:hover,:focus-within) .zen-media-progress-hbox {max-height:26px;opacity:1;pointer-events:auto;}
- .zen-media-card:is(:hover,:focus-within) .lt-player-footer {max-height:28px;opacity:1;pointer-events:auto;}
+ .zen-media-card:hover .zen-media-progress-hbox {max-height:26px;opacity:1;pointer-events:auto;}
+ .zen-media-card:hover .lt-player-footer {max-height:28px;opacity:1;pointer-events:auto;}
  .zen-media-card[media-position-hidden] .zen-media-progress-hbox {display:none !important;}
 }
 :root[zen-letter-tabs-active]:has(#zen-sidebar-foot-buttons:is([zen-library-stack-open],[zen-library-stack-closing])) :is(#zen-media-controls-toolbar,#zen-sidebar-pip-container) {opacity:0 !important;visibility:hidden !important;pointer-events:none !important;}
@@ -1357,3 +1357,15 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
 }
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-eye-path {fill:none !important;stroke:currentColor !important;}
+
+/* HTML button retains its inline SVG; XUL toolbarbutton may rebuild children. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > button.zen-sidebar-pip-toggle {
+ appearance:none !important;box-sizing:border-box !important;position:relative !important;
+ display:flex !important;align-items:center;justify-content:center;
+ width:26px !important;height:26px !important;min-width:26px !important;min-height:26px !important;
+ max-width:26px !important;max-height:26px !important;padding:0 !important;margin:0 !important;
+ border:0 !important;border-radius:6px !important;background:transparent;
+ color:light-dark(#606064,#c7c7cc) !important;cursor:pointer;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > button.zen-sidebar-pip-toggle:hover {background:light-dark(rgba(0,0,0,.07),rgba(255,255,255,.12));}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-eye-icon {display:block !important;visibility:visible !important;opacity:1 !important;}

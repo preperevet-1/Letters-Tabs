@@ -889,7 +889,8 @@
   }
 
   function buildToggle(template) {
-    const btn = document.createXULElement('toolbarbutton');
+    const btn = document.createElementNS('http://www.w3.org/1999/xhtml','button');
+    btn.type='button';btn.title='Toggle sidebar video';
     btn.classList.add('toolbarbutton-1');
     btn.removeAttribute("id");
     btn.classList.remove("zen-media-pip-button");
