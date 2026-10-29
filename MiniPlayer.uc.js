@@ -26,7 +26,7 @@
   }
   function update(){
     if(Date.now()-lastRecovery>2000){lastRecovery=Date.now();try{recoverPlayback();}catch(error){console.debug('Letter Tabs media recovery',error);}}
-    for(const [element,parts] of decorated)if(!element.isConnected){parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
+    for(const [element,parts] of decorated)if(!element.isConnected){parts.stopTitle();element.removeEventListener('mouseenter',parts.startTitle);element.removeEventListener('mouseleave',parts.stopTitle);parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
     const toolbar=document.getElementById('zen-media-controls-toolbar');
     const elements=[...document.querySelectorAll('#zen-media-controls-toolbar .zen-media-card')];
     const eligible=elements.filter(el=>!el.hidden && !el.hasAttribute('zen-hiding') && !el.hasAttribute('zen-removing'));
@@ -46,7 +46,8 @@
     if(!parts){
       const art=document.createElementNS('http://www.w3.org/1999/xhtml','img');
       art.className='lt-media-art';art.alt='';art.hidden=true;
-      art.addEventListener('error',()=>{art.hidden=true;});
+      art.addEventListener('load',()=>{art.hidden=false;card.focusButton.setAttribute('lt-has-artwork','');});
+      art.addEventListener('error',()=>{art.hidden=true;card.focusButton.removeAttribute('lt-has-artwork');});
       card.focusButton.append(art);
       const bars=document.createElementNS('http://www.w3.org/1999/xhtml','span');
       bars.className='lt-media-equalizer';bars.setAttribute('aria-hidden','true');
@@ -63,7 +64,22 @@
       move('.zen-media-focus-button',header);move('.zen-media-info-vbox',header);move('.zen-media-mute-button',header);
       for(const selector of ['.zen-sidebar-pip-toggle','.zen-media-previoustrack-button','.zen-media-playpause-button','.zen-media-nexttrack-button','.zen-media-pip-button','.zen-media-close-button'])move(selector,footer);
       main.prepend(header);main.append(footer);
-      parts={art,bars,title,text,header,footer,moved,card,url:'',failed:new Set()};
+      parts={art,bars,title,text,header,footer,moved,card,url:'',failed:new Set(),marquee:null};
+      parts.stopTitle=()=>{parts.marquee?.cancel();parts.marquee=null;};
+      parts.startTitle=()=>{
+        parts.stopTitle();
+        const distance=Math.max(0,text.scrollWidth-title.clientWidth);
+        if(distance<=2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+        parts.marquee=text.animate([
+          {transform:'translateX(0)',offset:0},
+          {transform:'translateX(0)',offset:.15},
+          {transform:`translateX(${-distance}px)`,offset:.7},
+          {transform:`translateX(${-distance}px)`,offset:.85},
+          {transform:'translateX(0)',offset:1}
+        ],{duration:Math.max(6000,distance/25*1000+2400),iterations:Infinity,easing:'ease-in-out'});
+      };
+      card.element.addEventListener('mouseenter',parts.startTitle);
+      card.element.addEventListener('mouseleave',parts.stopTitle);
       art.addEventListener('error',()=>{parts.failed.add(art.src);parts.url='';});decorated.set(card.element,parts);
     }
     if(card.controller)parts.card=card;
@@ -74,14 +90,14 @@
       const images=card.controller?.getMetadata()?.artwork || [];
       let fallback='';
       try{const u=new URL(card.browser.currentURI.spec);if(/(^|\.)youtube\.com$/.test(u.hostname)&&u.searchParams.get('v'))fallback='https://i.ytimg.com/vi/'+encodeURIComponent(u.searchParams.get('v'))+'/hqdefault.jpg';}catch(_){}
-      const url=[...images.map(a=>a.src),fallback,card.browser?.mIconURL].find(u=>u&&!parts.failed.has(u)) || '';
+      const url=[...images.map(a=>a.src),fallback].find(u=>u&&!parts.failed.has(u)) || '';
       const label=card.titleEl.textContent || '';
-      if(parts.text.textContent!==label){parts.text.textContent=label;parts.failed.clear();}
+      if(parts.text.textContent!==label){parts.stopTitle();parts.text.textContent=label;parts.failed.clear();if(element.matches(':hover'))parts.startTitle();}
       const distance=Math.max(0,parts.text.getBoundingClientRect().width-parts.title.clientWidth);
       parts.title.toggleAttribute('overflowing',distance>2);
       parts.title.style.setProperty('--lt-title-travel',-distance+'px');
       parts.title.style.setProperty('--lt-title-duration',Math.max(7,distance/22+4)+'s');
-      if(card.controller && url!==parts.url){parts.url=url;parts.art.hidden=!url;if(url)parts.art.src=url;else parts.art.removeAttribute('src');}
+      if(card.controller && url!==parts.url){parts.url=url;parts.art.hidden=true;card.focusButton.removeAttribute('lt-has-artwork');if(url)parts.art.src=url;else parts.art.removeAttribute('src');}
     }catch(_){ /* Metadata can disappear while the source tab closes. */ }
     }
   }
@@ -95,6 +111,6 @@
   const toolbar=document.getElementById('zen-media-controls-toolbar');
   if(toolbar)observer.observe(toolbar,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','zen-hiding','zen-removing']});
   const timer=setInterval(safeUpdate,250);safeUpdate();
-  function destroy(){clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
+  function destroy(){clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const [element,{art,bars,title,header,footer,moved,card,startTitle,stopTitle}] of decorated){stopTitle();element.removeEventListener('mouseenter',startTitle);element.removeEventListener('mouseleave',stopTitle);card.focusButton.removeAttribute('lt-has-artwork');for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();

@@ -208,3 +208,7 @@ Controls expand only on card hover, not retained focus. Eye toggle is now an HTM
 ## 1.10.10 — media recovery and preview toggle
 
 Rechecks sustained background playback and existing card visibility, retaining native controller deduplication. The preview toggle uses a self-contained SVG image and stops native card mousedown focus. Syntax, playback recovery mock, and 24 preview/layout regressions pass. Live Zen rendering still needs verification. Restart Zen after updating.
+
+## 1.10.11 — artwork fallback and hover title
+
+Use the native 22px favicon when artwork is unavailable; hide it only after an artwork image loads. Favicons are no longer enlarged as cover images. Overflowing top titles animate on pointer entry and reset on exit; the artist stays static. Syntax and mocked title animation checks pass; live Zen appearance remains unverified.

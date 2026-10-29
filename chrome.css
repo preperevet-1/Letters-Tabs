@@ -1293,7 +1293,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  .zen-media-title {display:none !important;}
  .lt-media-title-clip {overflow:hidden;min-width:0;width:100%;font-size:13px;font-weight:600;color:light-dark(#202024,#f4f4f4);}
  .lt-media-title-clip span {display:block;width:max-content;white-space:nowrap;transform:translateX(0);}
- .zen-media-card:hover .lt-media-title-clip[overflowing] span {animation:lt-media-title-scroll var(--lt-title-duration,8s) ease-in-out infinite;}
+ .lt-media-title-clip span {animation:none !important;}
  .zen-media-artist {animation:none !important;transform:none !important;height:auto !important;margin:0 !important;font-size:11px;opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
  .zen-media-focus-button {display:flex !important;position:relative;width:44px !important;height:44px !important;min-width:0 !important;padding:0 !important;margin:0 !important;overflow:hidden;border-radius:9px !important;}
  .zen-media-focus-button > image {width:22px !important;height:22px !important;padding:0 !important;}
@@ -1381,4 +1381,23 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 /* Do not retain the native hide animation's final opacity on a live card. */
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar:not([hidden]):has(.zen-media-card[lt-current-media]:not([zen-hiding]):not([zen-removing])) {
  opacity:1 !important;transform:none !important;
+}
+
+/* Artwork and the native favicon are alternatives, never overlapping layers. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-focus-button {
+ align-items:center !important;justify-content:center !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-focus-button .toolbarbutton-icon {
+ width:22px !important;height:22px !important;min-width:22px !important;max-width:22px !important;
+ min-height:22px !important;max-height:22px !important;padding:0 !important;margin:0 !important;
+ object-fit:contain !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-focus-button[lt-has-artwork] .toolbarbutton-icon {
+ visibility:hidden !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-media-title-clip {
+ display:block !important;align-self:stretch !important;max-width:100% !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-media-title-clip > span {
+ display:block !important;max-width:none !important;overflow:visible !important;text-overflow:clip !important;
 }
