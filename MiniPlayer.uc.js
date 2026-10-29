@@ -6,7 +6,26 @@
 (() => {
   window.__letterTabsMiniPlayer?.destroy();
   const decorated=new Map();
+  let lastRecovery=0;
+  function recoverPlayback(){
+    const manager=window.gZenMediaController;
+    if(!manager?.mediaControlBar)return;
+    // Recheck only sustained playback; paused/closed cards are not resurrected.
+    // Zen deduplicates this call by controller id and browser.
+    for(const tab of window.gBrowser?.tabs || []) {
+      const browser=tab.linkedBrowser;
+      const controller=browser?.browsingContext?.mediaController;
+      if(tab.closing || !tab.hasAttribute('soundplaying') || !controller?.isActive || !controller.isPlaying)continue;
+      if(browser===window.gBrowser.selectedBrowser || controller.isBeingUsedInPIPModeOrFullscreen)continue;
+      manager.onAudioPlaybackStarted(browser);
+    }
+    for(const [element,{card}] of decorated) {
+      if(element.isConnected && !element.hasAttribute('zen-removing') && card.controller)
+        card.refreshVisibility();
+    }
+  }
   function update(){
+    if(Date.now()-lastRecovery>2000){lastRecovery=Date.now();try{recoverPlayback();}catch(error){console.debug('Letter Tabs media recovery',error);}}
     for(const [element,parts] of decorated)if(!element.isConnected){parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
     const toolbar=document.getElementById('zen-media-controls-toolbar');
     const elements=[...document.querySelectorAll('#zen-media-controls-toolbar .zen-media-card')];
@@ -66,15 +85,16 @@
     }catch(_){ /* Metadata can disappear while the source tab closes. */ }
     }
   }
+  function safeUpdate(){try{update();}catch(error){console.debug('Letter Tabs media update',error);}}
   let scheduled=0;
   const observer=new MutationObserver(records=>{
     if(records.some(r=>r.type==='attributes' || [...r.addedNodes].some(n=>n.matches?.('.zen-media-card')))) {
-      clearTimeout(scheduled);scheduled=setTimeout(update,0);
+      clearTimeout(scheduled);scheduled=setTimeout(safeUpdate,0);
     }
   });
   const toolbar=document.getElementById('zen-media-controls-toolbar');
   if(toolbar)observer.observe(toolbar,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','zen-hiding','zen-removing']});
-  const timer=setInterval(update,250);update();
+  const timer=setInterval(safeUpdate,250);safeUpdate();
   function destroy(){clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const {art,bars,title,header,footer,moved} of decorated.values()){for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();

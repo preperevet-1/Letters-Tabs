@@ -1369,3 +1369,16 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 }
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > button.zen-sidebar-pip-toggle:hover {background:light-dark(rgba(0,0,0,.07),rgba(255,255,255,.12));}
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-eye-icon {display:block !important;visibility:visible !important;opacity:1 !important;}
+
+/* Image owns its stroke color, independent of chrome SVG context painting. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer .lt-eye-image {
+ display:block !important;position:static !important;width:18px !important;height:18px !important;
+ padding:0 !important;margin:auto !important;object-fit:contain;opacity:1 !important;visibility:visible !important;
+}
+@media(prefers-color-scheme:dark){
+ :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-eye-image {filter:brightness(2.05);}
+}
+/* Do not retain the native hide animation's final opacity on a live card. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar:not([hidden]):has(.zen-media-card[lt-current-media]:not([zen-hiding]):not([zen-removing])) {
+ opacity:1 !important;transform:none !important;
+}

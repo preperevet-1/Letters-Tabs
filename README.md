@@ -204,3 +204,7 @@ Eye toggle uses inline SVG with explicit currentColor stroke, avoiding external 
 
 ## 1.10.9
 Controls expand only on card hover, not retained focus. Eye toggle is now an HTML button with explicit dimensions and inline SVG, independent of XUL toolbarbutton child reconstruction. Live UI verification pending.
+
+## 1.10.10 — media recovery and preview toggle
+
+Rechecks sustained background playback and existing card visibility, retaining native controller deduplication. The preview toggle uses a self-contained SVG image and stops native card mousedown focus. Syntax, playback recovery mock, and 24 preview/layout regressions pass. Live Zen rendering still needs verification. Restart Zen after updating.

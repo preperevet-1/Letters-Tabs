@@ -875,7 +875,9 @@
         togglesByNativeButton.delete(nativeButton);
         continue;
       }
-      toggle.querySelector('.lt-eye-path')?.setAttribute('d', userHidden ? EYE_OFF_PATH : EYE_PATH);
+      const icon=toggle.querySelector('.lt-eye-image');
+      const next=eyeImage(userHidden);
+      if(icon && icon.getAttribute('src')!==next)icon.setAttribute('src',next);
       toggle.setAttribute('aria-pressed', String(!userHidden));
     }
   }
@@ -886,6 +888,11 @@
     btn.removeAttribute('zenslop-parked');
     btn.removeAttribute('aria-hidden');
     btn.style.removeProperty('display');
+  }
+
+  function eyeImage(hidden) {
+    const path=hidden?EYE_OFF_PATH:EYE_PATH;
+    return 'data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"><path d="${path}" fill="none" stroke="#606064" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
   }
 
   function buildToggle(template) {
@@ -899,10 +906,13 @@
     btn.setAttribute("zenslop-toggle", "true");
     btn.setAttribute("tooltiptext", "Toggle sidebar PiP");
     for (const a of STRIPPED_ATTRS) btn.removeAttribute(a);
-    const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
-    svg.setAttribute('class','lt-eye-icon');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('aria-hidden','true');
-    const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('class','lt-eye-path');
-    path.setAttribute('d',userHidden?EYE_OFF_PATH:EYE_PATH);svg.append(path);btn.append(svg);
+    const icon=document.createElementNS('http://www.w3.org/1999/xhtml','img');
+    icon.className='lt-eye-image';icon.alt='';icon.width=18;icon.height=18;
+    icon.src=eyeImage(userHidden);
+    icon.style.cssText='display:block!important;width:18px!important;height:18px!important;min-width:18px!important;opacity:1!important;visibility:visible!important;pointer-events:none!important;';
+    btn.append(icon);
+    // Native card mousedown treats any non-toolbarbutton as "focus source tab".
+    btn.addEventListener('mousedown',event=>event.stopPropagation());
     btn.setAttribute('aria-label','Toggle sidebar video');
     btn.setAttribute('aria-pressed',String(!userHidden));
     btn.addEventListener("click", (e) => {
