@@ -1433,3 +1433,17 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i:nth-child(4){height:5px;animation-delay:-100ms;}
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:is([muted],:not([soundplaying])) .lt-tab-equalizer i {height:2px;animation:none;opacity:.5;}
 @media(prefers-reduced-motion:reduce){:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i {animation:none;}}
+
+/* Cover is an HTML node: no generated native toolbarbutton icon underneath. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-footer > .zen-media-focus-button {display:none !important;}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-cover {
+ position:relative;display:flex;align-items:center;justify-content:center;width:24px;height:24px;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-cover[lt-has-artwork] {width:44px;height:44px;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-audio-meter]::after {content:none !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-audio-meter] {
+ position:relative !important;background-image:initial !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-audio-meter] > :not(.lt-tab-equalizer) {visibility:visible !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-audio-meter] :is(.tab-label-container,.tab-icon-stack) {visibility:hidden !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential] > .lt-tab-equalizer {z-index:2;color:light-dark(#606064,#c7c7cc);}

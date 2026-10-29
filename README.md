@@ -216,3 +216,7 @@ Use the native 22px favicon when artwork is unavailable; hide it only after an a
 ## 1.10.12 — favicon, source navigation and tab audio meter
 
 Without artwork, use a 20px site favicon in a compact 24px column, suppressing the native globe. Clicking the card surface focuses the source; transport, mute and preview buttons retain their own actions. Non-Essential tabs use animated audio bars on the native mute control, with static muted dots. Syntax and mocked click/title tests pass; live UI verification remains pending.
+
+## 1.10.13 — native icon isolation
+
+Hide the native moz-button audio image inside its shadow root, keeping the native mute action. Essentials show centered audio bars instead of their letter while soundplaying/muted. Media covers now live in an HTML container separate from the native focus toolbarbutton, preventing its generated globe from appearing. Generic icon metadata is excluded from artwork. Syntax and mocked title/navigation checks pass; live rendering still requires verification.
