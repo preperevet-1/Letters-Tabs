@@ -11,24 +11,29 @@
     const wanted=new Set();
     for(const tab of window.gBrowser?.tabs || []) {
       if(!(tab.hasAttribute('soundplaying') || tab.hasAttribute('muted')))continue;
-      const button=tab.hasAttribute('zen-essential')?tab:tab.querySelector('.tab-audio-button') || tab.querySelector('.tab-icon-overlay');
-      if(!button)continue;
-      wanted.add(button);
-      // moz-button paints its icon inside a shadow tree, outside chrome CSS.
-      if(button.shadowRoot && !button.shadowRoot.querySelector('[data-lt-audio-style]')){
-        const style=document.createElementNS('http://www.w3.org/1999/xhtml','style');
-        style.setAttribute('data-lt-audio-style','');
-        style.textContent='button::before{content:none!important;display:none!important}button{background-image:none!important}button>img{display:none!important}';
-        button.shadowRoot.append(style);
-      }
-      if(!tabMeters.has(button)){
-        const bars=document.createElementNS('http://www.w3.org/1999/xhtml','span');
+      const content=tab.querySelector('.tab-content');
+      if(!content)continue;
+      wanted.add(tab);
+      let button=tabMeters.get(tab);
+      if(!button){
+        button=document.createElementNS('http://www.w3.org/1999/xhtml','button');
+        button.type='button';button.className='lt-tab-meter-button';
+        const bars=document.createElementNS(button.namespaceURI,'span');
         bars.className='lt-tab-equalizer';bars.setAttribute('aria-hidden','true');
         for(let i=0;i<4;i++)bars.append(document.createElementNS(bars.namespaceURI,'i'));
-        button.append(bars);button.setAttribute('lt-audio-meter','');tabMeters.set(button,bars);
+        button.append(bars);
+        button.addEventListener('mousedown',event=>event.stopPropagation());
+        button.addEventListener('click',event=>{
+          event.preventDefault();event.stopPropagation();
+          if(tab.multiselected)window.gBrowser.toggleMuteAudioOnMultiSelectedTabs(tab);
+          else tab.toggleMuteAudio();
+        });
+        content.prepend(button);tab.setAttribute('lt-has-meter','');tabMeters.set(tab,button);
       }
+      button.setAttribute('aria-label',tab.hasAttribute('muted')?'Unmute tab':'Mute tab');
+      button.title=button.getAttribute('aria-label');
     }
-    for(const [button,bars] of tabMeters)if(!wanted.has(button)){bars.remove();button.removeAttribute('lt-audio-meter');button.shadowRoot?.querySelector('[data-lt-audio-style]')?.remove();tabMeters.delete(button);}
+    for(const [tab,button] of tabMeters)if(!wanted.has(tab)){button.remove();tab.removeAttribute('lt-has-meter');tabMeters.delete(tab);}
   }
   let lastRecovery=0;
   function recoverPlayback(){
@@ -161,6 +166,6 @@
   const toolbar=document.getElementById('zen-media-controls-toolbar');
   if(toolbar)observer.observe(toolbar,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','zen-hiding','zen-removing']});
   const timer=setInterval(safeUpdate,250);safeUpdate();
-  function destroy(){for(const [button,bars] of tabMeters){bars.remove();button.removeAttribute('lt-audio-meter');button.shadowRoot?.querySelector('[data-lt-audio-style]')?.remove();}tabMeters.clear();clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const [element,{art,favicon,bars,title,header,footer,moved,card,startTitle,stopTitle,onPress,onClick}] of decorated){stopTitle();element.removeEventListener('mousedown',onPress,true);element.removeEventListener('click',onClick,true);favicon.remove();card.focusButton.removeAttribute('lt-custom-media-icon');element.removeEventListener('mouseenter',startTitle);element.removeEventListener('mouseleave',stopTitle);card.focusButton.removeAttribute('lt-has-artwork');for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
+  function destroy(){for(const [tab,button] of tabMeters){button.remove();tab.removeAttribute('lt-has-meter');}tabMeters.clear();clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const [element,{art,favicon,bars,title,header,footer,moved,card,startTitle,stopTitle,onPress,onClick}] of decorated){stopTitle();element.removeEventListener('mousedown',onPress,true);element.removeEventListener('click',onClick,true);favicon.remove();card.focusButton.removeAttribute('lt-custom-media-icon');element.removeEventListener('mouseenter',startTitle);element.removeEventListener('mouseleave',stopTitle);card.focusButton.removeAttribute('lt-has-artwork');for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();

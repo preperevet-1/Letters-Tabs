@@ -220,3 +220,7 @@ Without artwork, use a 20px site favicon in a compact 24px column, suppressing t
 ## 1.10.13 — native icon isolation
 
 Hide the native moz-button audio image inside its shadow root, keeping the native mute action. Essentials show centered audio bars instead of their letter while soundplaying/muted. Media covers now live in an HTML container separate from the native focus toolbarbutton, preventing its generated globe from appearing. Generic icon metadata is excluded from artwork. Syntax and mocked title/navigation checks pass; live rendering still requires verification.
+
+## 1.10.14 — dedicated tab audio control
+
+Replace the native audio host with a separate HTML meter button, preserving native mute and multi-selection mute. Essentials center the meter within tab-content rather than the outer tab box. Meter creation, deduplication, mute and cleanup mock checks pass; live Zen layout remains unverified.

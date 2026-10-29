@@ -1447,3 +1447,28 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-audio-meter] > :not(.lt-tab-equalizer) {visibility:visible !important;}
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-audio-meter] :is(.tab-label-container,.tab-icon-stack) {visibility:hidden !important;}
 :root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential] > .lt-tab-equalizer {z-index:2;color:light-dark(#606064,#c7c7cc);}
+
+/* Replace the entire audio host, including its shadow DOM rendering. */
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[lt-has-meter] :is(.tab-audio-button,.tab-icon-overlay) {
+ display:none !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-meter-button {
+ appearance:none !important;box-sizing:border-box !important;position:relative !important;
+ display:block !important;flex:0 0 20px !important;width:20px !important;height:24px !important;
+ min-width:20px !important;min-height:0 !important;margin:0 4px 0 0 !important;padding:0 !important;
+ border:0 !important;border-radius:5px;background:transparent;color:inherit;cursor:pointer;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-meter-button:hover {background:light-dark(#0000000c,#ffffff16);}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-has-meter]::after {content:none !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-has-meter] .tab-content {position:relative !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-has-meter] :is(.tab-label-container,.tab-icon-stack) {visibility:hidden !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab[zen-essential][lt-has-meter] .lt-tab-meter-button {
+ position:absolute !important;inset:0 !important;width:100% !important;height:100% !important;
+ margin:0 !important;padding:0 !important;border:0 !important;background:transparent !important;
+ color:light-dark(#606064,#c7c7cc);z-index:2;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-meter-button > .lt-tab-equalizer {
+ position:absolute !important;inset:0 !important;box-sizing:border-box !important;
+ width:100% !important;height:100% !important;margin:0 !important;padding:0 !important;
+ display:flex !important;align-items:center !important;justify-content:center !important;
+}
