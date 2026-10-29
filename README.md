@@ -212,3 +212,7 @@ Rechecks sustained background playback and existing card visibility, retaining n
 ## 1.10.11 — artwork fallback and hover title
 
 Use the native 22px favicon when artwork is unavailable; hide it only after an artwork image loads. Favicons are no longer enlarged as cover images. Overflowing top titles animate on pointer entry and reset on exit; the artist stays static. Syntax and mocked title animation checks pass; live Zen appearance remains unverified.
+
+## 1.10.12 — favicon, source navigation and tab audio meter
+
+Without artwork, use a 20px site favicon in a compact 24px column, suppressing the native globe. Clicking the card surface focuses the source; transport, mute and preview buttons retain their own actions. Non-Essential tabs use animated audio bars on the native mute control, with static muted dots. Syntax and mocked click/title tests pass; live UI verification remains pending.

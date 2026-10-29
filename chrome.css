@@ -1401,3 +1401,35 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 :root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-media-title-clip > span {
  display:block !important;max-width:none !important;overflow:visible !important;text-overflow:clip !important;
 }
+
+/* Own the fallback image so Zen's generated globe cannot show through it. */
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-focus-button[lt-custom-media-icon] {
+ list-style-image:none !important;background-image:none !important;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-focus-button[lt-custom-media-icon] > :not(.lt-media-art,.lt-media-favicon) {display:none !important;}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-media-favicon {
+ width:20px !important;height:20px !important;object-fit:contain !important;pointer-events:none;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-media-favicon[hidden],
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar [lt-has-artwork] .lt-media-favicon {display:none !important;}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .lt-player-header:not(:has([lt-has-artwork])) {
+ grid-template-columns:24px minmax(0,1fr) 24px;gap:8px;
+}
+:root[zen-letter-tabs-active] #zen-media-controls-toolbar .zen-media-focus-button[lt-custom-media-icon]:not([lt-has-artwork]) {
+ width:24px !important;height:24px !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs [lt-audio-meter] {
+ position:relative !important;list-style-image:none !important;background-image:none !important;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs [lt-audio-meter] > :not(.lt-tab-equalizer) {visibility:hidden !important;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer {
+ position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:2px;pointer-events:none;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i {
+ display:block;width:2px;height:8px;border-radius:2px;background:currentColor;animation:lt-media-level 850ms ease-in-out infinite alternate;
+}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i:nth-child(2){height:13px;animation-delay:-250ms;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i:nth-child(3){height:10px;animation-delay:-550ms;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i:nth-child(4){height:5px;animation-delay:-100ms;}
+:root[zen-letter-tabs-active] #tabbrowser-tabs .tabbrowser-tab:is([muted],:not([soundplaying])) .lt-tab-equalizer i {height:2px;animation:none;opacity:.5;}
+@media(prefers-reduced-motion:reduce){:root[zen-letter-tabs-active] #tabbrowser-tabs .lt-tab-equalizer i {animation:none;}}

@@ -6,6 +6,23 @@
 (() => {
   window.__letterTabsMiniPlayer?.destroy();
   const decorated=new Map();
+  const tabMeters=new Map();
+  function syncTabMeters(){
+    const wanted=new Set();
+    for(const tab of window.gBrowser?.tabs || []) {
+      if(tab.hasAttribute('zen-essential') || !(tab.hasAttribute('soundplaying') || tab.hasAttribute('muted')))continue;
+      const button=tab.querySelector('.tab-audio-button') || tab.querySelector('.tab-icon-overlay');
+      if(!button)continue;
+      wanted.add(button);
+      if(!tabMeters.has(button)){
+        const bars=document.createElementNS('http://www.w3.org/1999/xhtml','span');
+        bars.className='lt-tab-equalizer';bars.setAttribute('aria-hidden','true');
+        for(let i=0;i<4;i++)bars.append(document.createElementNS(bars.namespaceURI,'i'));
+        button.append(bars);button.setAttribute('lt-audio-meter','');tabMeters.set(button,bars);
+      }
+    }
+    for(const [button,bars] of tabMeters)if(!wanted.has(button)){bars.remove();button.removeAttribute('lt-audio-meter');tabMeters.delete(button);}
+  }
   let lastRecovery=0;
   function recoverPlayback(){
     const manager=window.gZenMediaController;
@@ -25,8 +42,9 @@
     }
   }
   function update(){
+    syncTabMeters();
     if(Date.now()-lastRecovery>2000){lastRecovery=Date.now();try{recoverPlayback();}catch(error){console.debug('Letter Tabs media recovery',error);}}
-    for(const [element,parts] of decorated)if(!element.isConnected){parts.stopTitle();element.removeEventListener('mouseenter',parts.startTitle);element.removeEventListener('mouseleave',parts.stopTitle);parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
+    for(const [element,parts] of decorated)if(!element.isConnected){parts.stopTitle();element.removeEventListener('mouseenter',parts.startTitle);element.removeEventListener('mouseleave',parts.stopTitle);element.removeEventListener('mousedown',parts.onPress,true);element.removeEventListener('click',parts.onClick,true);parts.favicon.remove();parts.art.remove();parts.bars.remove();parts.title.remove();decorated.delete(element);}
     const toolbar=document.getElementById('zen-media-controls-toolbar');
     const elements=[...document.querySelectorAll('#zen-media-controls-toolbar .zen-media-card')];
     const eligible=elements.filter(el=>!el.hidden && !el.hasAttribute('zen-hiding') && !el.hasAttribute('zen-removing'));
@@ -49,6 +67,10 @@
       art.addEventListener('load',()=>{art.hidden=false;card.focusButton.setAttribute('lt-has-artwork','');});
       art.addEventListener('error',()=>{art.hidden=true;card.focusButton.removeAttribute('lt-has-artwork');});
       card.focusButton.append(art);
+      const favicon=document.createElementNS(art.namespaceURI,'img');
+      favicon.className='lt-media-favicon';favicon.alt='';favicon.hidden=true;
+      favicon.addEventListener('error',()=>{favicon.hidden=true;});
+      card.focusButton.append(favicon);card.focusButton.setAttribute('lt-custom-media-icon','');
       const bars=document.createElementNS('http://www.w3.org/1999/xhtml','span');
       bars.className='lt-media-equalizer';bars.setAttribute('aria-hidden','true');
       for(let i=0;i<4;i++)bars.append(document.createElementNS(bars.namespaceURI,'i'));
@@ -64,7 +86,18 @@
       move('.zen-media-focus-button',header);move('.zen-media-info-vbox',header);move('.zen-media-mute-button',header);
       for(const selector of ['.zen-sidebar-pip-toggle','.zen-media-previoustrack-button','.zen-media-playpause-button','.zen-media-nexttrack-button','.zen-media-pip-button','.zen-media-close-button'])move(selector,footer);
       main.prepend(header);main.append(footer);
-      parts={art,bars,title,text,header,footer,moved,card,url:'',failed:new Set(),marquee:null};
+      parts={art,favicon,bars,title,text,header,footer,moved,card,url:'',failed:new Set(),marquee:null};
+      const isCardSurface=target=>!target.closest('button,toolbarbutton,input,.lt-player-footer,.zen-media-progress-hbox') || !!target.closest('.zen-media-focus-button');
+      parts.onPress=event=>{if(event.button===0 && isCardSurface(event.target))event.stopImmediatePropagation();};
+      parts.onClick=event=>{
+        if(event.button!==0 || !isCardSurface(event.target))return;
+        event.preventDefault();event.stopImmediatePropagation();
+        const current=parts.card;
+        if(current.onFocus)current.onFocus();
+        else {const tab=window.gBrowser.getTabForBrowser(current.browser);if(tab)window.gBrowser.selectedTab=tab;}
+      };
+      element.addEventListener('mousedown',parts.onPress,true);
+      element.addEventListener('click',parts.onClick,true);
       parts.stopTitle=()=>{parts.marquee?.cancel();parts.marquee=null;};
       parts.startTitle=()=>{
         parts.stopTitle();
@@ -87,6 +120,13 @@
     const eye=card.element.querySelector('.zen-sidebar-pip-toggle');
     if(eye && eye.parentElement!==parts.footer)parts.footer.prepend(eye);
     try{
+      const sourceTab=card.browser && window.gBrowser.getTabForBrowser(card.browser);
+      const icon=card.browser?.mIconURL || sourceTab?.getAttribute('image') || '';
+      const faviconURL=/defaultFavicon|blank\.svg|globe\.svg/.test(icon)?'':icon;
+      if(parts.favicon.getAttribute('src')!==(faviconURL || null)){
+        parts.favicon.hidden=!faviconURL;
+        if(faviconURL)parts.favicon.src=faviconURL;else parts.favicon.removeAttribute('src');
+      }
       const images=card.controller?.getMetadata()?.artwork || [];
       let fallback='';
       try{const u=new URL(card.browser.currentURI.spec);if(/(^|\.)youtube\.com$/.test(u.hostname)&&u.searchParams.get('v'))fallback='https://i.ytimg.com/vi/'+encodeURIComponent(u.searchParams.get('v'))+'/hqdefault.jpg';}catch(_){}
@@ -111,6 +151,6 @@
   const toolbar=document.getElementById('zen-media-controls-toolbar');
   if(toolbar)observer.observe(toolbar,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','zen-hiding','zen-removing']});
   const timer=setInterval(safeUpdate,250);safeUpdate();
-  function destroy(){clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const [element,{art,bars,title,header,footer,moved,card,startTitle,stopTitle}] of decorated){stopTitle();element.removeEventListener('mouseenter',startTitle);element.removeEventListener('mouseleave',stopTitle);card.focusButton.removeAttribute('lt-has-artwork');for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
+  function destroy(){for(const [button,bars] of tabMeters){bars.remove();button.removeAttribute('lt-audio-meter');}tabMeters.clear();clearTimeout(scheduled);observer.disconnect();clearInterval(timer);for(const [element,{art,favicon,bars,title,header,footer,moved,card,startTitle,stopTitle,onPress,onClick}] of decorated){stopTitle();element.removeEventListener('mousedown',onPress,true);element.removeEventListener('click',onClick,true);favicon.remove();card.focusButton.removeAttribute('lt-custom-media-icon');element.removeEventListener('mouseenter',startTitle);element.removeEventListener('mouseleave',stopTitle);card.focusButton.removeAttribute('lt-has-artwork');for(const [node,marker] of moved)marker.replaceWith(node);art.remove();bars.remove();title.remove();header.remove();footer.remove();}decorated.clear();for(const el of document.querySelectorAll('[lt-current-media]'))el.removeAttribute('lt-current-media');window.removeEventListener('unload',destroy);delete window.__letterTabsMiniPlayer;}
   window.__letterTabsMiniPlayer={destroy};window.addEventListener('unload',destroy,{once:true});window.addUnloadListener?.(destroy);
 })();
